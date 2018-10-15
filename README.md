@@ -1,2 +1,2 @@
-# pro_dictionary
-Dictionaries management system
+# Словари
+Система управления словарями
