@@ -15,9 +15,9 @@ const
       padding: theme.spacing.unit * 3,
     },
   }),
-  handleLogout = (routing, auth) => (_event) => auth.signOut() && routing.push('/login')
+  handleLogout = (auth) => (_event) => auth.signOut()
 
-const DictionaryFooter = ({ classes, routing, auth }) =>
+const DictionaryFooter = ({ classes, auth }) =>
   <Grid
     container
     justify='flex-end'
@@ -25,7 +25,7 @@ const DictionaryFooter = ({ classes, routing, auth }) =>
     className={classes.container}>
     <Slide direction='up' in={true} timeout={400} mountOnEnter unmountOnExit>
       <IconButton
-        onClick={handleLogout(routing, auth)}
+        onClick={handleLogout(auth)}
         color='secondary'>
         <PowerSettings />
       </IconButton>
@@ -36,4 +36,4 @@ DictionaryFooter.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default injectStore('routing')(injectStore('auth')(observer(withStyles(styles)(DictionaryFooter))))
+export default injectStore('auth')(withStyles(styles)(DictionaryFooter))

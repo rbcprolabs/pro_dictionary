@@ -3,9 +3,7 @@ import Amplify from 'aws-amplify'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'mobx-react'
-import { RouterStore, syncHistoryWithStore } from 'mobx-react-router'
-import Router from 'react-router-dom/Router'
-import createBrowserHistory from 'history/createBrowserHistory'
+import BrowserRouter from 'react-router-dom/BrowserRouter'
 import OfflinePluginRuntime from 'offline-plugin/runtime'
 import config from './config'
 import theme from './theme'
@@ -39,41 +37,47 @@ Amplify.configure({
   }
 })
 
+const stores = {
+  auth: new Auth(),
+  dictionary: new Dictionary(),
+  notification: new Notification(),
+}
+
 OfflinePluginRuntime.install({
   onUpdating() {
     console.log('SW Event:', 'onUpdating')
   },
   onUpdateReady() {
-    console.log('SW Event:', 'onUpdateReady')
+    stores.notification.notify({
+      variant: Notification.INFO,
+      message: 'Загружается новая версия сайта',
+    })
     OfflinePluginRuntime.applyUpdate()
   },
-  onUpdated() {
-    console.log('SW Event:', 'onUpdated')
+  async onUpdated() {
+    await stores.notification.notify({
+      variant: Notification.WARNING,
+      message: 'Новая версия сайта загружена. Сейчас произойдет обновление страницы',
+    })
     window.location.reload()
   },
   onUpdateFailed() {
-    console.log('SW Event:', 'onUpdateFailed')
+    stores.notification.notify({
+      variant: Notification.ERROR,
+      message: 'Обновление сайта не удалось, попробуйте перезагрузить страницу самостоятельно',
+    })
   }
 })
-
-const
-  stores = {
-    routing: new RouterStore(),
-    auth: new Auth(),
-    dictionary: new Dictionary(),
-    notification: new Notification(),
-  },
-  history = syncHistoryWithStore(createBrowserHistory(), stores.routing)
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
       <Provider {...stores}>
-        <Router history={history}>
+        <BrowserRouter>
           <>
             <CssBaseline />
             <App />
           </>
-        </Router>
+        </BrowserRouter>
       </Provider>
   </MuiThemeProvider>,
   document.getElementById('root')
