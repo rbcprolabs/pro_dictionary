@@ -47,7 +47,6 @@ export default class Terms {
     } finally {
       this.loading = false
     }
-    console.log(this.items)
     return result.items
   }
 }

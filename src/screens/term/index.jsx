@@ -20,6 +20,7 @@ import Link from 'react-router-dom/Link'
 import CenteredProgress from 'components/centered-progress'
 import Typography from '@material-ui/core/Typography'
 import CenteredContainer from 'components/centered-container'
+import Grow from '@material-ui/core/Grow'
 
 const
   styles = (theme) => ({
@@ -73,7 +74,7 @@ export default class Term extends Component {
       { params } = match,
       dictionary = params.dictionary,
       terms = params.terms ? params.terms.split('/') : [],
-      three =  [dictionary, ...terms]
+      three = [dictionary, ...terms]
 
     return {
       three,
@@ -86,8 +87,6 @@ export default class Term extends Component {
     const { term } = this.props
 
     this.data = this.getDataFromURL()
-
-    // console.log(match, this.props.location, this.props.history)
 
     term.get(this.data.fullTerm).then((items) => this.setState({ items }))
   }
@@ -102,50 +101,50 @@ export default class Term extends Component {
 
   renderList = (items) =>
     <List>
-      {items.map(({term, children}) =>
+      {items.map(({ term, children }) =>
         <Fragment key={term}>
           <ListItem button component={Link} to={`/${this.data.fullTerm}/${term}`}>
             <ListItemText
               primary={term}
               secondary={children && children.join(', ')}
-              secondaryTypographyProps={this.listItemTypographyProps}/>
+              secondaryTypographyProps={this.listItemTypographyProps} />
             <ListItemSecondaryAction>
               <IconButton aria-label='Edit'>
                 <EditIcon />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
-          <Divider/>
+          <Divider />
         </Fragment>
       )}
     </List>
 
   makeTabItems = (items) => items.map((item, index, arr) => {
-
     let link = '/'
 
-    for(let i = 0; i < index + 1; i++) {
+    for (let i = 0; i < index + 1; i++) {
       link += arr[i] + '/'
-      console.log(item, arr[i])
     }
 
-    return (<Tab classes={{root: this.props.classes.tabRoot}} key={item} label={item} component={Link} to={link.slice(0, -1)}/>)
+    return (
+      <Grow in={true} timeout={600 + index * 100} key={item}>
+        <Tab classes={{ root: this.props.classes.tabRoot }} label={item} component={Link} to={link.slice(0, -1)} />
+      </Grow>
+    )
   })
 
   render() {
     const
-    {
-      classes,
-      term: {
-        loading,
-      },
-    } = this.props,
-    {
-      three,
-      term,
-    } = this.data
-
-    console.log(three, this.state.items)
+      {
+        classes,
+        term: {
+          loading,
+        },
+      } = this.props,
+      {
+        three,
+        term,
+      } = this.data
 
     return (
       <>
@@ -160,47 +159,47 @@ export default class Term extends Component {
           </Tabs>
         </AppBar>
         <Grid container className={classes.container}>
-          <Grid container>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              lg={9}
-              xl={10}
-              className={classes.itemsContainer}>
-              {
-                loading
-                  ? <CenteredProgress fullHeight />
-                  : this.state.items.length > 0
-                    ? this.renderList(this.state.items)
-                    : <CenteredContainer fullHeight>
-                        <Typography
-                          variant='h6'
-                          align='center'
-                          color='textSecondary'>
-                          Пусто
-                        </Typography>
-                      </CenteredContainer>
-              }
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              lg={3}
-              xl={2}>
-              <FullSizeInput
-                placeholder={`Впишите сюда новые термины в столбик для «${term}»`}>
-                <Grid container justify='center'>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            lg={9}
+            xl={10}
+            className={classes.itemsContainer}>
+            {
+              loading
+                ? <CenteredProgress fullHeight />
+                : this.state.items.length > 0
+                  ? this.renderList(this.state.items)
+                  : <CenteredContainer fullHeight>
+                      <Typography
+                        variant='h6'
+                        align='center'
+                        color='textSecondary'>
+                        Пусто
+                          </Typography>
+                    </CenteredContainer>
+            }
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            lg={3}
+            xl={2}>
+            <FullSizeInput
+              placeholder={`Впишите сюда новые термины в столбик для «${term}»`}>
+              <Grid container justify='center'>
+                <Grow in={true} timeout={1000}>
                   <LoadingButton
                     loading={false}
                     variant='contained'
                     color='secondary'>
                     Добавить термины
                   </LoadingButton>
-                </Grid>
-              </FullSizeInput>
-            </Grid>
+                </Grow>
+              </Grid>
+            </FullSizeInput>
           </Grid>
         </Grid>
       </>
