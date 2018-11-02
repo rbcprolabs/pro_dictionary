@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
+import { observer, inject as injectStore } from 'mobx-react'
 import withRouter from 'react-router/withRouter'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
@@ -16,34 +17,40 @@ import FullSizeInput from 'components/fullsize-input'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Link from 'react-router-dom/Link'
+import CenteredProgress from 'components/centered-progress'
+import Typography from '@material-ui/core/Typography'
+import CenteredContainer from 'components/centered-container'
 
-const styles = (theme) => ({
-  nestedStringText: {
-    maxWidth: '100%',
-  },
-  container: {
-    height: '100%',
-    overflowY: 'auto',
-    paddingTop: theme.spacing.unit * 6,
-  },
-  itemsContainer: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
-  itemSubTitle: {
-    [theme.breakpoints.down('md')]: {
-      display: 'none',
+const
+  styles = (theme) => ({
+    nestedStringText: {
+      maxWidth: '100%',
     },
-  },
-  whiteText: {
-    color: '#fff',
-  },
-  tabRoot: {
-    minWidth: 72,
-  },
-})
+    container: {
+      height: '100%',
+      overflowY: 'auto',
+      paddingTop: theme.spacing.unit * 6,
+    },
+    itemsContainer: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
+    itemSubTitle: {
+      [theme.breakpoints.down('md')]: {
+        display: 'none',
+      },
+    },
+    whiteText: {
+      color: '#fff',
+    },
+    tabRoot: {
+      minWidth: 72,
+    },
+  })
 
 @withRouter
 @withStyles(styles)
+@injectStore('term')
+@observer
 export default class Term extends Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
@@ -52,22 +59,93 @@ export default class Term extends Component {
     classes: PropTypes.object.isRequired,
   }
 
-  render() {
+  listItemTypographyProps = { noWrap: true, className: this.props.classes.itemSubTitle }
+
+  state = {
+    items: [],
+  }
+
+  getDataFromURL() {
     const
       {
-        classes,
         match,
       } = this.props,
       { params } = match,
       dictionary = params.dictionary,
       terms = params.terms ? params.terms.split('/') : [],
-      three = [dictionary, ...terms],
-      concatedThree = three.join('/')
+      three =  [dictionary, ...terms]
 
+    return {
+      three,
+      fullTerm: three.join('/'),
+      term: three[three.length - 1],
+    }
+  }
 
-    console.log(match, this.props.location, this.props.history)
+  componentWillMount() {
+    const { term } = this.props
 
-    console.log(three, three.join('/'))
+    this.data = this.getDataFromURL()
+
+    // console.log(match, this.props.location, this.props.history)
+
+    term.get(this.data.fullTerm).then((items) => this.setState({ items }))
+  }
+
+  componentDidUpdate(prevProps) {
+    const locationChanged = this.props.location !== prevProps.location
+    if (locationChanged) {
+      this.data = this.getDataFromURL()
+      this.props.term.get(this.data.fullTerm).then((items) => this.setState({ items }))
+    }
+  }
+
+  renderList = (items) =>
+    <List>
+      {items.map(({term, children}) =>
+        <Fragment key={term}>
+          <ListItem button component={Link} to={`/${this.data.fullTerm}/${term}`}>
+            <ListItemText
+              primary={term}
+              secondary={children && children.join(', ')}
+              secondaryTypographyProps={this.listItemTypographyProps}/>
+            <ListItemSecondaryAction>
+              <IconButton aria-label='Edit'>
+                <EditIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+          <Divider/>
+        </Fragment>
+      )}
+    </List>
+
+  makeTabItems = (items) => items.map((item, index, arr) => {
+
+    let link = '/'
+
+    for(let i = 0; i < index + 1; i++) {
+      link += arr[i] + '/'
+      console.log(item, arr[i])
+    }
+
+    return (<Tab classes={{root: this.props.classes.tabRoot}} key={item} label={item} component={Link} to={link.slice(0, -1)}/>)
+  })
+
+  render() {
+    const
+    {
+      classes,
+      term: {
+        loading,
+      },
+    } = this.props,
+    {
+      three,
+      term,
+    } = this.data
+
+    console.log(three, this.state.items)
 
     return (
       <>
@@ -78,11 +156,7 @@ export default class Term extends Component {
             scrollable
             scrollButtons='auto'
             className={classes.whiteText}>
-            {
-              three.map((item, index) =>
-                <Tab classes={{root: classes.tabRoot}} key={item+index} label={item} />
-              )
-            }
+            {this.makeTabItems(three)}
           </Tabs>
         </AppBar>
         <Grid container className={classes.container}>
@@ -94,24 +168,20 @@ export default class Term extends Component {
               lg={9}
               xl={10}
               className={classes.itemsContainer}>
-              <List>
-                <ListItem button component={Link} to={`/${concatedThree}/eat`}>
-                  <ListItemText
-                    primary='Продукты питания'
-                    secondary='Свежие, Замороженные, Маринованные, Консервы, Соленые, Сушеные, Полуфабрикаты, Овощи, Зелень, Грибы…'
-                    secondaryTypographyProps={{ noWrap: true, className: classes.itemSubTitle }}/>
-                  <ListItemSecondaryAction>
-                    <IconButton aria-label='Edit'>
-                      <EditIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-                <Divider />
-                <ListItem button component={Link} to={`/${concatedThree}/conservi`}>
-                  <ListItemText primary='Маринованные' />
-                </ListItem>
-                <Divider />
-              </List>
+              {
+                loading
+                  ? <CenteredProgress fullHeight />
+                  : this.state.items.length > 0
+                    ? this.renderList(this.state.items)
+                    : <CenteredContainer fullHeight>
+                        <Typography
+                          variant='h6'
+                          align='center'
+                          color='textSecondary'>
+                          Пусто
+                        </Typography>
+                      </CenteredContainer>
+              }
             </Grid>
             <Grid
               item
@@ -120,7 +190,7 @@ export default class Term extends Component {
               lg={3}
               xl={2}>
               <FullSizeInput
-                placeholder='Впишите сюда новые термины в столбик для «Кукуруза»'>
+                placeholder={`Впишите сюда новые термины в столбик для «${term}»`}>
                 <Grid container justify='center'>
                   <LoadingButton
                     loading={false}

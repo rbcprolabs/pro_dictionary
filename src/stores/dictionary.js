@@ -2,7 +2,7 @@ import { action, observable } from 'mobx'
 import { API } from 'aws-amplify'
 
 export default class Dictionary {
-  lastItem = 0
+  lastKey = 0
   limit = 5
 
   @observable items = []
@@ -24,13 +24,13 @@ export default class Dictionary {
   }
 
   @action
-  async getAll(lastItem = this.lastItem, limit = this.limit) {
+  async getAll(lastKey = this.lastKey, limit = this.limit) {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionary?from=${lastItem}&limit=${limit}`)
-      this.lastItem += this.limit
-      this.items.push(...result)
+      result = await API.get('dictionary', `/dictionary?lastEvaluatedKey=${lastKey}&limit=${limit}`)
+      this.lastKey = result.lastEvaluatedKey || null
+      this.items.push(...result.items)
     } catch (error) {
       console.error(error)
     } finally {

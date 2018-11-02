@@ -8,9 +8,9 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
+import CenteredProgress from 'components/centered-progress'
 
 const
   styles = (theme) => ({
@@ -39,19 +39,11 @@ export default class DictionaryList extends Component {
     this.props.dictionary.items.length < 1 && this.props.dictionary.getAll()
   }
 
-  centeredProgress = () =>
-    <Grid
-      container
-      justify='center'
-      alignItems='center'>
-      <CircularProgress />
-    </Grid>
-
   dictionariesList = ({ items }) =>
     <List>
       {items.map(({ name, slug }, index) =>
         <Grow in={true} timeout={1000 + index * 100} key={slug}>
-          <ListItem button component={Link} to={`/${slug}`}>
+          <ListItem button component={Link} to={`/${name}`}>
             <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
           </ListItem>
         </Grow>
@@ -80,7 +72,7 @@ export default class DictionaryList extends Component {
           {
             dictionary.items.length < 1
               ? dictionary.loading
-                ? <this.centeredProgress />
+                ? <CenteredProgress />
                 : <Grow direction='down' in={true} timeout={1000} mountOnEnter unmountOnExit>
                   <Typography variant='h6' color='textSecondary' align='center'>
                     Словарей ещё нет
