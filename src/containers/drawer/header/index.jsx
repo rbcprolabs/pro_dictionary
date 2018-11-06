@@ -22,7 +22,7 @@ const styles = (theme) => ({
   },
 })
 
-const DictionaryHeader = ({ classes }) =>
+const DrawerHeader = ({ classes }) =>
   <Grid
     container
     justify='space-between'
@@ -47,8 +47,8 @@ const DictionaryHeader = ({ classes }) =>
     </Grid>
   </Grid>
 
-DictionaryHeader.propTypes = {
+DrawerHeader.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(DictionaryHeader)
+export default withStyles(styles)(DrawerHeader)

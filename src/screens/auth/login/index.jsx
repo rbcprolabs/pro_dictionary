@@ -7,6 +7,7 @@ import LoadingButton from 'components/loading-button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
 import withStyles from '@material-ui/core/styles/withStyles'
+import Notification from 'stores/notification'
 
 const styles = (theme) => ({
   form: {
@@ -46,8 +47,11 @@ export default class Login extends Component {
         this.state.login,
         this.state.password,
       )
-    } catch (error) {
-      this.props.notification.error(error.message)
+    } catch ({message}) {
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message,
+      })
     }
   }
 

@@ -15,9 +15,7 @@ export default class Notification extends React.Component {
   render() {
     const {
       notification: {
-        message,
-        variant,
-        clear,
+        detail,
       },
     } = this.props
     return (
@@ -26,13 +24,14 @@ export default class Notification extends React.Component {
           vertical: 'bottom',
           horizontal: 'right',
         }}
-        open={this.props.notification.open}
-        autoHideDuration={4000}
+        open={detail !== null}
         onClose={this.handleClose}>
-        <SnackbarContent
-          onClose={this.handleClose}
-          variant={variant}
-          message={message}/>
+        { detail &&
+          <SnackbarContent
+            onClose={this.handleClose}
+            variant={detail.variant || 'info'}
+            message={detail.message || ''}/>
+        }
       </Snackbar>
     )
   }

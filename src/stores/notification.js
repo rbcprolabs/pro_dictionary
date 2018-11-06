@@ -1,42 +1,37 @@
 import { observable, action } from 'mobx'
 
 export default class Notification {
-  @observable message = ''
-  @observable variant = 'info'
-  @observable open = false
+  static INFO = 'info'
+  static SUCCESS = 'success'
+  static WARNING = 'warning'
+  static ERROR = 'error'
+
+  static SHORT = 4000
+  static LONG = 6000
+
+  @observable detail = null
+
+  timeoutCallback = null
 
   @action
-  info = (message) => {
-    this.message = message
-    this.variant = 'info'
-    this.open = true
-  }
+  notify = ({
+    message,
+    variant = Notification.INFO,
+    length = Notification.SHORT,
+  }) => new Promise((resolve, _reject) => {
+    let timeout
+    this.detail = {
+      variant,
+      message,
+    }
+    this.timeoutCallback = () => {
+      this.detail = null
+      resolve()
+      clearTimeout(timeout)
+    }
+    timeout = setTimeout(this.timeoutCallback, length)
+  })
 
   @action
-  error = (message) => {
-    this.message = message
-    this.variant = 'error'
-    this.open = true
-  }
-
-  @action
-  success = (message) => {
-    this.message = message
-    this.variant = 'success'
-    this.open = true
-  }
-
-  @action
-  warning = (message) => {
-    this.message = message
-    this.variant = 'warning'
-    this.open = true
-  }
-
-  @action
-  close = () => {
-    this.message = ''
-    this.variant = 'info'
-    this.open = false
-  }
+  close = () => this.timeoutCallback()
 }

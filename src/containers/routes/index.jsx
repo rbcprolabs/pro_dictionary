@@ -7,17 +7,13 @@ import {
   Login,
   ForgotPassword,
 } from 'screens/auth'
-import {
-  New as TermNew,
-  Detail as TermDetail,
-} from 'screens/term'
+import Term from 'screens/term'
 
 export default () =>
   <Switch>
     <Route.Unauthenticated path='/login' exact component={Login} />
     <Route.Unauthenticated path='/forgot-password' exact component={ForgotPassword} />
     <Route.Authenticated path='/' exact component={Home} />
-    <Route.Authenticated path='/term/new' exact component={TermNew} />
-    <Route.Authenticated path='/term/:id' exact component={TermDetail} />
+    <Route.Authenticated path='/:dictionary/:terms*' component={Term} />
     <Route component={NotFound} />
   </Switch>

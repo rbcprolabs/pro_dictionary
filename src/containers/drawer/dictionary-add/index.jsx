@@ -12,6 +12,7 @@ import RadioGroup from '@material-ui/core/RadioGroup'
 import Divider from '@material-ui/core/Divider'
 import Grow from '@material-ui/core/Grow'
 import LoadingButton from 'components/loading-button'
+import Notification from 'stores/notification'
 
 const styles = (theme) => ({
   container: {
@@ -56,12 +57,23 @@ export default class DictionaryAdd extends Component {
       isOpen,
     } = this.state
 
-    await this.props.dictionary.post({
-      name,
-      isFlat,
-      isOpen,
-    })
-    this.props.notification.success('Словарь успешно добавлен')
+    try {
+      await this.props.dictionary.post({
+        name,
+        isFlat,
+        isOpen,
+      })
+      this.props.notification.notify({
+        variant: Notification.SUCCESS,
+        message: 'Словарь успешно добавлен',
+      })
+    } catch (error) {
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message: 'Ошибка добавления словаря',
+      })
+    }
+
     this.props.onBackClick()
   }
 

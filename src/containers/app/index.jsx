@@ -18,9 +18,7 @@ const
       position: 'relative',
       flexGrow: 1,
       backgroundColor: '#fff',
-      padding: theme.spacing.unit * 3,
     },
-    // toolbar: theme.mixins.toolbar,
   }),
   Progress = ({className}) =>
     <Grid
@@ -42,8 +40,6 @@ const App = ({ classes, auth }) =>
         className={classes.container}>
         <Drawer />
         <main className={classes.content}>
-          {/* <Header /> */}
-          {/* <div className={classes.toolbar} /> */}
           <Routes />
           <Notification />
         </main>
