@@ -4,8 +4,8 @@ import classNames from 'classnames'
 import { observer, inject as injectStore } from 'mobx-react'
 import withStyles from '@material-ui/core/styles/withStyles'
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
-import DictionaryHeader from './dictionary-header'
-import DictionaryFooter from './dictionary-footer'
+import DrawerHeader from './header'
+import DrawerFooter from './footer'
 import DictionaryList from './dictionary-list'
 import DictionaryAdd from './dictionary-add'
 import Main from './main'
@@ -114,9 +114,9 @@ export default class AppDrawer extends Component {
           {
             authStatus
               ? <>
-                  <DictionaryHeader />
+                  <DrawerHeader />
                   {this.getFrameByName(frame)}
-                  <DictionaryFooter />
+                  <DrawerFooter />
                 </>
               : this.getFrameByName('main')
           }

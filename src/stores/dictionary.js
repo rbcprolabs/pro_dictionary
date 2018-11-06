@@ -17,6 +17,7 @@ export default class Dictionary {
       this.items.push(result)
     } catch (error) {
       console.error(error)
+      throw error
     } finally {
       this.loading = false
     }

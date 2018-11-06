@@ -45,7 +45,6 @@ export default class LoadingButton extends React.Component {
       classes,
       disabled,
       children,
-      onClick,
       loading = false,
       success = false,
       ...props

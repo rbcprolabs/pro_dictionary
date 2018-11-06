@@ -2,7 +2,6 @@ import { action, observable } from 'mobx'
 import { API } from 'aws-amplify'
 
 export default class Terms {
-  lastKey = 0
   limit = 100
 
   @observable items = {}
@@ -14,10 +13,9 @@ export default class Terms {
     let result = null
     try {
       result = await API.post('term', '/term/', { body })
-      (!this.items[body.parent]) && (this.items[body.parent] = [])
-      this.items[body.parent].push(result)
     } catch (error) {
       console.error(error)
+      throw error
     } finally {
       this.loading = false
     }
@@ -29,8 +27,8 @@ export default class Terms {
     this.loading = true
     let result = null
     try {
-      if (!this.items[parent]) {
-        result = await API.get('term', `/term?parent=${parent}&limit=${limit}`)
+      if (!this.items[parent] || loadMore && !this.items[parent].lastEvaluatedKey) {
+        result = await API.get('term', `/term/?parent=${parent}&limit=${limit}`)
         this.items[parent] = {
           lastEvaluatedKey: result.lastEvaluatedKey,
           items: result.items,

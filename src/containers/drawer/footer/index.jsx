@@ -17,7 +17,7 @@ const
   }),
   handleLogout = (auth) => (_event) => auth.signOut()
 
-const DictionaryFooter = ({ classes, auth }) =>
+const DrawerFooter = ({ classes, auth }) =>
   <Grid
     container
     justify='flex-end'
@@ -32,8 +32,8 @@ const DictionaryFooter = ({ classes, auth }) =>
     </Slide>
   </Grid>
 
-DictionaryFooter.propTypes = {
+DrawerFooter.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default injectStore('auth')(withStyles(styles)(DictionaryFooter))
+export default injectStore('auth')(withStyles(styles)(DrawerFooter))

@@ -1,19 +1,10 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import withRouter from 'react-router/withRouter'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import AppBar from '@material-ui/core/AppBar'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import Divider from '@material-ui/core/Divider'
-import IconButton from '@material-ui/core/IconButton'
-import EditIcon from '@material-ui/icons/Edit'
-import LoadingButton from 'components/loading-button'
-import FullSizeInput from 'components/fullsize-input'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Link from 'react-router-dom/Link'
@@ -21,35 +12,34 @@ import CenteredProgress from 'components/centered-progress'
 import Typography from '@material-ui/core/Typography'
 import CenteredContainer from 'components/centered-container'
 import Grow from '@material-ui/core/Grow'
+import Notification from 'stores/notification'
 
-const
-  styles = (theme) => ({
-    nestedStringText: {
-      maxWidth: '100%',
-    },
-    container: {
-      height: '100%',
-      overflowY: 'auto',
-      paddingTop: theme.spacing.unit * 6,
-    },
-    itemsContainer: {
-      borderRight: `1px solid ${theme.palette.divider}`,
-    },
-    itemSubTitle: {
-      [theme.breakpoints.down('md')]: {
-        display: 'none',
-      },
-    },
-    whiteText: {
-      color: '#fff',
-    },
-    tabRoot: {
-      minWidth: 72,
-    },
-  })
+import TermList from './list'
+import TermAdd from './add'
+
+const styles = (theme) => ({
+  nestedStringText: {
+    maxWidth: '100%',
+  },
+  container: {
+    height: '100%',
+    overflowY: 'auto',
+    paddingTop: theme.spacing.unit * 6,
+  },
+  itemsContainer: {
+    borderRight: `1px solid ${theme.palette.divider}`,
+  },
+  whiteText: {
+    color: '#fff',
+  },
+  tabRoot: {
+    minWidth: 72,
+  },
+})
 
 @withRouter
 @withStyles(styles)
+@injectStore('notification')
 @injectStore('term')
 @observer
 export default class Term extends Component {
@@ -60,64 +50,49 @@ export default class Term extends Component {
     classes: PropTypes.object.isRequired,
   }
 
-  listItemTypographyProps = { noWrap: true, className: this.props.classes.itemSubTitle }
-
-  state = {
-    items: [],
-  }
+  state = {}
 
   getDataFromURL() {
     const
-      {
-        match,
-      } = this.props,
+      { match } = this.props,
       { params } = match,
-      dictionary = params.dictionary,
+      dictionaryName = params.dictionary,
       terms = params.terms ? params.terms.split('/') : [],
-      three = [dictionary, ...terms]
+      three = [dictionaryName, ...terms]
 
     return {
       three,
       fullTerm: three.join('/'),
+      parent: [].concat(three).splice(0, three.length - 1).join('/'),
+      dictionaryName,
       term: three[three.length - 1],
     }
   }
 
-  componentWillMount() {
-    const { term } = this.props
+  async componentWillMount() {
+    const {
+      term,
+      history,
+    } = this.props
 
     this.data = this.getDataFromURL()
 
-    term.get(this.data.fullTerm).then((items) => this.setState({ items }))
-  }
-
-  componentDidUpdate(prevProps) {
-    const locationChanged = this.props.location !== prevProps.location
-    if (locationChanged) {
-      this.data = this.getDataFromURL()
-      this.props.term.get(this.data.fullTerm).then((items) => this.setState({ items }))
+    try {
+      const items = await term.get(this.data.fullTerm)
+      this.setState({ items })
+    } catch (error) {
+      history.go('/404')
     }
   }
 
-  renderList = (items) =>
-    <List>
-      {items.map(({ term, children }) =>
-        <Fragment key={term}>
-          <ListItem button component={Link} to={`/${this.data.fullTerm}/${term}`}>
-            <ListItemText
-              primary={term}
-              secondary={children && children.join(', ')}
-              secondaryTypographyProps={this.listItemTypographyProps} />
-            <ListItemSecondaryAction>
-              <IconButton aria-label='Edit'>
-                <EditIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-          <Divider />
-        </Fragment>
-      )}
-    </List>
+  async componentDidUpdate(prevProps) {
+    const locationChanged = this.props.location !== prevProps.location
+    if (locationChanged) {
+      this.data = this.getDataFromURL()
+      const items = await this.props.term.get(this.data.fullTerm)
+      this.setState({ items })
+    }
+  }
 
   makeTabItems = (items) => items.map((item, index, arr) => {
     let link = '/'
@@ -133,8 +108,26 @@ export default class Term extends Component {
     )
   })
 
+  onAdded = async () => {
+    this.props.notification.notify({
+      variant: Notification.SUCCESS,
+      message: 'Термины успешно добавлены',
+    })
+    const items = await this.props.term.get(this.data.fullTerm, true)
+    this.setState({ items })
+  }
+
+  onAddError = (error) => {
+    console.error(error)
+    this.props.notification.notify({
+      variant: Notification.ERROR,
+      message: 'Ошибка добавления терминов',
+    })
+  }
+
   render() {
     const
+      { items = [] } = this.state,
       {
         classes,
         term: {
@@ -169,16 +162,16 @@ export default class Term extends Component {
             {
               loading
                 ? <CenteredProgress fullHeight />
-                : this.state.items.length > 0
-                  ? this.renderList(this.state.items)
+                : items.length > 0
+                  ? <TermList items={items} />
                   : <CenteredContainer fullHeight>
-                      <Typography
-                        variant='h6'
-                        align='center'
-                        color='textSecondary'>
-                        Пусто
-                          </Typography>
-                    </CenteredContainer>
+                    <Typography
+                      variant='h6'
+                      align='center'
+                      color='textSecondary'>
+                      Пусто
+                </Typography>
+                  </CenteredContainer>
             }
           </Grid>
           <Grid
@@ -187,19 +180,13 @@ export default class Term extends Component {
             md={6}
             lg={3}
             xl={2}>
-            <FullSizeInput
-              placeholder={`Впишите сюда новые термины в столбик для «${term}»`}>
-              <Grid container justify='center'>
-                <Grow in={true} timeout={1000}>
-                  <LoadingButton
-                    loading={false}
-                    variant='contained'
-                    color='secondary'>
-                    Добавить термины
-                  </LoadingButton>
-                </Grow>
-              </Grid>
-            </FullSizeInput>
+            <TermAdd
+              dictionaryName={this.data.dictionaryName}
+              term={term}
+              parent={this.data.parent}
+              fullTerm={this.data.fullTerm}
+              onAdded={this.onAdded}
+              onError={this.onAddError} />
           </Grid>
         </Grid>
       </>

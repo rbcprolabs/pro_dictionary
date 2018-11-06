@@ -57,15 +57,23 @@ export default class DictionaryAdd extends Component {
       isOpen,
     } = this.state
 
-    await this.props.dictionary.post({
-      name,
-      isFlat,
-      isOpen,
-    })
-    this.props.notification.notify({
-      variant: Notification.SUCCESS,
-      message: 'Словарь успешно добавлен',
-    })
+    try {
+      await this.props.dictionary.post({
+        name,
+        isFlat,
+        isOpen,
+      })
+      this.props.notification.notify({
+        variant: Notification.SUCCESS,
+        message: 'Словарь успешно добавлен',
+      })
+    } catch (error) {
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message: 'Ошибка добавления словаря',
+      })
+    }
+
     this.props.onBackClick()
   }
 

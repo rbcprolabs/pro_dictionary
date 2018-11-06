@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import InputBase from '@material-ui/core/InputBase'
@@ -50,5 +51,10 @@ const FullSizeInput = ({
       {children}
     </Grid>
   </Grid>
+
+FullSizeInput.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.node,
+}
 
 export default withStyles(styles)(FullSizeInput)
