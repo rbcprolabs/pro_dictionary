@@ -13,8 +13,17 @@ import EditIcon from '@material-ui/icons/Edit'
 const
   styles = (theme) => ({
     itemSubTitle: {
+      [theme.breakpoints.down('xl')]: {
+        maxWidth: 1200,
+      },
+      [theme.breakpoints.down('lg')]: {
+        maxWidth: 600,
+      },
       [theme.breakpoints.down('md')]: {
-        display: 'none',
+        maxWidth: 400,
+      },
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 200,
       },
     },
   }),

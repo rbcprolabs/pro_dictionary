@@ -29,6 +29,21 @@ export default createMuiTheme({
     medium: 400,
     large: '70%',
   },
+  mixins: {
+    scrollbar: {
+      '&::-webkit-scrollbar-track': {
+        boxShadow: 'inset 0 0 6px rgba(0,0,0,0.3)',
+        backgroundColor: '#F5F5F5',
+      },
+      '&::-webkit-scrollbar': {
+        width: 6,
+        backgroundColor: '#F5F5F5',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: '#407766',
+      },
+    },
+  },
 })
 
 export const darkTheme = createMuiTheme({

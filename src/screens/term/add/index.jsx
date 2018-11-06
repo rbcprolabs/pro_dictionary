@@ -7,7 +7,6 @@ import Grow from '@material-ui/core/Grow'
 
 
 @injectStore(stores => ({
-  dictionaryItems: stores.dictionary.items,
   termStore: stores.term,
 }))
 @observer
@@ -24,20 +23,16 @@ export default class TermAdd extends Component {
 
   addTerms = async () => {
     const {
-      dictionaryItems,
       termStore,
 
       dictionaryName,
+      dictionary,
       term,
       parent,
       fullTerm,
       onAdded,
       onError,
     } = this.props
-
-    const dictionary = dictionaryItems.find(({ name }) =>
-      dictionaryName == name
-    ).slug
 
     try {
       const body = {

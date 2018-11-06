@@ -1,7 +1,6 @@
 import React from 'react'
 import { Observer, inject as injectStore } from 'mobx-react'
 import Routes from '../routes'
-// import Header from '../header'
 import Drawer from 'containers/drawer'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
@@ -18,6 +17,7 @@ const
       position: 'relative',
       flexGrow: 1,
       backgroundColor: '#fff',
+      maxHeight: '100vh',
     },
   }),
   Progress = ({className}) =>

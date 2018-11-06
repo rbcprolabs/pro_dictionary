@@ -23,11 +23,12 @@ const styles = (theme) => ({
   },
   container: {
     height: '100%',
-    overflowY: 'auto',
     paddingTop: theme.spacing.unit * 6,
   },
   itemsContainer: {
+    overflowY: 'auto',
     borderRight: `1px solid ${theme.palette.divider}`,
+    ...theme.mixins.scrollbar,
   },
   whiteText: {
     color: '#fff',
@@ -40,6 +41,7 @@ const styles = (theme) => ({
 @withRouter
 @withStyles(styles)
 @injectStore('notification')
+@injectStore('dictionary')
 @injectStore('term')
 @observer
 export default class Term extends Component {
@@ -69,28 +71,21 @@ export default class Term extends Component {
     }
   }
 
-  async componentWillMount() {
-    const {
-      term,
-      history,
-    } = this.props
-
+  componentWillMount() {
     this.data = this.getDataFromURL()
-
-    try {
-      const items = await term.get(this.data.fullTerm)
-      this.setState({ items })
-    } catch (error) {
-      history.go('/404')
-    }
+    this.getTerms()
   }
 
-  async componentDidUpdate(prevProps) {
+  getTerms = async (loadMore = false) => {
+    const items = await this.props.term.get(this.data.fullTerm, loadMore)
+    this.setState({ items })
+  }
+
+  componentDidUpdate(prevProps) {
     const locationChanged = this.props.location !== prevProps.location
     if (locationChanged) {
       this.data = this.getDataFromURL()
-      const items = await this.props.term.get(this.data.fullTerm)
-      this.setState({ items })
+      this.getTerms()
     }
   }
 
@@ -108,13 +103,12 @@ export default class Term extends Component {
     )
   })
 
-  onAdded = async () => {
+  onAdded = () => {
     this.props.notification.notify({
       variant: Notification.SUCCESS,
       message: 'Термины успешно добавлены',
     })
-    const items = await this.props.term.get(this.data.fullTerm, true)
-    this.setState({ items })
+    this.getTerms(true)
   }
 
   onAddError = (error) => {
@@ -125,69 +119,94 @@ export default class Term extends Component {
     })
   }
 
+  withAdd (dictionary, children) {
+    const
+      {
+        classes,
+      } = this.props,
+      {
+        parent,
+        term,
+        dictionaryName,
+        fullTerm,
+      } = this.data
+
+    return (
+      <>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          lg={9}
+          xl={10}
+          className={classes.itemsContainer}>
+          {children}
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          lg={3}
+          xl={2}>
+          <TermAdd
+            dictionaryName={dictionaryName}
+            dictionary={dictionary}
+            term={term}
+            parent={parent}
+            fullTerm={fullTerm}
+            onAdded={this.onAdded}
+            onError={this.onAddError} />
+        </Grid>
+      </>
+    )
+  }
+
   render() {
     const
       { items = [] } = this.state,
       {
         classes,
-        term: {
-          loading,
-        },
-      } = this.props,
-      {
-        three,
         term,
-      } = this.data
+        dictionary: dictionaryStore,
+      } = this.props
+    let dictionary = null
+
+    if (!dictionaryStore.loading)
+      dictionary = dictionaryStore.items.find(({ name }) =>
+        this.data.dictionaryName == name
+      )
+
+    const content = items.length > 0
+        ? <TermList items={items} />
+        : <CenteredContainer fullHeight>
+            <Typography
+              variant='h6'
+              align='center'
+              color='textSecondary'>
+              Пусто
+            </Typography>
+          </CenteredContainer>
 
     return (
       <>
         <AppBar position='absolute'>
           <Tabs
             indicatorColor='secondary'
-            value={three.length - 1}
+            value={this.data.three.length - 1}
             scrollable
             scrollButtons='auto'
             className={classes.whiteText}>
-            {this.makeTabItems(three)}
+            {this.makeTabItems(this.data.three)}
           </Tabs>
         </AppBar>
         <Grid container className={classes.container}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            lg={9}
-            xl={10}
-            className={classes.itemsContainer}>
-            {
-              loading
-                ? <CenteredProgress fullHeight />
-                : items.length > 0
-                  ? <TermList items={items} />
-                  : <CenteredContainer fullHeight>
-                    <Typography
-                      variant='h6'
-                      align='center'
-                      color='textSecondary'>
-                      Пусто
-                </Typography>
-                  </CenteredContainer>
-            }
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            lg={3}
-            xl={2}>
-            <TermAdd
-              dictionaryName={this.data.dictionaryName}
-              term={term}
-              parent={this.data.parent}
-              fullTerm={this.data.fullTerm}
-              onAdded={this.onAdded}
-              onError={this.onAddError} />
-          </Grid>
+          {
+            term.loading || dictionaryStore.loading
+              ? <CenteredProgress fullHeight />
+              : dictionary.isOpen
+                ? this.withAdd(dictionary.slug, content)
+                : content
+          }
         </Grid>
       </>
     )
