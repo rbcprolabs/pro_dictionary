@@ -19,7 +19,7 @@ export default class TermAdd extends Component {
     [target.id]: target.value,
   })
 
-  validateTerms = () => this.state.terms.length > 0
+  validateTerms = () => this.state.terms.length > 0 && this.state.terms.split(/\r|\n/).length < 25
 
   addTerms = async () => {
     const {

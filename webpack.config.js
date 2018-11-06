@@ -6,36 +6,7 @@ const
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   { version } = require('./package')
 
-const mode = process.env.NODE_ENV || 'development',
-  plugins = []
-
-mode === 'production' &&
-  plugins.push(
-    new OfflinePlugin({
-      safeToUseOptionalCaches: true,
-      caches: {
-        main: [
-          'app.bundle.js',
-          'vendor.bundle.js',
-          ':rest:',
-        ],
-        additional: [
-          ':externals:',
-        ],
-      },
-      externals: [
-        '/manifest.json',
-        '/browserconfig.xml',
-        '/assets/**/*.*',
-        '/',
-      ],
-      ServiceWorker: {
-        events: true,
-        navigateFallbackURL: '/',
-        publicPath: '/sw.js'
-      },
-    }),
-  )
+const mode = process.env.NODE_ENV || 'development'
 
 module.exports = {
   mode,
@@ -111,7 +82,32 @@ module.exports = {
     new webpack.DefinePlugin({
       'appVersion': JSON.stringify(version),
     }),
-    ...plugins,
+    new OfflinePlugin({
+      safeToUseOptionalCaches: true,
+      caches: {
+        main: [
+          'app.bundle.js',
+          'vendor.bundle.js',
+          ':rest:',
+        ],
+        additional: [
+          ':externals:',
+        ],
+      },
+      externals: [
+        '/manifest.json',
+        '/browserconfig.xml',
+        '/assets/**/*.*',
+        '/',
+      ],
+      ServiceWorker: {
+        events: true,
+        navigateFallbackURL: '/',
+        output: 'service-worker.js',
+      },
+      publicPath: '/',
+      AppCache: false,
+    }),
   ],
 
   devServer: {

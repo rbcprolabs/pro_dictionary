@@ -29,7 +29,7 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionary?${lastKey && `lastEvaluatedKey=${lastKey}&`}limit=${limit}`)
+      result = await API.get('dictionary', `/dictionary?${lastKey ? `lastEvaluatedKey=${lastKey}&` : ''}limit=${limit}`)
       this.lastKey = result.lastEvaluatedKey || null
       this.items.push(...result.items)
     } catch (error) {

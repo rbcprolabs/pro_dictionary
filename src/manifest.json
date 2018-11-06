@@ -1,11 +1,11 @@
 {
-  "name": "Dictionary",
-  "short_name": "Dictionary",
+  "name": "Словари",
+  "short_name": "Словари",
   "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FAFAFA",
-  "theme_color": "#FFFFFF",
+  "background_color": "#ffffff",
+  "theme_color": "#0b3b2c",
   "icons": [
     {
       "src": "\/assets/icons/android-icon-36x36.png",
