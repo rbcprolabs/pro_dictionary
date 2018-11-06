@@ -13,6 +13,7 @@ import Divider from '@material-ui/core/Divider'
 import Grow from '@material-ui/core/Grow'
 import LoadingButton from 'components/loading-button'
 import Notification from 'stores/notification'
+import cyrillicToTranslit from 'utils/cyrillic-to-translit'
 
 const styles = (theme) => ({
   container: {
@@ -40,6 +41,9 @@ export default class DictionaryAdd extends Component {
 
   validateForm = () => this.state.name.length > 0
 
+  validateName = (value) => /^[а-яА-Я ]+$/g.test(value)
+  validateSlug = (value) => /^[a-z_]+$/g.test(value)
+
   handleChange = ({ target }) => this.setState({
     [target.name]: target.type === 'radio'
       ? target.value === 'true'
@@ -55,11 +59,13 @@ export default class DictionaryAdd extends Component {
       name,
       isFlat,
       isOpen,
+      slug = cyrillicToTranslit(name, '_').toLowerCase()
     } = this.state
 
     try {
       await this.props.dictionary.post({
         name,
+        slug,
         isFlat,
         isOpen,
       })
@@ -78,13 +84,15 @@ export default class DictionaryAdd extends Component {
   }
 
   render() {
-    const {
-      classes,
-      onBackClick,
-      dictionary: {
-        loading,
-      },
-    } = this.props
+    const
+      {
+        classes,
+        onBackClick,
+        dictionary: {
+          loading,
+        },
+      } = this.props,
+      slug = this.state.slug || cyrillicToTranslit(this.state.name, '_').toLowerCase()
 
     return (
       <Grid
@@ -108,17 +116,30 @@ export default class DictionaryAdd extends Component {
           <Grid item>
             <Grow in={true} timeout={900}>
               <TextField
+                error={!!this.state.name && !this.validateName(this.state.name)}
                 required
                 fullWidth
                 name='name'
-                label='Укажите название словаря'
+                label='Название словаря'
                 type='text'
                 value={this.state.name}
-                onChange={this.handleChange} />
+                onChange={this.handleChange}/>
+            </Grow>
+            <Grow in={true} timeout={1000}>
+              <TextField
+                error={!!slug && !this.validateSlug(slug)}
+                required
+                fullWidth
+                name='slug'
+                label='Английская версия без пробелов'
+                type='text'
+                value={slug}
+                onChange={this.handleChange}
+                margin='normal' />
             </Grow>
           </Grid>
           <Grid item>
-            <Grow in={true} timeout={1000}>
+            <Grow in={true} timeout={1100}>
               <RadioGroup
                 aria-label='Тип'
                 name='isFlat'
@@ -133,7 +154,7 @@ export default class DictionaryAdd extends Component {
             <Divider className={classes.divider} />
           </Grid>
           <Grid item>
-            <Grow in={true} timeout={1100}>
+            <Grow in={true} timeout={1200}>
               <FormControlLabel
                 name='isOpen'
                 checked={this.state.isOpen}
@@ -149,7 +170,7 @@ export default class DictionaryAdd extends Component {
               spacing={16}
               justify='center'>
               <Grid item xs={6}>
-                <Grow in={true} timeout={1200}>
+                <Grow in={true} timeout={1300}>
                   <Button
                     fullWidth
                     color='secondary'
@@ -159,7 +180,7 @@ export default class DictionaryAdd extends Component {
                 </Grow>
               </Grid>
               <Grid item xs={6}>
-                <Grow in={true} timeout={1300}>
+                <Grow in={true} timeout={1400}>
                   <LoadingButton
                     fullWidth
                     loading={loading}
