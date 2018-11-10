@@ -52,18 +52,36 @@ TermListItem.propTypes = {
   listItemTypographyProps: PropTypes.object.isRequired,
 }
 
-const TermList = ({ items, classes }) => {
+const TermListFlatItem = ({ term }) =>
+  <>
+    <ListItem>
+      <ListItemText primary={term}/>
+    </ListItem>
+    <Divider />
+  </>
+
+TermListFlatItem.propTypes = {
+  term: PropTypes.string.isRequired,
+}
+
+const TermList = ({ classes, items, isFlat }) => {
   const listItemTypographyProps = listItemTypographyPropsPreset(classes.itemSubTitle)
 
   return (
     <List>
-      {items.map(({ fullTerm, term, children }) =>
-        <TermListItem
+      {!isFlat
+      ? items.map(({ fullTerm, term, children }) =>
+          <TermListItem
+            key={term}
+            term={term}
+            fullTerm={fullTerm}
+            children={children}
+            listItemTypographyProps={listItemTypographyProps} />
+        )
+      : items.map(({ term }) =>
+        <TermListFlatItem
           key={term}
-          term={term}
-          fullTerm={fullTerm}
-          children={children}
-          listItemTypographyProps={listItemTypographyProps} />
+          term={term}/>
       )}
     </List>
   )
@@ -72,6 +90,7 @@ const TermList = ({ items, classes }) => {
 TermList.propTypes = {
   classes: PropTypes.object.isRequired,
   items: PropTypes.array,
+  isFlat: PropTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(TermList)

@@ -119,7 +119,7 @@ export default class Term extends Component {
     })
   }
 
-  withAdd (dictionary, children) {
+  withAdd(dictionary, children) {
     const
       {
         classes,
@@ -176,16 +176,16 @@ export default class Term extends Component {
         this.data.dictionaryName == name
       )
 
-    const content = items.length > 0
-        ? <TermList items={items} />
-        : <CenteredContainer fullHeight>
-            <Typography
-              variant='h6'
-              align='center'
-              color='textSecondary'>
-              Пусто
+    const content = !!dictionary && items.length > 0
+      ? <TermList items={items} isFlat={dictionary.isFlat} />
+      : <CenteredContainer fullHeight>
+        <Typography
+          variant='h6'
+          align='center'
+          color='textSecondary'>
+          Пусто
             </Typography>
-          </CenteredContainer>
+      </CenteredContainer>
 
     return (
       <>
@@ -203,9 +203,7 @@ export default class Term extends Component {
           {
             term.loading || dictionaryStore.loading
               ? <CenteredProgress fullHeight />
-              : dictionary.isOpen
-                ? this.withAdd(dictionary.slug, content)
-                : content
+              : this.withAdd(dictionary.slug, content)
           }
         </Grid>
       </>

@@ -63,14 +63,14 @@ OfflinePluginRuntime.install({
   async onUpdated() {
     await stores.notification.notify({
       variant: Notification.WARNING,
-      message: 'Новая версия сайта загружена. Сейчас произойдет обновление страницы',
+      message: 'Сейчас произойдет обновление страницы',
     })
     window.location.reload()
   },
   onUpdateFailed() {
     stores.notification.notify({
       variant: Notification.ERROR,
-      message: 'Обновление сайта не удалось, попробуйте перезагрузить страницу самостоятельно',
+      message: 'Обновление сайта не удалось, перезагрузите страницу',
     })
   }
 })

@@ -3,10 +3,10 @@ import { API } from 'aws-amplify'
 
 export default class Dictionary {
   lastKey = null
-  limit = 5
+  limit = 100
 
   @observable items = []
-  @observable loading = false
+  @observable loading = true
 
   @action
   async post(body) {
@@ -25,11 +25,11 @@ export default class Dictionary {
   }
 
   @action
-  async getAll(lastKey = this.lastKey, limit = this.limit) {
+  async getAll(limit = this.limit) {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionary?${lastKey ? `lastEvaluatedKey=${lastKey}&` : ''}limit=${limit}`)
+      result = await API.get('dictionary', `/dictionary?${this.lastKey ? `lastEvaluatedKey=${this.lastKey}&` : ''}limit=${limit}`)
       this.lastKey = result.lastEvaluatedKey || null
       this.items.push(...result.items)
     } catch (error) {
@@ -40,12 +40,27 @@ export default class Dictionary {
     return result
   }
 
+  hasMore = () => this.lastKey !== null
+
   @action
   async get(id) {
     this.loading = true
     let result = null
     try {
       result = await API.get('dictionary', `/dictionary/${id}`)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      this.loading = false
+    }
+    return result
+  }
+
+  async getByName(name) {
+    this.loading = true
+    let result = null
+    try {
+      result = await API.get('dictionary', `/dictionaryByName/${name}`)
     } catch (error) {
       console.error(error)
     } finally {

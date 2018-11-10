@@ -1,6 +1,6 @@
 {
   "name": "dictionary",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Dictionary web app",
   "main": "src/index.jsx",
   "scripts": {

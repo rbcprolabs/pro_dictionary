@@ -26,6 +26,7 @@ const
     list: {
       maxHeight: 400,
       overflowY: 'auto',
+      ...theme.mixins.scrollbar,
     },
   }),
   listItemTypographyProp = { align: 'center' }
@@ -39,8 +40,8 @@ export default class DictionaryList extends Component {
     this.props.dictionary.items.length < 1 && this.props.dictionary.getAll()
   }
 
-  dictionariesList = ({ items }) =>
-    <List>
+  dictionariesList = ({ items, className }) =>
+    <List className={className}>
       {items.map(({ name, slug }, index) =>
         <Grow in={true} timeout={1000 + index * 100} key={slug}>
           <ListItem button component={Link} to={`/${name}`}>
