@@ -56,6 +56,11 @@ const TermListFlatItem = ({ term }) =>
   <>
     <ListItem>
       <ListItemText primary={term}/>
+      <ListItemSecondaryAction>
+        <IconButton aria-label='Edit'>
+          <EditIcon />
+        </IconButton>
+      </ListItemSecondaryAction>
     </ListItem>
     <Divider />
   </>

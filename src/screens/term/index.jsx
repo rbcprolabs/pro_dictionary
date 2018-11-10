@@ -12,6 +12,7 @@ import CenteredProgress from 'components/centered-progress'
 import Typography from '@material-ui/core/Typography'
 import CenteredContainer from 'components/centered-container'
 import Grow from '@material-ui/core/Grow'
+import Slide from '@material-ui/core/Slide'
 import Notification from 'stores/notification'
 
 import TermList from './list'
@@ -52,53 +53,62 @@ export default class Term extends Component {
     classes: PropTypes.object.isRequired,
   }
 
-  state = {}
+  state = {
+    three: [],
+    parent: '',
+    term: '',
+    fullTerm: '',
+    dictionary: null,
+  }
 
-  getDataFromURL() {
+  async getData() {
     const
-      { match } = this.props,
-      { params } = match,
+      {
+        match: {
+          params,
+        },
+        dictionary,
+      } = this.props,
       dictionaryName = params.dictionary,
       terms = params.terms ? params.terms.split('/') : [],
-      three = [dictionaryName, ...terms]
+      three = [dictionaryName, ...terms],
+      fullTerm = three.join('/')
 
     return {
       three,
-      fullTerm: three.join('/'),
+      fullTerm,
       parent: [].concat(three).splice(0, three.length - 1).join('/'),
-      dictionaryName,
+      dictionary: await dictionary.getByName(dictionaryName),
       term: three[three.length - 1],
+      items: await this.getTerms(fullTerm),
     }
   }
 
-  componentWillMount() {
-    this.data = this.getDataFromURL()
-    this.getTerms()
-  }
+  getTerms = (fullTerm, loadMore = false) => this.props.term.get(fullTerm, loadMore)
 
-  getTerms = async (loadMore = false) => {
-    const items = await this.props.term.get(this.data.fullTerm, loadMore)
-    this.setState({ items })
+  componentWillMount() {
+    this.getData().then((data) => this.setState(data))
   }
 
   componentDidUpdate(prevProps) {
     const locationChanged = this.props.location !== prevProps.location
-    if (locationChanged) {
-      this.data = this.getDataFromURL()
-      this.getTerms()
-    }
+    if (locationChanged) this.getData().then((data) => this.setState(data))
   }
 
   makeTabItems = (items) => items.map((item, index, arr) => {
     let link = '/'
 
-    for (let i = 0; i < index + 1; i++) {
-      link += arr[i] + '/'
-    }
+    for (let i = 0; i < index + 1; i++) link += arr[i] + '/'
 
     return (
-      <Grow in={true} timeout={600 + index * 100} key={item}>
-        <Tab classes={{ root: this.props.classes.tabRoot }} label={item} component={Link} to={link.slice(0, -1)} />
+      <Grow
+        in={true}
+        timeout={600 + index * 100}
+        key={item}>
+        <Tab
+          classes={{ root: this.props.classes.tabRoot }}
+          label={item} component={Link}
+          to={link.slice(0, -1)} />
       </Grow>
     )
   })
@@ -108,7 +118,7 @@ export default class Term extends Component {
       variant: Notification.SUCCESS,
       message: 'Термины успешно добавлены',
     })
-    this.getTerms(true)
+    this.getTerms(this.state.fullTerm, true).then((items) => this.setState({items}))
   }
 
   onAddError = (error) => {
@@ -119,17 +129,15 @@ export default class Term extends Component {
     })
   }
 
-  withAdd(dictionary, children) {
+  renderAdd(dictionary, children) {
     const
-      {
-        classes,
-      } = this.props,
+      { classes } = this.props,
       {
         parent,
         term,
         dictionaryName,
         fullTerm,
-      } = this.data
+      } = this.state
 
     return (
       <>
@@ -163,18 +171,16 @@ export default class Term extends Component {
 
   render() {
     const
-      { items = [] } = this.state,
       {
         classes,
         term,
         dictionary: dictionaryStore,
-      } = this.props
-    let dictionary = null
-
-    if (!dictionaryStore.loading)
-      dictionary = dictionaryStore.items.find(({ name }) =>
-        this.data.dictionaryName == name
-      )
+      } = this.props,
+      {
+        items = [],
+        dictionary,
+        three,
+      } = this.state
 
     const content = !!dictionary && items.length > 0
       ? <TermList items={items} isFlat={dictionary.isFlat} />
@@ -184,26 +190,30 @@ export default class Term extends Component {
           align='center'
           color='textSecondary'>
           Пусто
-            </Typography>
+        </Typography>
       </CenteredContainer>
 
     return (
       <>
-        <AppBar position='absolute'>
-          <Tabs
-            indicatorColor='secondary'
-            value={this.data.three.length - 1}
-            scrollable
-            scrollButtons='auto'
-            className={classes.whiteText}>
-            {this.makeTabItems(this.data.three)}
-          </Tabs>
-        </AppBar>
+        {three.length > 0 &&
+          <Slide in={true} timeout={600} direction='down'>
+            <AppBar position='absolute'>
+
+                <Tabs
+                  indicatorColor='secondary'
+                  value={three.length - 1}
+                  scrollable
+                  scrollButtons='auto'
+                  className={classes.whiteText}>
+                  {this.makeTabItems(three)}
+                </Tabs>
+            </AppBar>
+          </Slide>
+        }
         <Grid container className={classes.container}>
-          {
-            term.loading || dictionaryStore.loading
-              ? <CenteredProgress fullHeight />
-              : this.withAdd(dictionary.slug, content)
+          {term.loading || dictionaryStore.loading || !dictionary
+            ? <CenteredProgress fullHeight />
+            : this.renderAdd(dictionary.slug, content)
           }
         </Grid>
       </>

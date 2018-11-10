@@ -21,17 +21,17 @@ const styles = (theme) => ({
 export default class DrawerFooter extends Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
   }
 
   state = {
-    deferredPrompt: null
+    deferredPrompt: null,
   }
 
   beforeInstallPrompt = (event) => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     event.preventDefault()
     // Stash the event so it can be triggered later.
-    console.log(event)
     this.setState({
       deferredPrompt: event,
     })
@@ -45,18 +45,12 @@ export default class DrawerFooter extends Component {
     window.removeEventListener('beforeinstallprompt', this.beforeInstallPrompt)
   }
 
-  handleLogout = (_event) => this.props.auth.signOut()
+  handleLogout = () => this.props.auth.signOut()
 
-  addToHomeScreen = async () => {
+  addToHomeScreen = () => {
     if (!this.state.deferredPrompt) return
     // Show the prompt
     this.state.deferredPrompt.prompt()
-    // Wait for the user to respond to the prompt
-    const choiceResult = await this.state.deferredPrompt.userChoice
-
-    console.log(choiceResult.outcome === 'accepted'
-      ? 'User accepted the A2HS prompt'
-      : 'User dismissed the A2HS prompt')
 
     this.setState({
       deferredPrompt: null,
@@ -64,18 +58,13 @@ export default class DrawerFooter extends Component {
   }
 
   render() {
-    const {
-      classes,
-      auth,
-    } = this.props
-
     return (
       <Grid
         container
         justify='flex-end'
         alignItems='center'
         wrap='nowrap'
-        className={classes.container}>
+        className={this.props.classes.container}>
         <Button
           onClick={this.addToHomeScreen}
           color='secondary'

@@ -56,6 +56,7 @@ export default class Dictionary {
     return result
   }
 
+  @action
   async getByName(name) {
     this.loading = true
     let result = null
