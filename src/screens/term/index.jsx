@@ -198,7 +198,6 @@ export default class Term extends Component {
         {three.length > 0 &&
           <Slide in={true} timeout={600} direction='down'>
             <AppBar position='absolute'>
-
                 <Tabs
                   indicatorColor='secondary'
                   value={three.length - 1}

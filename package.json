@@ -1,6 +1,6 @@
 {
   "name": "dictionary",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Dictionary web app",
   "main": "src/index.jsx",
   "scripts": {
@@ -24,7 +24,6 @@
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
