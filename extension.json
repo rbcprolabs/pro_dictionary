@@ -1,0 +1,9 @@
+{
+  "id": "dictionaries",
+  "name": "Dictionary UI Extension",
+  "src": "https://d2ih136zgu7ccp.cloudfront.net/widget/index.html",
+  "fieldTypes": [
+    "Symbol",
+    "Text"
+  ]
+}

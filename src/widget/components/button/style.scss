@@ -1,0 +1,29 @@
+.Button {
+  display: inline-block;
+  padding: 0.625rem 1.5rem;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  line-height: 18px;
+  background-size: 100% 200%;
+  transition: all  0.1s ease-in-out;
+  &:hover {
+    background-position: 0 100%;
+  }
+  &:focus {
+    outline: none;
+  }
+  &.primary {
+    background: linear-gradient(to top, #3c80cf, #5b9fef);
+    color: #fff;
+    border-color: #3c80cf;
+  }
+  &.secondary {
+    background: #e5ebed;
+    color: #536171;
+    border-color: #c3cfd5;
+  }
+}

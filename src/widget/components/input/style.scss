@@ -1,0 +1,20 @@
+.FullWidth {
+  width: 100%;
+}
+
+.InputContainer {
+  border: solid 1px #d3dce0;
+  box-sizing: border-box;
+  display: flex;
+  svg {
+    padding: 12px;
+  }
+  input {
+    border: none;
+    width: 100%;
+    padding-right: 12px;
+    &:focus {
+      outline: none;
+    }
+  }
+}

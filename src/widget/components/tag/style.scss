@@ -1,0 +1,57 @@
+@mixin icon {
+  svg {
+    height: 14px;
+    width: 14px;
+    path {
+      @include iconAnimation;
+    }
+  }
+}
+
+@mixin iconAnimation {
+  cursor: pointer;
+  transition: all .3s ease-in;
+}
+
+.Tag {
+  border-radius: 2px;
+  background-color: #e5ebed;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  &:not(:last-child) {
+    margin-right: 12px;
+    margin-bottom: 12px;
+  }
+  label {
+    padding: 8px 12px;
+    @include icon;
+  }
+
+  .AddIcon {
+    padding: 10px;
+    border-radius: 2px;
+    @include iconAnimation;
+    @include icon;
+    &:hover {
+      background-color: #0eb87f;
+      svg path {
+        fill: #fff;
+        stroke: #fff;
+      }
+    }
+  }
+
+  .CloseIcon {
+    background-color: #546171;
+    padding: 10px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    @include iconAnimation;
+    @include icon;
+    &:hover {
+      background-color: #cd4739;
+    }
+  }
+}
