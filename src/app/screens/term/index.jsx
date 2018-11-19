@@ -89,7 +89,7 @@ export default class Term extends Component {
 
   getTerms = (fullTerm, loadMore = false) => this.props.term.get(fullTerm, loadMore)
 
-  componentWillMount() {
+  componentDidMount() {
     this.getData().then((data) => this.setState(data))
   }
 
@@ -124,8 +124,7 @@ export default class Term extends Component {
     this.getTerms(this.state.fullTerm, true).then((items) => this.setState({items}))
   }
 
-  onAddError = (error) => {
-    console.error(error)
+  onAddError = () => {
     this.props.notification.notify({
       variant: Notification.ERROR,
       message: 'Ошибка добавления терминов',

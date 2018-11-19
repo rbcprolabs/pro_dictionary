@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@app/components/snackbar-content'
@@ -6,6 +7,10 @@ import SnackbarContent from '@app/components/snackbar-content'
 @injectStore('notification')
 @observer
 export default class Notification extends React.Component {
+  static propTypes = {
+    notification: PropTypes.object.isRequired,
+  }
+
   handleClose = (_event, reason) => {
     if (reason === 'clickaway') return
 

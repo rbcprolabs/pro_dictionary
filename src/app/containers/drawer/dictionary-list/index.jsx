@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
@@ -36,6 +37,12 @@ const
 @injectStore('dictionary')
 @observer
 export default class DictionaryList extends Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    dictionary: PropTypes.object.isRequired,
+    onCreateClick: PropTypes.func,
+  }
+
   componentDidMount() {
     this.props.dictionary.items.length < 1 && this.props.dictionary.getAll()
   }

@@ -10,7 +10,7 @@ const styles = {
   },
 }
 
-const CenteredContainer = ({ className, classes, children, fullHeight }) =>
+const CenteredContainer = ({ classes, className, children, fullHeight }) =>
   <Grid
     container
     alignItems='center'
@@ -24,6 +24,7 @@ const CenteredContainer = ({ className, classes, children, fullHeight }) =>
 CenteredContainer.propTypes = {
   classes: PropTypes.object.isRequired,
   className: PropTypes.string,
+  children: PropTypes.node,
   fullHeight: PropTypes.bool,
 }
 

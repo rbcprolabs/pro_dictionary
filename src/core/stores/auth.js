@@ -16,7 +16,7 @@ export default class AuthStore {
       await Auth.currentSession();
       this.status = true
     } catch (error) {
-      (error !== 'No current user') && console.error(e)
+      (error !== 'No current user') && console.error(error) // eslint-disable-line no-console
       this.status = false
     } finally {
       this.loading = false
@@ -30,9 +30,8 @@ export default class AuthStore {
     try {
       await Auth.signIn(login, password);
       this.status = true
-      console.log('Logged in')
     } catch (error) {
-      console.error(error.message)
+      console.error(error.message) // eslint-disable-line no-console
       throw error
     } finally {
       this.loading = false
@@ -46,9 +45,8 @@ export default class AuthStore {
     try {
       await Auth.signOut();
       this.status = false
-      console.log('Logged out')
     } catch (e) {
-      console.error(e.message);
+      console.error(e.message) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }

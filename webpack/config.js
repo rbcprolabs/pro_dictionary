@@ -23,6 +23,8 @@ module.exports = ({mode, dirname}) => ({
       /* Contentful widget */
       '@widget/components': path.resolve(dirname, 'src/widget/components'),
       '@widget/containers': path.resolve(dirname, 'src/widget/containers'),
+      '@widget/screens': path.resolve(dirname, 'src/widget/screens'),
+      '@widget/stores': path.resolve(dirname, 'src/widget/stores'),
       '@widget/assets': path.resolve(dirname, 'src/widget/assets'),
     },
   },
@@ -34,6 +36,7 @@ module.exports = ({mode, dirname}) => ({
   devServer: {
     host: '0.0.0.0',
     historyApiFallback: true,
+    hot: true,
     https: {
       pfx: fs.readFileSync(path.resolve(__dirname, 'certificate/localhost.pfx')),
       passphrase: 'localhost',

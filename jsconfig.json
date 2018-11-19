@@ -16,6 +16,8 @@
         /* Contentful widget */
         "@widget/components/*": ["src/widget/components/*"],
         "@widget/containers/*": ["src/widget/containers/*"],
+        "@widget/screens/*": ["src/widget/screens/*"],
+        "@widget/stores/*": ["src/widget/stores/*"],
         "@widget/assets/*": ["src/widget/assets/*"],
       }
   }

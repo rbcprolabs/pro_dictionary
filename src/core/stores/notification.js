@@ -18,7 +18,7 @@ export default class Notification {
     message,
     variant = Notification.INFO,
     length = Notification.SHORT,
-  }) => new Promise((resolve, _reject) => {
+  }) => new Promise((resolve) => {
     let timeout
     this.detail = {
       variant,

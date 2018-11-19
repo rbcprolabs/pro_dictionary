@@ -5,12 +5,13 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'mobx-react'
 import config from '@core/config'
 import App from '@widget/containers/app'
-import * as contentfulExtension from 'contentful-ui-extensions-sdk'
 import {
   Auth,
   Dictionary,
   Term,
 } from '@core/stores'
+import Extension from '@widget/stores/extension'
+
 
 Amplify.configure({
   Auth: {
@@ -40,15 +41,12 @@ const stores = {
   auth: new Auth(),
   dictionary: new Dictionary(),
   term: new Term(),
+  extension: new Extension(),
 }
 
-contentfulExtension.init((extension) =>
-  ReactDOM.render(
-    <Provider {...stores}>
-      <App extension={extension} />
-    </Provider>,
-    document.getElementById('root')
-  )
+ReactDOM.render(
+  <Provider {...stores}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
 )
-
-

@@ -80,8 +80,9 @@ const TermList = ({ classes, items, isFlat }) => {
             key={term}
             term={term}
             fullTerm={fullTerm}
-            children={children}
-            listItemTypographyProps={listItemTypographyProps} />
+            listItemTypographyProps={listItemTypographyProps}>
+              {children}
+            </TermListItem>
         )
       : items.map(({ term }) =>
         <TermListFlatItem

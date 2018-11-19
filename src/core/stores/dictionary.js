@@ -16,7 +16,7 @@ export default class Dictionary {
       result = await API.post('dictionary', '/dictionary/', { body })
       this.items.push(result)
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
       throw error
     } finally {
       this.loading = false
@@ -29,11 +29,14 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionary?${this.lastKey ? `lastEvaluatedKey=${this.lastKey}&` : ''}limit=${limit}`)
+      result = await API.get(
+        'dictionary',
+        `/dictionary?${this.lastKey ? `lastEvaluatedKey=${this.lastKey}&` : ''}limit=${limit}`
+      )
       this.lastKey = result.lastEvaluatedKey || null
       this.items.push(...result.items)
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }
@@ -49,7 +52,7 @@ export default class Dictionary {
     try {
       result = await API.get('dictionary', `/dictionary/${id}`)
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }
@@ -63,7 +66,7 @@ export default class Dictionary {
     try {
       result = await API.get('dictionary', `/dictionaryByName/${name}`)
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }
@@ -77,7 +80,7 @@ export default class Dictionary {
     try {
       result = await API.put('dictionary', `/dictionary/${id}`, { body })
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }
@@ -91,7 +94,7 @@ export default class Dictionary {
     try {
       result = await API.del('dictionary', `/dictionary/${id}`)
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }

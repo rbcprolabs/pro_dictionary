@@ -1,0 +1,11 @@
+{
+  "root": true,
+  "parser": "babel-eslint",
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "max-len": [1, 120, 2, {"ignoreComments": true}]
+  },
+  "extends": ["eslint:recommended"]
+}

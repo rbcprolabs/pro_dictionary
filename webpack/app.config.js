@@ -23,6 +23,10 @@ module.exports = {
       exclude: /(node_modules)/,
       loader: ['babel-loader'],
     },{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: ['babel-loader', 'eslint-loader'],
+    },{
       test: /\.(svg|ico|png|jpg)$/,
       loader: 'file-loader',
       options: {
@@ -50,6 +54,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'appVersion': JSON.stringify(version),
     }),
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: './src/app/index.html',
     }),

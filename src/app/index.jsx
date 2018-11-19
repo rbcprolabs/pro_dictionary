@@ -49,10 +49,7 @@ const stores = {
   notification: new Notification(),
 }
 
-OfflinePluginRuntime.install({
-  onUpdating() {
-    console.log('SW Event:', 'onUpdating')
-  },
+config.env === 'production' && OfflinePluginRuntime.install({
   onUpdateReady() {
     stores.notification.notify({
       variant: Notification.INFO,
@@ -61,7 +58,7 @@ OfflinePluginRuntime.install({
     OfflinePluginRuntime.applyUpdate()
   },
   async onUpdated() {
-    await stores.notification.notify({
+     await stores.notification.notify({
       variant: Notification.WARNING,
       message: 'Сейчас произойдет обновление страницы',
     })

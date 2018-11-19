@@ -1,4 +1,5 @@
 // Set this to true for production
+// eslint-disable-next-line no-undef
 var doCache = process.env.NODE_ENV === 'production'
 
 // Name our cache
@@ -12,7 +13,7 @@ self.addEventListener('activate', (event) => {
       .then(keyList =>
         Promise.all(keyList.map(key => {
           if (!cacheWhitelist.includes(key)) {
-            console.log('Deleting cache: ' + key)
+            console.log('Deleting cache: ' + key) // eslint-disable-line no-console
             return caches.delete(key)
           }
         }))
@@ -22,7 +23,6 @@ self.addEventListener('activate', (event) => {
 
 // The first time the user starts up the PWA, 'install' is triggered.
 self.addEventListener('install', (event) => {
-  console.log('install called')
   if (!doCache) return
   event.waitUntil(
     caches
@@ -30,7 +30,7 @@ self.addEventListener('install', (event) => {
       .then((cache) => {
         // Get the assets manifest so we can see what our js file is named
         // This is because webpack hashes it
-        console.log(serviceWorkerOption.assets)
+        console.log(serviceWorkerOption.assets) // eslint-disable-line no-console
         cache.addAll(serviceWorkerOption.assets)
       })
       .then(self.skipWaiting())

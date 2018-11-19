@@ -75,11 +75,11 @@ export default class AppDrawer extends Component {
 
   toggleDrawerSize = (size, frame) => () => this.setState({ size, frame })
 
-  componentDidUpdate(_prevProps, prevState, _snapshot) {
-    if (this._sizes[prevState.size] < this._sizes[this.props.size] && this.state.openDrawer !== true)
-      this.state.openDrawer = true
-    else if (this._sizes[prevState.size] > this._sizes[this.props.size] && this.state.openDrawer !== false)
-      this.state.openDrawer = false
+  componentDidUpdate(_prevProps, prevState) {
+    if (this._sizes[prevState.size] < this._sizes[this.state.size] && this.state.openDrawer !== true)
+      this.state.openDrawer = true // eslint-disable-line react/no-direct-mutation-state
+    else if (this._sizes[prevState.size] > this._sizes[this.state.size] && this.state.openDrawer !== false)
+      this.state.openDrawer = false // eslint-disable-line react/no-direct-mutation-state
   }
 
   render() {

@@ -5,7 +5,6 @@ import style from './style.scss'
 
 const Input = ({
   icon: Icon,
-  fullWidth,
   classes = {},
   className,
   ...props

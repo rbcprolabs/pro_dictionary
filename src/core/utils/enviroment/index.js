@@ -1,3 +1,5 @@
+import config from '@core/config'
+
 /**
  * Enviroment value selector
  * *
@@ -10,5 +12,5 @@
  * })
  */
 export default function enviroment(env) {
-  return env[process.env.NODE_ENV] || env.development
+  return env[config.env] || env.development
 }

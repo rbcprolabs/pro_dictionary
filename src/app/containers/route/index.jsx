@@ -2,7 +2,7 @@ import React from 'react'
 import { observer, inject as injectStore } from 'mobx-react'
 import { Route, Redirect } from 'react-router-dom'
 
-function querystring(name, url = window.location.href) {
+function queryString(name, url = window.location.href) {
   name = name.replace(/[[]]/g, '\\$&')
 
   const
@@ -23,23 +23,26 @@ const
       : <Redirect to={`/login?redirect=${props.location.pathname}`}/>
   )),
   UnauthenticatedRoute = injectStore('auth')(observer(({component: Component, auth, ...props}) => {
-    const redirect = querystring('redirect')
+    const redirect = queryString('redirect')
 
     return !auth.status
       ? <Component {...props} />
       : <Redirect to={redirect === '' || redirect === null ? '/' : redirect}/>
   }))
 
-Route.Authenticated = ({ component, ...rest }) =>
+const Authenticated = ({ component, ...rest }) =>
   <Route
     {...rest}
     render={props => <AuthenticatedRoute component={component} {...props} />}
   />
 
-Route.Unauthenticated = ({ component, ...rest }) =>
+const Unauthenticated = ({ component, ...rest }) =>
   <Route
     {...rest}
     render={props => <UnauthenticatedRoute component={component} {...props} />}
   />
+
+Route.Authenticated = Authenticated
+Route.Unauthenticated = Unauthenticated
 
 export default Route

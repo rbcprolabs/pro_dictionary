@@ -9,7 +9,7 @@ import {
 } from '@app/screens/auth'
 import Term from '@app/screens/term'
 
-export default () =>
+const Routes =  () =>
   <Switch>
     <Route.Unauthenticated path='/login' exact component={Login} />
     <Route.Unauthenticated path='/forgot-password' exact component={ForgotPassword} />
@@ -17,3 +17,5 @@ export default () =>
     <Route.Authenticated path='/:dictionary/:terms*' component={Term} />
     <Route component={NotFound} />
   </Switch>
+
+export default Routes

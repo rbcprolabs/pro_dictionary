@@ -14,7 +14,7 @@ export default class Terms {
     try {
       result = await API.post('term', '/term/', { body })
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
       throw error
     } finally {
       this.loading = false
@@ -34,14 +34,17 @@ export default class Terms {
           items: result.items,
         }
       } else if (loadMore && !!this.items[parent].lastEvaluatedKey) {
-        result = await API.get('term', `/term?parent=${parent}&lastEvaluatedKey=${this.items[parent].lastEvaluatedKey}&limit=${limit}`)
+        result = await API.get(
+          'term',
+          `/term?parent=${parent}&lastEvaluatedKey=${this.items[parent].lastEvaluatedKey}&limit=${limit}`,
+        )
         this.items[parent].items.push(...result.items)
         this.items[parent].lastEvaluatedKey = result.lastEvaluatedKey
       } else {
         result = this.items[parent]
       }
     } catch (error) {
-      console.error(error)
+      console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }

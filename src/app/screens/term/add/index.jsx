@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Grid from '@material-ui/core/Grid'
 import FullSizeInput from '@app/components/fullsize-input'
@@ -11,6 +12,17 @@ import Grow from '@material-ui/core/Grow'
 }))
 @observer
 export default class TermAdd extends Component {
+  static propTypes = {
+    termStore: PropTypes.object.isRequired,
+    dictionaryName: PropTypes.string,
+    dictionary: PropTypes.string.isRequired,
+    term: PropTypes.string.isRequired,
+    parent: PropTypes.string.isRequired,
+    fullTerm: PropTypes.string.isRequired,
+    onAdded: PropTypes.func.isRequired,
+    onError: PropTypes.func.isRequired,
+  }
+
   state = {
     terms: '',
   }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { observer, inject as injectStore  } from 'mobx-react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -23,6 +24,11 @@ const styles = (theme)=> ({
 @injectStore('auth')
 @observer
 export default class ForgotPassword extends Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
+  }
+
   state = {
     password: '',
   }

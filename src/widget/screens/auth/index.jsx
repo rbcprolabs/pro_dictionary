@@ -1,8 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Hint from '@widget/components/hint'
 import Button from '@widget/components/button'
 
-export default ({
+const Auth = ({
   loginWindowIsOpen,
   onClickAuth,
 }) =>
@@ -13,3 +14,10 @@ export default ({
       : <Hint>Пожалуйста авторизируйтесь в открытом окне</Hint>
     }
   </>
+
+Auth.propTypes = {
+  loginWindowIsOpen: PropTypes.bool.isRequired,
+  onClickAuth: PropTypes.func,
+}
+
+export default Auth

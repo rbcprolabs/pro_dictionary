@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Observer, inject as injectStore } from 'mobx-react'
 import Routes from '@app/containers/routes'
 import Drawer from '@app/containers/drawer'
@@ -7,9 +8,10 @@ import Grid from '@material-ui/core/Grid'
 import Zoom from '@material-ui/core/Zoom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Notification from '@app/containers/notification'
+import { hot } from 'react-hot-loader'
 
 const
-  styles = theme => ({
+  styles =  {
     container: {
       minHeight: '100vh',
     },
@@ -19,7 +21,7 @@ const
       backgroundColor: '#fff',
       maxHeight: '100vh',
     },
-  }),
+  },
   Progress = ({className}) =>
     <Grid
       container
@@ -30,6 +32,10 @@ const
         <CircularProgress size={40} />
       </Zoom>
     </Grid>
+
+Progress.propTypes = {
+  className: PropTypes.string,
+}
 
 const App = ({ classes, auth }) =>
   <Observer render={() => (auth.status === null
@@ -47,4 +53,9 @@ const App = ({ classes, auth }) =>
     )}
   />
 
-export default injectStore('auth')(withStyles(styles)(App))
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
+}
+
+export default hot(module)(injectStore('auth')(withStyles(styles)(App)))

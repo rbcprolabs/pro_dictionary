@@ -37,7 +37,7 @@ export default class LoadingButton extends React.Component {
 
   handleButtonClick = (event) => {
     if (this.props.loading) return
-    else if (typeof this.props.onClick === 'Function') this.props.onClick(event)
+    else if (typeof this.props.onClick === 'function') this.props.onClick(event)
   }
 
   render() {

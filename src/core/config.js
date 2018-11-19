@@ -9,4 +9,6 @@ export default {
     APP_CLIENT_ID: '6hqa21cc7ut0oretqoe20qi9o6',
     IDENTITY_POOL_ID: 'us-east-2:5bde78dd-71dd-4597-8818-a3c1cd1bc245',
   },
-};
+  // eslint-disable-next-line no-undef
+  env: process.env.NODE_ENV,
+}

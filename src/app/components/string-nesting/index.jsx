@@ -41,6 +41,8 @@ const NestingString = ({
 }
 
 NestingString.propTypes = {
+  classes: PropTypes.object.isRequired,
+  className: PropTypes.string,
   strings: PropTypes.arrayOf(PropTypes.string).isRequired,
   endStringsCount: PropTypes.number,
   delimeter: PropTypes.string,

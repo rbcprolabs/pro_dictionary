@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -33,6 +34,13 @@ const styles = (theme) => ({
 @injectStore('notification')
 @observer
 export default class DictionaryAdd extends Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    dictionary: PropTypes.object.isRequired,
+    notification: PropTypes.object.isRequired,
+    onBackClick: PropTypes.func.isRequired,
+  }
+
   state = {
     name: '',
     isFlat: false,
