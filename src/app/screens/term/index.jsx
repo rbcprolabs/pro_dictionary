@@ -57,23 +57,23 @@ export default class Term extends Component {
   }
 
   state = {
+    /** @type {string[]} */
     three: [],
+    /** @type {string} */
     parent: '',
+    /** @type {string} */
     term: '',
+    /** @type {string} */
     fullTerm: '',
     dictionary: null,
+    items: [],
   }
 
   async getData() {
     const
-      {
-        match: {
-          params,
-        },
-        dictionary,
-      } = this.props,
-      dictionaryName = params.dictionary,
-      terms = params.terms ? params.terms.split('/') : [],
+      { match, dictionary } = this.props,
+      dictionaryName = match.params.dictionary,
+      terms = match.params.terms ? match.params.terms.split('/') : [],
       three = [dictionaryName, ...terms],
       fullTerm = three.join('/')
 
@@ -124,12 +124,11 @@ export default class Term extends Component {
     this.getTerms(this.state.fullTerm, true).then((items) => this.setState({items}))
   }
 
-  onAddError = () => {
+  onAddError = () =>
     this.props.notification.notify({
       variant: Notification.ERROR,
       message: 'Ошибка добавления терминов',
     })
-  }
 
   renderAdd(dictionary, children) {
     const

@@ -2,12 +2,14 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Tag from '@widget/components/tag'
-import Input from '@widget/components/input'
 import style from './style.scss'
-import SearchIcon from '@widget/assets/icons/search.svg'
+import {
+  View as TermView,
+} from '@widget/screens/term'
+import Loader from '@widget/components/loader';
 
 @injectStore((stores) => ({
-  extension: stores.extension.instance,
+  extension: stores.extension,
   dictionary: stores.dictionary,
 }))
 @observer
@@ -17,18 +19,10 @@ export default class Dictionary extends Component {
     dictionary: PropTypes.object.isRequired,
   }
 
-  state = {
-    /** @type {string[]} */
-    tags: [],
-  }
+  state = {}
 
   componentDidMount() {
-    /** @type {string} */
-    const fieldValue = this.props.extension.field.getValue()
-
-    fieldValue && this.setState({ tags: fieldValue.split('; ') })
-
-    this.getDictionary(this.props.extension.field.id)
+    this.getDictionary(this.props.extension.dictionarySlug)
   }
 
   async getDictionary(id) {
@@ -36,20 +30,25 @@ export default class Dictionary extends Component {
     this.setState({ dictionary })
   }
 
+  removeTag = (fullTerm) => () => this.props.extension.removeTag(fullTerm)
+
   render() {
-    const { tags } = this.state
+    const
+      { tags } = this.props.extension,
+      { dictionary } = this.state
 
     return (
       <>
         <div className={style.TagContainer}>
-          {tags.map((item) =>
-            /* eslint-disable-next-line no-console */
-            <Tag key={item} removable onRemoveClick={(event) => console.log(event)}>{item}</Tag>
+          {tags.map((fullTerm) =>
+            <Tag key={fullTerm} removable onRemoveClick={this.removeTag(fullTerm)}>{fullTerm}</Tag>
           )}
           {/* eslint-disable-next-line no-console */}
           <Tag add onAdd={(event) => console.log(event)} />
         </div>
-        <Input icon={SearchIcon} placeholder='Искать термин' />
+        {!dictionary
+          ? <Loader />
+          : <TermView dictionaryName={dictionary.name} />}
       </>
     )
   }

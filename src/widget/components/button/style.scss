@@ -9,21 +9,21 @@
   border-radius: 2px;
   line-height: 18px;
   background-size: 100% 200%;
-  transition: all  0.1s ease-in-out;
-  &:hover {
-    background-position: 0 100%;
-  }
-  &:focus {
-    outline: none;
-  }
+  transition: all  0.3s ease-in-out;
   &.primary {
     background: linear-gradient(to top, #3c80cf, #5b9fef);
     color: #fff;
     border-color: #3c80cf;
+    &:hover {
+      background: linear-gradient(to bottom, #3c80cf, #5b9fef);
+    }
   }
   &.secondary {
     background: #e5ebed;
     color: #536171;
     border-color: #c3cfd5;
+  }
+  &:focus {
+    outline: none;
   }
 }

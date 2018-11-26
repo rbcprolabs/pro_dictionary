@@ -9,13 +9,13 @@ import Dictionary from '@widget/screens/dictionary'
 import Init from '@widget/screens/init'
 
 @injectStore((stores) => ({
-  extension: stores.extension.instance,
+  inited: stores.extension.inited,
   auth: stores.auth,
 }))
 @observer
 export default class App extends Component {
   static propTypes = {
-    extension: PropTypes.object,
+    inited: PropTypes.bool.isRequired,
     auth: PropTypes.object.isRequired,
   }
 
@@ -39,20 +39,14 @@ export default class App extends Component {
 
   render() {
     const
-      { loginWindowIsOpen } = this.state,
-      {
-        auth: {
-          status,
-          loading,
-        },
-        extension,
-      } = this.props
+      { auth, inited } = this.props,
+      { loginWindowIsOpen } = this.state
 
     return (
       <div className={style.FormField}>
-        {loading || !extension
+        {auth.loading || !inited
           ? <Init />
-          : !status
+          : !auth.status
             ? <Auth loginWindowIsOpen={loginWindowIsOpen} onClickAuth={this.openPopupWindow} />
             : <Dictionary />}
       </div>

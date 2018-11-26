@@ -1,0 +1,39 @@
+.TermView {
+  border: 1px solid #c3cfd4;
+  margin-top: 16px;
+  .Header {
+    background-color: #546171;
+    padding: 16px;
+    font-size: 14px;
+    color: #ffffff;
+  }
+  .Item {
+    padding: 12px;
+    display: flex;
+    transition: all .3s ease-in;
+    &:not(:last-child) {
+      border-bottom: 1px solid #c3cfd4;
+    }
+    &.hasChilds:hover {
+      background-color: #F4F7F7;
+      cursor: pointer;
+    }
+    .content {
+      overflow: hidden;
+      flex-grow: 1;
+      margin: auto 0;
+    }
+    .title {
+      font-size: 16px;
+      color: #000100;
+    }
+    .subtitle {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #676d73;
+      margin: 8px 16px 0 0;
+    }
+  }
+}
