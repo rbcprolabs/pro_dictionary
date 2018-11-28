@@ -41,9 +41,11 @@ const styles = (theme) => ({
 
 @withRouter
 @withStyles(styles)
-@injectStore('notification')
-@injectStore('dictionary')
-@injectStore('term')
+@injectStore((stores) => ({
+  dictionary: stores.dictionary,
+  term: stores.term,
+  notification: stores.notification,
+}))
 @observer
 export default class Term extends Component {
   static propTypes = {

@@ -52,7 +52,23 @@ export default class Dictionary {
     try {
       result = await API.get('dictionary', `/dictionary/${id}`)
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      if (error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
+    } finally {
+      this.loading = false
+    }
+    return result
+  }
+
+  @action
+  async getBySlug(slug) {
+    this.loading = true
+    let result = null
+    try {
+      result = await API.get('dictionary', `/dictionaryBySlug/${slug}`)
+    } catch (error) {
+      if (error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }
@@ -66,7 +82,8 @@ export default class Dictionary {
     try {
       result = await API.get('dictionary', `/dictionaryByName/${name}`)
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      if (error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }

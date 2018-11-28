@@ -1,5 +1,3 @@
-import config from '@core/config'
-
 /**
  * Enviroment value selector
  * *
@@ -12,5 +10,6 @@ import config from '@core/config'
  * })
  */
 export default function enviroment(env) {
-  return env[config.env] || env.development
+  // eslint-disable-next-line no-undef
+  return env[process.env.NODE_ENV] || env.development
 }

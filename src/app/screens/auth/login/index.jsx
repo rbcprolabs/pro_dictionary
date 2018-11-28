@@ -25,8 +25,10 @@ const styles = (theme) => ({
 })
 
 @withStyles(styles)
-@injectStore('auth')
-@injectStore('notification')
+@injectStore((stores) => ({
+  auth: stores.auth,
+  notification: stores.notification,
+}))
 @observer
 export default class Login extends Component {
   static propTypes = {
@@ -114,6 +116,7 @@ export default class Login extends Component {
                   className={classes.textField}
                   value={this.state.login}
                   onChange={this.handleChange}
+                  autoComplete='username'
                   type='text' />
               </Grow>
             </Grid>
@@ -125,6 +128,7 @@ export default class Login extends Component {
                   className={classes.textField}
                   value={this.state.password}
                   onChange={this.handleChange}
+                  autoComplete='current-password'
                   type='password' />
               </Grow>
             </Grid>

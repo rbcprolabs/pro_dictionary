@@ -30,8 +30,10 @@ const styles = (theme) => ({
 })
 
 @withStyles(styles)
-@injectStore('dictionary')
-@injectStore('notification')
+@injectStore((stores) => ({
+  dictionary: stores.dictionary,
+  notification: stores.notification,
+}))
 @observer
 export default class DictionaryAdd extends Component {
   static propTypes = {

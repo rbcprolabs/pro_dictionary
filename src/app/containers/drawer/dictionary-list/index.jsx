@@ -49,8 +49,8 @@ export default class DictionaryList extends Component {
 
   dictionariesList = ({ items, className }) =>
     <List className={className}>
-      {items.map(({ name, slug }, index) =>
-        <Grow in={true} timeout={1000 + index * 100} key={slug}>
+      {items.map(({ id, name }, index) =>
+        <Grow in={true} timeout={1000 + index * 100} key={id}>
           <ListItem button component={Link} to={`/${name}`}>
             <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
           </ListItem>

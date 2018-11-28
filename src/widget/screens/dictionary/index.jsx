@@ -6,7 +6,8 @@ import style from './style.scss'
 import {
   View as TermView,
 } from '@widget/screens/term'
-import Loader from '@widget/components/loader';
+import Loader from '@widget/components/loader'
+import Hint from '@widget/components/hint'
 
 @injectStore((stores) => ({
   extension: stores.extension,
@@ -34,21 +35,23 @@ export default class Dictionary extends Component {
 
   render() {
     const
-      { tags } = this.props.extension,
+      { extension, dictionary: dictionaryStore } = this.props,
       { dictionary } = this.state
 
     return (
       <>
         <div className={style.TagContainer}>
-          {tags.map((fullTerm) =>
+          {extension.tags.map((fullTerm) =>
             <Tag key={fullTerm} removable onRemoveClick={this.removeTag(fullTerm)}>{fullTerm}</Tag>
           )}
           {/* eslint-disable-next-line no-console */}
           <Tag add onAdd={(event) => console.log(event)} />
         </div>
-        {!dictionary
+        {dictionaryStore.loading
           ? <Loader />
-          : <TermView dictionaryName={dictionary.name} />}
+          : !dictionary
+            ? <Hint>Ошибка загрузки словаря</Hint>
+            : <TermView dictionaryName={dictionary.name} />}
       </>
     )
   }

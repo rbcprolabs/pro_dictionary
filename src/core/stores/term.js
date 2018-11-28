@@ -44,10 +44,11 @@ export default class Terms {
         result = this.items[parent]
       }
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      if (error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
     }
-    return result.items
+    return result ? result.items : []
   }
 }
