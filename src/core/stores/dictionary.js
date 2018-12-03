@@ -1,12 +1,19 @@
-import { action, observable } from 'mobx'
+import { action, observable, computed } from 'mobx'
 import { API } from 'aws-amplify'
+import { isEmpty } from '@core/utils/hooks/object'
+import { findByProperty } from '@core/utils/hooks/array';
 
 export default class Dictionary {
-  lastKey = null
+  lastEvaluatedKey = null
   limit = 100
 
-  @observable items = []
   @observable loading = true
+  @observable _items = {}
+
+  @computed
+  get items () {
+    return Object.values(this._items)
+  }
 
   @action
   async post(body) {
@@ -14,7 +21,7 @@ export default class Dictionary {
     let result = null
     try {
       result = await API.post('dictionary', '/dictionary/', { body })
-      this.items.push(result)
+      this._items[result.name] = result
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
       throw error
@@ -25,16 +32,35 @@ export default class Dictionary {
   }
 
   @action
-  async getAll(limit = this.limit) {
+  async getAll(loadMore, limit = this.limit) {
     this.loading = true
     let result = null
     try {
-      result = await API.get(
-        'dictionary',
-        `/dictionary?${this.lastKey ? `lastEvaluatedKey=${this.lastKey}&` : ''}limit=${limit}`
-      )
-      this.lastKey = result.lastEvaluatedKey || null
-      this.items.push(...result.items)
+      if (this._items::isEmpty() || loadMore && this.lastEvaluatedKey === null) {
+        result = await API.get(
+          'dictionary',
+          `/dictionary?limit=${limit}`,
+        )
+        result.items.forEach((dictionary) =>
+          this._items[dictionary.name] = dictionary
+        )
+        if (result.lastEvaluatedKey)
+          this.lastEvaluatedKey = result.lastEvaluatedKey
+      } else if (loadMore && !!this.lastEvaluatedKey) {
+        result = await API.get(
+          'dictionary',
+          `/dictionary?lastEvaluatedKey=${this.lastEvaluatedKey}&limit=${limit}`,
+        )
+        result.items.forEach((dictionary) =>
+          this._items[dictionary.name] = dictionary
+        )
+        if (result.lastEvaluatedKey)
+          this.lastEvaluatedKey = result.lastEvaluatedKey
+        else if (!result.lastEvaluatedKey && this.lastEvaluatedKey !== null)
+          this.lastEvaluatedKey = null
+      } else {
+        result = Object.values(this._items)
+      }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -43,16 +69,20 @@ export default class Dictionary {
     return result
   }
 
-  hasMore = () => this.lastKey !== null
+  hasMore = () => this.lastEvaluatedKey !== null
 
   @action
-  async get(id) {
+  async getById(id) {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionary/${id}`)
+      if (!this._items::isEmpty())
+        result = this.items::findByProperty('id', id)
+
+      if (!result)
+        result = await API.get('dictionary', `/dictionary/${id}`)
     } catch (error) {
-      if (error.response.status !== 404)
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
@@ -65,9 +95,13 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionaryBySlug/${slug}`)
+      if (!this._items::isEmpty())
+        result = this.items::findByProperty('slug', slug)
+
+      if (!result)
+        result = await API.get('dictionary', `/dictionaryBySlug/${slug}`)
     } catch (error) {
-      if (error.response.status !== 404)
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
@@ -80,9 +114,14 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      result = await API.get('dictionary', `/dictionaryByName/${name}`)
+      if (this._items[name]) {
+        result = this._items[name]
+      } else {
+        result = await API.get('dictionary', `/dictionaryByName/${name}`)
+        this._items[name] = result
+      }
     } catch (error) {
-      if (error.response.status !== 404)
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false

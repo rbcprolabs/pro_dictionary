@@ -115,7 +115,7 @@ export default class AppDrawer extends Component {
             authStatus
               ? <>
                   <DrawerHeader />
-                  {this.getFrameByName(frame)}
+                    {this.getFrameByName(frame)}
                   <DrawerFooter />
                 </>
               : this.getFrameByName('main')

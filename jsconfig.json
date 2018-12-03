@@ -11,6 +11,7 @@
         "@app/components/*": ["src/app/components/*"],
         "@app/containers/*": ["src/app/containers/*"],
         "@app/screens/*": ["src/app/screens/*"],
+        "@app/stores/*": ["src/app/stores/*"],
         "@app/theme/*": ["src/app/theme.js"],
         "@app/assets/*": ["src/app/assets/*"],
         /* Contentful widget */

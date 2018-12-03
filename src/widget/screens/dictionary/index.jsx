@@ -26,8 +26,8 @@ export default class Dictionary extends Component {
     this.getDictionary(this.props.extension.dictionarySlug)
   }
 
-  async getDictionary(id) {
-    const dictionary = await this.props.dictionary.get(id)
+  async getDictionary(slug) {
+    const dictionary = await this.props.dictionary.getBySlug(slug)
     this.setState({ dictionary })
   }
 

@@ -64,7 +64,7 @@ export default class Term extends Component {
     /** @type {string} */
     parent: '',
     /** @type {string} */
-    term: '',
+    termName: '',
     /** @type {string} */
     fullTerm: '',
     dictionary: null,
@@ -82,22 +82,43 @@ export default class Term extends Component {
     return {
       three,
       fullTerm,
-      parent: [].concat(three).splice(0, three.length - 1).join('/'),
+      parent: [].concat(three).splice(0, three.length - 1).join('/') || null,
       dictionary: await dictionary.getByName(dictionaryName),
-      term: three[three.length - 1],
+      termName: three[three.length - 1],
       items: await this.getTerms(fullTerm),
     }
   }
 
-  getTerms = (fullTerm, loadMore = false) => this.props.term.get(fullTerm, loadMore)
+  async updateData() {
+    try {
+      const data = await this.getData()
+      this.setState(data)
+    } catch (error) {
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message: 'Ошибка загрузки',
+      })
+    }
+  }
+
+  async getTerms(fullTerm, loadMore = false) {
+    try {
+      return await this.props.term.get(fullTerm, loadMore)
+    } catch (error) {
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message: 'Ошибка загрузки терминов',
+      })
+    }
+  }
 
   componentDidMount() {
-    this.getData().then((data) => this.setState(data))
+    this.updateData()
   }
 
   componentDidUpdate(prevProps) {
     const locationChanged = this.props.location !== prevProps.location
-    if (locationChanged) this.getData().then((data) => this.setState(data))
+    if (locationChanged) this.updateData()
   }
 
   makeTabItems = (items) => items.map((item, index, arr) => {
@@ -118,26 +139,29 @@ export default class Term extends Component {
     )
   })
 
-  onAdded = () => {
+  async onAdded() {
     this.props.notification.notify({
       variant: Notification.SUCCESS,
       message: 'Термины успешно добавлены',
     })
-    this.getTerms(this.state.fullTerm, true).then((items) => this.setState({items}))
+
+    const items = await this.getTerms(this.state.fullTerm, true)
+    this.setState({ items })
   }
 
-  onAddError = () =>
+  onAddError() {
     this.props.notification.notify({
       variant: Notification.ERROR,
       message: 'Ошибка добавления терминов',
     })
+  }
 
-  renderAdd(dictionary, children) {
+  renderAdd(dictionaryId, children) {
     const
       { classes } = this.props,
       {
         parent,
-        term,
+        termName,
         dictionaryName,
         fullTerm,
       } = this.state
@@ -161,12 +185,12 @@ export default class Term extends Component {
           xl={2}>
           <TermAdd
             dictionaryName={dictionaryName}
-            dictionary={dictionary}
-            term={term}
+            dictionaryId={dictionaryId}
+            termName={termName}
             parent={parent}
             fullTerm={fullTerm}
-            onAdded={this.onAdded}
-            onError={this.onAddError} />
+            onAdded={::this.onAdded}
+            onError={::this.onAddError} />
         </Grid>
       </>
     )
@@ -201,21 +225,21 @@ export default class Term extends Component {
         {three.length > 0 &&
           <Slide in={true} timeout={600} direction='down'>
             <AppBar position='absolute'>
-                <Tabs
-                  indicatorColor='secondary'
-                  value={three.length - 1}
-                  scrollable
-                  scrollButtons='auto'
-                  className={classes.whiteText}>
-                  {this.makeTabItems(three)}
-                </Tabs>
+              <Tabs
+                indicatorColor='secondary'
+                value={three.length - 1}
+                scrollable
+                scrollButtons='auto'
+                className={classes.whiteText}>
+                {this.makeTabItems(three)}
+              </Tabs>
             </AppBar>
           </Slide>
         }
         <Grid container className={classes.container}>
           {term.loading || dictionaryStore.loading || !dictionary
             ? <CenteredProgress fullHeight />
-            : this.renderAdd(dictionary.slug, content)
+            : this.renderAdd(dictionary.id, content)
           }
         </Grid>
       </>

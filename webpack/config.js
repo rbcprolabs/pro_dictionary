@@ -18,6 +18,7 @@ module.exports = ({mode, dirname}) => ({
       '@app/components': path.resolve(dirname, 'src/app/components'),
       '@app/containers': path.resolve(dirname, 'src/app/containers'),
       '@app/screens': path.resolve(dirname, 'src/app/screens'),
+      '@app/stores': path.resolve(dirname, 'src/app/stores'),
       '@app/theme': path.resolve(dirname, 'src/app/theme.js'),
       '@app/assets': path.resolve(dirname, 'src/app/assets'),
       /* Contentful widget */

@@ -8,16 +8,16 @@ import Grow from '@material-ui/core/Grow'
 
 
 @injectStore(stores => ({
-  termStore: stores.term,
+  term: stores.term,
 }))
 @observer
 export default class TermAdd extends Component {
   static propTypes = {
-    termStore: PropTypes.object.isRequired,
+    term: PropTypes.object.isRequired,
     dictionaryName: PropTypes.string,
-    dictionary: PropTypes.string.isRequired,
-    term: PropTypes.string.isRequired,
-    parent: PropTypes.string.isRequired,
+    dictionaryId: PropTypes.string.isRequired,
+    termName: PropTypes.string.isRequired,
+    parent: PropTypes.string,
     fullTerm: PropTypes.string.isRequired,
     onAdded: PropTypes.func.isRequired,
     onError: PropTypes.func.isRequired,
@@ -31,65 +31,80 @@ export default class TermAdd extends Component {
     [target.id]: target.value,
   })
 
-  validateTerms = () => this.state.terms.length > 0 && this.state.terms.split(/\r|\n/).length < 25
+  get splittedTerms() {
+    return this.state.terms.split(/\r|\n/)
+  }
+
+  get validateTerms() {
+    return this.state.terms.length > 0 && this.splittedTerms.length < 25
+  }
+
+  makeRequest(dictionaryId, terms) {
+    const body = {
+      dictionaryId,
+    }
+
+    if (terms.length === 1)
+      body.term = terms[0].term
+    else
+      body.terms = terms
+
+    // if (parent && fullTerm !== dictionaryName) {
+    //   body.parent = parent
+    //   body.term = term
+    // }
+
+    return body
+  }
 
   addTerms = async () => {
     const {
-      termStore,
-
-      dictionaryName,
-      dictionary,
       term,
-      parent,
-      fullTerm,
+
+      // dictionaryName,
+      dictionaryId,
+      // termName,
+      // parent,
+      // fullTerm,
       onAdded,
       onError,
     } = this.props
 
     try {
-      const body = {
-        dictionary,
-        items: this.state.terms.split(/\r|\n/).map((term) => ({ term }))
-      }
+      const
+        terms = this.splittedTerms.map((term) => ({ term })),
+        body = this.makeRequest(dictionaryId, terms)
 
-      if (fullTerm !== dictionaryName) {
-        body.parent = parent
-        body.term = term
-      }
+      await term.post(body)
 
-      await termStore.post(body);
+      onAdded()
 
-      (typeof onAdded === 'function') && onAdded()
       this.setState({
         terms: '',
       })
     } catch (error) {
-      (typeof onError === 'function') && onError(error)
+      onError(error)
     }
   }
 
-  render() {
-
-    return (
-      <FullSizeInput
-        placeholder={`Впишите сюда новые термины в столбик для «${this.props.term}»`}
-        value={this.state.terms}
-        id='terms'
-        onChange={this.handleChange}>
-        <Grid container justify='center'>
-          <Grow in={true} timeout={1000}>
-            <LoadingButton
-              loading={false}
-              variant='contained'
-              color='secondary'
-              disabled={!this.validateTerms()}
-              onClick={this.addTerms}>
-              Добавить термины
-          </LoadingButton>
-          </Grow>
-        </Grid>
-      </FullSizeInput>
-    )
-  }
+  render = () =>
+    <FullSizeInput
+      placeholder={`Впишите сюда новые термины в столбик для «${this.props.termName}»`}
+      value={this.state.terms}
+      id='terms'
+      onChange={this.handleChange}>
+      <Grid container justify='center'>
+        <Grow in={true} timeout={1000}>
+          <LoadingButton
+            loading={false}
+            variant='contained'
+            color='secondary'
+            disabled={!this.validateTerms}
+            onClick={this.addTerms}>
+            Добавить термины
+        </LoadingButton>
+        </Grow>
+      </Grid>
+    </FullSizeInput>
 
 }

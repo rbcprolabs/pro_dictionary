@@ -12,7 +12,9 @@ export default class Terms {
     this.loading = true
     let result = null
     try {
-      result = await API.post('term', '/term/', { body })
+      result = await ('term' in body
+        ? API.post('term', '/term/', { body })
+        : API.post('term', '/termAll/', { body }))
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
       throw error
@@ -28,7 +30,10 @@ export default class Terms {
     let result = null
     try {
       if (!this.items[parent] || loadMore && !this.items[parent].lastEvaluatedKey) {
-        result = await API.get('term', `/term/?parent=${parent}&limit=${limit}`)
+        result = await API.get(
+          'term',
+          `/term/?parent=${parent}&limit=${limit}`,
+        )
         this.items[parent] = {
           lastEvaluatedKey: result.lastEvaluatedKey,
           items: result.items,
