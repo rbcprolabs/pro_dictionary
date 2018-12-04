@@ -25,13 +25,13 @@ export default class Extension {
   }
 
   @action
-  addTag(fullTerm) {
+  addTag = (fullTerm) => {
     this.tags.push(fullTerm)
     this._saveTags()
   }
 
   @action
-  removeTag(fullTerm) {
+  removeTag = (fullTerm) => {
     const index = this.tags.indexOf(fullTerm)
     if (index !== -1) this.tags.splice(index, 1)
     this._saveTags()

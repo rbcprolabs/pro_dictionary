@@ -4,10 +4,6 @@ import CloseIcon from '@widget/assets/icons/remove.svg'
 import AddIcon from '@widget/assets/icons/add.svg'
 import style from './style.scss'
 
-const checkCallback = (callback) => typeof callback === 'function'
-  ? callback
-  : null
-
 const Tag = ({
   children,
   onClick,
@@ -18,15 +14,15 @@ const Tag = ({
 }) =>
   <div className={style.Tag}>
     {
-      !add && <label onClick={checkCallback(onClick)}>{children}</label>
+      !add && <label onClick={onClick}>{children}</label>
     }
     {
       !add && removable &&
-      <div className={style.CloseIcon} onClick={checkCallback(onRemoveClick)}>
+      <div className={style.CloseIcon} onClick={onRemoveClick}>
         <CloseIcon />
       </div>
       || add && !removable &&
-      <div className={style.AddIcon} onClick={checkCallback(onAddClick)}>
+      <div className={style.AddIcon} onClick={onAddClick}>
         <AddIcon />
       </div>
     }

@@ -5,9 +5,12 @@ import Auth from '@widget/screens/auth'
 import popupWindow from '@core/utils/popupWindow'
 import enviroment from '@core/utils/enviroment'
 import style from './style.scss'
-import Dictionary from '@widget/screens/dictionary'
 import Init from '@widget/screens/init'
+import Tags from '@widget/containers/tags'
+import { hot } from 'react-hot-loader'
+import Term from '@widget/screens/term/view'
 
+@hot(module)
 @injectStore((stores) => ({
   inited: stores.extension.inited,
   auth: stores.auth,
@@ -22,6 +25,8 @@ export default class App extends Component {
   state = {
     /** @type {boolean} */
     loginWindowIsOpen: false,
+    /** @type {boolean} */
+    showAdditional: false,
   }
 
   openPopupWindow = async () => {
@@ -32,9 +37,21 @@ export default class App extends Component {
       development: 'https://localhost:8080/login?widget=true',
     }), 'Авторизация', 400, 380)
 
-    result && this.props.auth.checkIsAuth()
-    console.log('Авторизирован?', result) // eslint-disable-line no-console
+    if (result) this.props.auth.checkIsAuth()
     this.setState({ loginWindowIsOpen: false })
+  }
+
+  toggleShowAdditionals = () => {
+    // eslint-disable-next-line no-console
+    console.log('toggleShowAdditionals clicked')
+    this.setState({showAdditional: !this.state.showAdditional})
+  }
+
+  renderContent() {
+    return (<>
+      <Tags onAdd={this.toggleShowAdditionals}/>
+      {this.state.showAdditional && <Term />}
+    </>)
   }
 
   render() {
@@ -48,7 +65,7 @@ export default class App extends Component {
           ? <Init />
           : !auth.status
             ? <Auth loginWindowIsOpen={loginWindowIsOpen} onClickAuth={this.openPopupWindow} />
-            : <Dictionary />}
+            : this.renderContent()}
       </div>
     )
   }

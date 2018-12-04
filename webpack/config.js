@@ -1,6 +1,4 @@
-const
-  fs = require('fs'),
-  path = require('path')
+const pathResolve = require('path').resolve
 
 module.exports = ({mode, dirname}) => ({
   mode,
@@ -11,36 +9,26 @@ module.exports = ({mode, dirname}) => ({
     extensions: ['.js', '.jsx', '.json'],
     alias: {
       /* Common */
-      '@core/stores': path.resolve(dirname, 'src/core/stores'),
-      '@core/utils': path.resolve(dirname, 'src/core/utils'),
-      '@core/config': path.resolve(dirname, 'src/core/config.js'),
+      '@core/stores': pathResolve(dirname, 'src/core/stores'),
+      '@core/utils': pathResolve(dirname, 'src/core/utils'),
+      '@core/config': pathResolve(dirname, 'src/core/config.js'),
       /* Admin site */
-      '@app/components': path.resolve(dirname, 'src/app/components'),
-      '@app/containers': path.resolve(dirname, 'src/app/containers'),
-      '@app/screens': path.resolve(dirname, 'src/app/screens'),
-      '@app/stores': path.resolve(dirname, 'src/app/stores'),
-      '@app/theme': path.resolve(dirname, 'src/app/theme.js'),
-      '@app/assets': path.resolve(dirname, 'src/app/assets'),
+      '@app/components': pathResolve(dirname, 'src/app/components'),
+      '@app/containers': pathResolve(dirname, 'src/app/containers'),
+      '@app/screens': pathResolve(dirname, 'src/app/screens'),
+      '@app/stores': pathResolve(dirname, 'src/app/stores'),
+      '@app/theme': pathResolve(dirname, 'src/app/theme.js'),
+      '@app/assets': pathResolve(dirname, 'src/app/assets'),
       /* Contentful widget */
-      '@widget/components': path.resolve(dirname, 'src/widget/components'),
-      '@widget/containers': path.resolve(dirname, 'src/widget/containers'),
-      '@widget/screens': path.resolve(dirname, 'src/widget/screens'),
-      '@widget/stores': path.resolve(dirname, 'src/widget/stores'),
-      '@widget/assets': path.resolve(dirname, 'src/widget/assets'),
+      '@widget/components': pathResolve(dirname, 'src/widget/components'),
+      '@widget/containers': pathResolve(dirname, 'src/widget/containers'),
+      '@widget/screens': pathResolve(dirname, 'src/widget/screens'),
+      '@widget/stores': pathResolve(dirname, 'src/widget/stores'),
+      '@widget/assets': pathResolve(dirname, 'src/widget/assets'),
     },
   },
 
   optimization: {
     minimize: mode === 'production',
-  },
-
-  devServer: {
-    host: '0.0.0.0',
-    historyApiFallback: true,
-    hot: true,
-    https: {
-      pfx: fs.readFileSync(path.resolve(__dirname, 'certificate/localhost.pfx')),
-      passphrase: 'localhost',
-    },
   },
 })

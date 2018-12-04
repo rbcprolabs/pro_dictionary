@@ -8,7 +8,7 @@ export default class Terms {
   @observable loading = false
 
   @action
-  async post(body) {
+  post = async (body) => {
     this.loading = true
     let result = null
     try {
@@ -25,14 +25,14 @@ export default class Terms {
   }
 
   @action
-  async get(parent, loadMore, limit = this.limit) {
+  get = async (parent, loadMore, limit = this.limit) => {
     this.loading = true
     let result = null
     try {
       if (!this.items[parent] || loadMore && !this.items[parent].lastEvaluatedKey) {
         result = await API.get(
           'term',
-          `/term/?parent=${parent}&limit=${limit}`,
+          `/getAllByParent/${encodeURIComponent(parent)}/?limit=${limit}`,
         )
         this.items[parent] = {
           lastEvaluatedKey: result.lastEvaluatedKey,
@@ -41,7 +41,8 @@ export default class Terms {
       } else if (loadMore && !!this.items[parent].lastEvaluatedKey) {
         result = await API.get(
           'term',
-          `/term?parent=${parent}&lastEvaluatedKey=${this.items[parent].lastEvaluatedKey}&limit=${limit}`,
+          `/getAllByParent/${encodeURIComponent(parent)}/` +
+          `?lastEvaluatedKey=${this.items[parent].lastEvaluatedKey}&limit=${limit}`,
         )
         this.items[parent].items.push(...result.items)
         this.items[parent].lastEvaluatedKey = result.lastEvaluatedKey
@@ -55,5 +56,29 @@ export default class Terms {
       this.loading = false
     }
     return result ? result.items : []
+  }
+
+  @action
+  getByFullTerm = async (parent, fullTerm) => {
+    this.loading = true
+    let result = null
+    try {
+      if (this.items[parent]) {
+        result = this.items[parent].items.find((element) =>
+          element.fullTerm === fullTerm
+        )
+      } else {
+        result = await API.get(
+          'term',
+          `/termByFullTerm/${encodeURIComponent(fullTerm)}`,
+        )
+      }
+    } catch (error) {
+      if (error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
+    } finally {
+      this.loading = false
+    }
+    return result
   }
 }

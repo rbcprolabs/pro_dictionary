@@ -14,8 +14,14 @@
     background: linear-gradient(to top, #3c80cf, #5b9fef);
     color: #fff;
     border-color: #3c80cf;
-    &:hover {
+    &:not([disabled]):hover {
       background: linear-gradient(to bottom, #3c80cf, #5b9fef);
+    }
+    &[disabled] {
+      cursor: not-allowed;
+      color: #eee;
+      background: linear-gradient(to top, #659bd9, #89baf4);
+      border-color: #659bd9;
     }
   }
   &.secondary {

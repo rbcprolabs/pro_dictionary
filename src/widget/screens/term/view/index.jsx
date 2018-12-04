@@ -5,10 +5,14 @@ import style from './style.scss'
 import { observer, inject as injectStore } from 'mobx-react'
 import Input from '@widget/components/input'
 import SearchIcon from '@widget/assets/icons/search.svg'
-import Loader from '@widget/components/loader';
-import Hint from '@widget/components/hint';
-import Button from '@widget/components/button';
+import Loader from '@widget/components/loader'
+import Hint from '@widget/components/hint'
+import Button from '@widget/components/button'
+import CenteredContainer from '@widget/components/centered-container'
+import threeArray from '@core/utils/threeArray'
+import withDictionary from '@widget/containers/dictionary'
 
+@withDictionary
 @injectStore((stores) => ({
   extension: stores.extension,
   term: stores.term,
@@ -18,7 +22,7 @@ export default class Term extends Component {
   static propTypes = {
     extension: PropTypes.object.isRequired,
     term: PropTypes.object.isRequired,
-    dictionaryName: PropTypes.string.isRequired,
+    dictionary: PropTypes.object.isRequired,
   }
 
   state = {
@@ -31,20 +35,16 @@ export default class Term extends Component {
   getTerms = (fullTerm, loadMore = false) => this.props.term.get(fullTerm, loadMore)
 
   componentDidMount() {
-    if (this.state.fullTerm === null) this.navigate(this.props.dictionaryName)
+    if (this.state.fullTerm === null) this.navigate(this.props.dictionary.name)
   }
 
   async navigate(fullTerm, loadMore) {
     const items = await this.getTerms(fullTerm, loadMore)
-    // eslint-disable-next-line no-console
-    console.log(fullTerm, items)
     this.setState({fullTerm, items})
   }
 
   onClickTerm = (fullTerm) => () =>
     this.navigate(fullTerm)
-
-  // componentDidUpdate(_prevProps) {}
 
   addTag = (fullTerm) => (event) => {
     event.preventDefault()
@@ -52,46 +52,46 @@ export default class Term extends Component {
     this.props.extension.addTag(fullTerm)
   }
 
-  renderTermItem = ({ term, fullTerm, children }) =>
+  renderTermItem = ({ term, fullTerm, childrens }, alreadyAdded) =>
     <div
       className={classNames(style.Item, {
-        [style.hasChilds]: !!children,
+        [style.hasChilds]: !!childrens,
       })}
       key={fullTerm}
-      onClick={children ? this.onClickTerm(fullTerm) : null}>
+      onClick={childrens ? this.onClickTerm(fullTerm) : null}>
       <div className={style.content}>
         <label className={style.title}>{term}</label>
-        {children && <p className={style.subtitle}>{children.join(', ')}</p> }
+        {childrens && <p className={style.subtitle}>{childrens.join(', ')}</p> }
       </div>
-      <Button type='primary' onClick={this.addTag(fullTerm)}>Добавить</Button>
+      <Button type='primary' disabled={alreadyAdded} onClick={this.addTag(fullTerm)}>Добавить</Button>
     </div>
 
-  renderTermView() {
+  renderHeaderNavigation(fullTerm) {
+    return fullTerm.split('/')::threeArray().map(({origin, deep}, index, arr) =>
+      <a key={deep} onClick={this.onClickTerm(deep)}>{index === arr.length - 1 ? origin : origin + ' / '}</a>
+    )
+  }
+
+  render() {
     const
-      { extension } = this.props,
+      { term, extension, dictionary } = this.props,
       { items, fullTerm } = this.state
 
     return (
       <>
         <Input icon={SearchIcon} placeholder='Искать термин' />
         <section className={style.TermView}>
-          <div className={style.Header}>{fullTerm}</div>
-          {items.filter((tag) => !extension.tags.includes(tag.fullTerm)).map(this.renderTermItem)}
+          <div className={style.Header}>{this.renderHeaderNavigation(fullTerm || dictionary.name)}</div>
+          {term.loading
+            ? <CenteredContainer>
+                <Loader />
+              </CenteredContainer>
+            :  items.length === 0
+              ? <Hint>Словарь пуст</Hint>
+              : items.map((tag) => this.renderTermItem(tag, extension.tags.includes(tag.fullTerm)))
+          }
         </section>
       </>
-    )
-  }
-
-  render() {
-    const
-      { term } = this.props,
-      { items } = this.state
-
-    return (term.loading
-      ? <Loader />
-      : items.length > 0
-        ? this.renderTermView()
-        : <Hint>Словарь пуст</Hint>
     )
   }
 }

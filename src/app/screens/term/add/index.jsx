@@ -7,18 +7,14 @@ import LoadingButton from '@app/components/loading-button'
 import Grow from '@material-ui/core/Grow'
 
 
-@injectStore(stores => ({
-  term: stores.term,
-}))
+@injectStore('term')
 @observer
 export default class TermAdd extends Component {
   static propTypes = {
     term: PropTypes.object.isRequired,
-    dictionaryName: PropTypes.string,
     dictionaryId: PropTypes.string.isRequired,
     termName: PropTypes.string.isRequired,
-    parent: PropTypes.string,
-    fullTerm: PropTypes.string.isRequired,
+    parentId: PropTypes.string,
     onAdded: PropTypes.func.isRequired,
     onError: PropTypes.func.isRequired,
   }
@@ -39,7 +35,7 @@ export default class TermAdd extends Component {
     return this.state.terms.length > 0 && this.splittedTerms.length < 25
   }
 
-  makeRequest(dictionaryId, terms) {
+  makeRequest(dictionaryId, terms, parentId) {
     const body = {
       dictionaryId,
     }
@@ -49,23 +45,18 @@ export default class TermAdd extends Component {
     else
       body.terms = terms
 
-    // if (parent && fullTerm !== dictionaryName) {
-    //   body.parent = parent
-    //   body.term = term
-    // }
+    if (parentId)
+      body.parentId = parentId
 
     return body
   }
 
-  addTerms = async () => {
+  async addTerms() {
     const {
       term,
 
-      // dictionaryName,
       dictionaryId,
-      // termName,
-      // parent,
-      // fullTerm,
+      parentId,
       onAdded,
       onError,
     } = this.props
@@ -73,7 +64,7 @@ export default class TermAdd extends Component {
     try {
       const
         terms = this.splittedTerms.map((term) => ({ term })),
-        body = this.makeRequest(dictionaryId, terms)
+        body = this.makeRequest(dictionaryId, terms, parentId)
 
       await term.post(body)
 
@@ -100,11 +91,10 @@ export default class TermAdd extends Component {
             variant='contained'
             color='secondary'
             disabled={!this.validateTerms}
-            onClick={this.addTerms}>
+            onClick={::this.addTerms}>
             Добавить термины
         </LoadingButton>
         </Grow>
       </Grid>
     </FullSizeInput>
-
 }

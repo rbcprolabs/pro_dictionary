@@ -5,7 +5,11 @@ const
 
 module.exports = {
   entry: {
-    widget: pathResolve(__dirname, '../', 'src/widget/index.jsx'),
+    widget: [
+      pathResolve(__dirname, '../', 'src/widget/index.jsx'),
+      // path = output.publicPath + __webpack_hmr
+      'webpack-hot-middleware/client?path=/widget__webpack_hmr&timeout=20000&reload=true',
+    ],
   },
 
   output: {

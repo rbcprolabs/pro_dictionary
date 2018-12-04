@@ -29,12 +29,12 @@ const
   }),
   listItemTypographyPropsPreset = (className) => ({ noWrap: true, className })
 
-const TermListItem = ({ term, fullTerm, children, listItemTypographyProps }) =>
+const TermListItem = ({ term, fullTerm, childrens, listItemTypographyProps }) =>
   <>
     <ListItem button component={Link} to={`/${fullTerm}`}>
       <ListItemText
         primary={term}
-        secondary={children && children.join(', ')}
+        secondary={childrens && childrens.join(', ')}
         secondaryTypographyProps={listItemTypographyProps} />
       <ListItemSecondaryAction>
         <IconButton aria-label='Edit'>
@@ -48,7 +48,7 @@ const TermListItem = ({ term, fullTerm, children, listItemTypographyProps }) =>
 TermListItem.propTypes = {
   term: PropTypes.string.isRequired,
   fullTerm: PropTypes.string.isRequired,
-  children: PropTypes.arrayOf(PropTypes.string),
+  childrens: PropTypes.instanceOf(Object),
   listItemTypographyProps: PropTypes.object.isRequired,
 }
 
@@ -75,14 +75,13 @@ const TermList = ({ classes, items, isFlat }) => {
   return (
     <List>
       {!isFlat
-      ? items.map(({ fullTerm, term, children }) =>
+      ? items.map(({ fullTerm, term, childrens }) =>
           <TermListItem
             key={term}
             term={term}
             fullTerm={fullTerm}
-            listItemTypographyProps={listItemTypographyProps}>
-              {children}
-            </TermListItem>
+            listItemTypographyProps={listItemTypographyProps}
+            childrens={childrens} />
         )
       : items.map(({ term }) =>
         <TermListFlatItem

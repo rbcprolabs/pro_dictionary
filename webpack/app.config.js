@@ -8,7 +8,11 @@ const
 
 module.exports = {
   entry: {
-    app: pathResolve(__dirname, '../', 'src/app/index.jsx'),
+    app: [
+      pathResolve(__dirname, '../', 'src/app/index.jsx'),
+      // path = output.publicPath + __webpack_hmr
+      'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true',
+    ],
   },
 
   output: {

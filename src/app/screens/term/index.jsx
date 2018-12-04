@@ -14,6 +14,7 @@ import CenteredContainer from '@app/components/centered-container'
 import Grow from '@material-ui/core/Grow'
 import Slide from '@material-ui/core/Slide'
 import Notification from '@core/stores/notification'
+import threeArray from '@core/utils/threeArray'
 
 import TermList from './list'
 import TermAdd from './add'
@@ -71,39 +72,62 @@ export default class Term extends Component {
     items: [],
   }
 
+  async fetchDataDictionary(dictionaryName, fullTerm) {
+    const [ dictionary, items ] = await Promise.all([
+      this.handleError(this.props.dictionary.getByName, dictionaryName),
+      this.handleError(this.props.term.get, fullTerm),
+    ])
+
+    return {
+      dictionary,
+      items,
+    }
+  }
+
+  async fetchDataTerm(dictionaryName, parentTerm, fullTerm) {
+    const [ dictionary, items, parent ] = await Promise.all([
+      this.handleError(this.props.dictionary.getByName, dictionaryName),
+      this.handleError(this.props.term.get, fullTerm),
+      this.handleError(this.props.term.getByFullTerm, parentTerm, fullTerm),
+    ])
+
+    return {
+      dictionary,
+      items,
+      parent,
+    }
+  }
+
   async getData() {
     const
-      { match, dictionary } = this.props,
+      { match } = this.props,
       dictionaryName = match.params.dictionary,
       terms = match.params.terms ? match.params.terms.split('/') : [],
       three = [dictionaryName, ...terms],
-      fullTerm = three.join('/')
+      fullTerm = three.join('/'),
+      parent = [].concat(three).splice(0, three.length - 1).join('/') || null
+
+    const fetchedData = await (parent
+      ? this.fetchDataTerm(dictionaryName, parent, fullTerm)
+      : this.fetchDataDictionary(dictionaryName, fullTerm))
 
     return {
       three,
       fullTerm,
-      parent: [].concat(three).splice(0, three.length - 1).join('/') || null,
-      dictionary: await dictionary.getByName(dictionaryName),
+      parent,
       termName: three[three.length - 1],
-      items: await this.getTerms(fullTerm),
+      ...fetchedData,
     }
   }
 
   async updateData() {
-    try {
-      const data = await this.getData()
-      this.setState(data)
-    } catch (error) {
-      this.props.notification.notify({
-        variant: Notification.ERROR,
-        message: 'Ошибка загрузки',
-      })
-    }
+    const data = await this.getData()
+    this.setState(data)
   }
 
-  async getTerms(fullTerm, loadMore = false) {
+  async handleError(apiCall, ...args) {
     try {
-      return await this.props.term.get(fullTerm, loadMore)
+      return await apiCall(...args)
     } catch (error) {
       this.props.notification.notify({
         variant: Notification.ERROR,
@@ -121,23 +145,17 @@ export default class Term extends Component {
     if (locationChanged) this.updateData()
   }
 
-  makeTabItems = (items) => items.map((item, index, arr) => {
-    let link = '/'
-
-    for (let i = 0; i < index + 1; i++) link += arr[i] + '/'
-
-    return (
-      <Grow
-        in={true}
-        timeout={600 + index * 100}
-        key={item}>
-        <Tab
-          classes={{ root: this.props.classes.tabRoot }}
-          label={item} component={Link}
-          to={link.slice(0, -1)} />
-      </Grow>
-    )
-  })
+  makeTabItems = (items) => items::threeArray(true).map(({ origin, deep }, index) =>
+    <Grow
+      in={true}
+      timeout={600 + index * 100}
+      key={deep}>
+      <Tab
+        classes={{ root: this.props.classes.tabRoot }}
+        label={origin} component={Link}
+        to={deep} />
+    </Grow>
+  )
 
   async onAdded() {
     this.props.notification.notify({
@@ -145,7 +163,7 @@ export default class Term extends Component {
       message: 'Термины успешно добавлены',
     })
 
-    const items = await this.getTerms(this.state.fullTerm, true)
+    const items = await this.handleError(this.props.term.get, this.state.fullTerm, true)
     this.setState({ items })
   }
 
@@ -154,46 +172,6 @@ export default class Term extends Component {
       variant: Notification.ERROR,
       message: 'Ошибка добавления терминов',
     })
-  }
-
-  renderAdd(dictionaryId, children) {
-    const
-      { classes } = this.props,
-      {
-        parent,
-        termName,
-        dictionaryName,
-        fullTerm,
-      } = this.state
-
-    return (
-      <>
-        <Grid
-          item
-          xs={12}
-          md={6}
-          lg={9}
-          xl={10}
-          className={classes.itemsContainer}>
-          {children}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}
-          lg={3}
-          xl={2}>
-          <TermAdd
-            dictionaryName={dictionaryName}
-            dictionaryId={dictionaryId}
-            termName={termName}
-            parent={parent}
-            fullTerm={fullTerm}
-            onAdded={::this.onAdded}
-            onError={::this.onAddError} />
-        </Grid>
-      </>
-    )
   }
 
   render() {
@@ -207,18 +185,20 @@ export default class Term extends Component {
         items = [],
         dictionary,
         three,
+        termName,
+        parent,
       } = this.state
 
     const content = !!dictionary && items.length > 0
       ? <TermList items={items} isFlat={dictionary.isFlat} />
       : <CenteredContainer fullHeight>
-        <Typography
-          variant='h6'
-          align='center'
-          color='textSecondary'>
-          Пусто
-        </Typography>
-      </CenteredContainer>
+          <Typography
+            variant='h6'
+            align='center'
+            color='textSecondary'>
+            Пусто
+          </Typography>
+        </CenteredContainer>
 
     return (
       <>
@@ -237,9 +217,35 @@ export default class Term extends Component {
           </Slide>
         }
         <Grid container className={classes.container}>
-          {term.loading || dictionaryStore.loading || !dictionary
+          {!dictionary
             ? <CenteredProgress fullHeight />
-            : this.renderAdd(dictionary.id, content)
+            : <>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  lg={9}
+                  xl={10}
+                  className={classes.itemsContainer}>
+                    {term.loading || dictionaryStore.loading
+                      ? <CenteredProgress fullHeight />
+                      : content
+                    }
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  lg={3}
+                  xl={2}>
+                  <TermAdd
+                    dictionaryId={dictionary.id}
+                    termName={termName}
+                    parentId={parent && parent.id}
+                    onAdded={::this.onAdded}
+                    onError={::this.onAddError} />
+                </Grid>
+              </>
           }
         </Grid>
       </>

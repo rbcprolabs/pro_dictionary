@@ -16,7 +16,7 @@ export default class Dictionary {
   }
 
   @action
-  async post(body) {
+  post = async (body) => {
     this.loading = true
     let result = null
     try {
@@ -32,7 +32,7 @@ export default class Dictionary {
   }
 
   @action
-  async getAll(loadMore, limit = this.limit) {
+  getAll = async (loadMore, limit = this.limit) => {
     this.loading = true
     let result = null
     try {
@@ -72,15 +72,17 @@ export default class Dictionary {
   hasMore = () => this.lastEvaluatedKey !== null
 
   @action
-  async getById(id) {
+  getById = async (id) => {
     this.loading = true
     let result = null
     try {
       if (!this._items::isEmpty())
         result = this.items::findByProperty('id', id)
 
-      if (!result)
+      if (!result) {
         result = await API.get('dictionary', `/dictionary/${id}`)
+        this._items[result.name] = result
+      }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
@@ -91,15 +93,17 @@ export default class Dictionary {
   }
 
   @action
-  async getBySlug(slug) {
+  getBySlug = async (slug) => {
     this.loading = true
     let result = null
     try {
       if (!this._items::isEmpty())
         result = this.items::findByProperty('slug', slug)
 
-      if (!result)
+      if (!result) {
         result = await API.get('dictionary', `/dictionaryBySlug/${slug}`)
+        this._items[result.name] = result
+      }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
@@ -110,7 +114,7 @@ export default class Dictionary {
   }
 
   @action
-  async getByName(name) {
+  getByName = async (name) => {
     this.loading = true
     let result = null
     try {
@@ -130,7 +134,7 @@ export default class Dictionary {
   }
 
   @action
-  async update(id, body) {
+  update = async (id, body) => {
     this.loading = true
     let result = null
     try {
@@ -144,7 +148,7 @@ export default class Dictionary {
   }
 
   @action
-  async delete(id) {
+  delete = async (id) => {
     this.loading = true
     let result = null
     try {

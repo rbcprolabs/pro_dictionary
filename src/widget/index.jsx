@@ -12,7 +12,6 @@ import {
 } from '@core/stores'
 import Extension from '@widget/stores/extension'
 
-
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
