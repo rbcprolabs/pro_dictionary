@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography'
 import Slide from '@material-ui/core/Slide'
 import Link from 'react-router-dom/Link'
 import withStyles from '@material-ui/core/styles/withStyles'
-import Logo from '@app/assets/images/logo.svg'
+import logoUrl from '@app/assets/images/logo.svg'
 
 const styles = (theme) => ({
   container: {
@@ -31,7 +31,7 @@ const DrawerHeader = ({ classes }) =>
     <Grid item xs={4}>
       <Link to='/'>
         <Slide direction='down' in={true} timeout={400} mountOnEnter unmountOnExit>
-          <img src={Logo} />
+          <img src={logoUrl} />
         </Slide>
       </Link>
     </Grid>

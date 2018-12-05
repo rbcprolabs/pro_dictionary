@@ -7,10 +7,10 @@ import enviroment from '@core/utils/enviroment'
 import style from './style.scss'
 import Init from '@widget/screens/init'
 import Tags from '@widget/containers/tags'
-import { hot } from 'react-hot-loader'
 import Term from '@widget/screens/term/view'
+import hmr from '@core/utils/hmr'
 
-@hot(module)
+@hmr(module)
 @injectStore((stores) => ({
   inited: stores.extension.inited,
   auth: stores.auth,

@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid'
 import Zoom from '@material-ui/core/Zoom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Notification from '@app/containers/notification'
-import { hot } from 'react-hot-loader'
+import hmr from '@core/utils/hmr'
 
 const
   styles =  {
@@ -58,4 +58,4 @@ App.propTypes = {
   auth: PropTypes.object.isRequired,
 }
 
-export default hot(module)(injectStore('auth')(withStyles(styles)(App)))
+export default hmr(module)(injectStore('auth')(withStyles(styles)(App)))

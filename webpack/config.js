@@ -1,34 +1,70 @@
-const pathResolve = require('path').resolve
+const
+  pathResolve = require('path').resolve,
+  webpack = require('webpack'),
+  { version } = require('../package')
 
-module.exports = ({mode, dirname}) => ({
-  mode,
+module.exports = ({ mode, dirname }) => {
+  const plugins = []
 
-  devtool: mode === 'production' ? false : 'source-map',
+  if (mode === 'development') plugins.push(
+    new webpack.HotModuleReplacementPlugin()
+  )
 
-  resolve: {
-    extensions: ['.js', '.jsx', '.json'],
-    alias: {
-      /* Common */
-      '@core/stores': pathResolve(dirname, 'src/core/stores'),
-      '@core/utils': pathResolve(dirname, 'src/core/utils'),
-      '@core/config': pathResolve(dirname, 'src/core/config.js'),
-      /* Admin site */
-      '@app/components': pathResolve(dirname, 'src/app/components'),
-      '@app/containers': pathResolve(dirname, 'src/app/containers'),
-      '@app/screens': pathResolve(dirname, 'src/app/screens'),
-      '@app/stores': pathResolve(dirname, 'src/app/stores'),
-      '@app/theme': pathResolve(dirname, 'src/app/theme.js'),
-      '@app/assets': pathResolve(dirname, 'src/app/assets'),
-      /* Contentful widget */
-      '@widget/components': pathResolve(dirname, 'src/widget/components'),
-      '@widget/containers': pathResolve(dirname, 'src/widget/containers'),
-      '@widget/screens': pathResolve(dirname, 'src/widget/screens'),
-      '@widget/stores': pathResolve(dirname, 'src/widget/stores'),
-      '@widget/assets': pathResolve(dirname, 'src/widget/assets'),
+  return {
+    mode,
+
+    devtool: mode === 'production' ? false : 'source-map',
+
+    resolve: {
+      extensions: ['.js', '.jsx', '.json'],
+      alias: {
+        '@core/stores': pathResolve(dirname, 'src/core/stores'),
+        '@core/utils': pathResolve(dirname, 'src/core/utils'),
+        '@core/config': pathResolve(dirname, 'src/core/config.js'),
+      },
     },
-  },
 
-  optimization: {
-    minimize: mode === 'production',
-  },
-})
+    module: {
+      rules: [{
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: [
+          'babel-loader',
+          'eslint-loader',
+        ],
+      }, {
+        test: /\.(ico|png|jpg)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'assets/',
+        },
+      }, {
+        test: /\.svg$/,
+        use: [
+          '@svgr/webpack',
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'assets/',
+            },
+          },
+        ],
+      }]
+    },
+
+    optimization: {
+      minimize: mode === 'production',
+      nodeEnv: mode,
+    },
+
+    plugins: [
+      // new webpack.EnvironmentPlugin(['NODE_ENV']),
+      new webpack.DefinePlugin({
+        'appVersion': JSON.stringify(version),
+      }),
+      ...plugins,
+    ],
+  }
+}

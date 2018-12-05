@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import CloseIcon from '@widget/assets/icons/remove.svg'
-import AddIcon from '@widget/assets/icons/add.svg'
+import { ReactComponent as CloseIcon } from '@widget/assets/icons/remove.svg'
+import { ReactComponent as AddIcon } from '@widget/assets/icons/add.svg'
 import style from './style.scss'
 
 const Tag = ({

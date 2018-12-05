@@ -4,7 +4,7 @@ import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Slide from '@material-ui/core/Slide'
-import Logo from '@app/assets/images/logo.svg'
+import { ReactComponent as Logo } from '@app/assets/images/logo.svg'
 
 const styles = (theme) => ({
   container: {
@@ -41,7 +41,7 @@ const Main = ({ classes }) =>
           container
           justify='center'>
           <Slide direction='down' in={true} timeout={600} mountOnEnter unmountOnExit>
-            <img src={Logo} />
+            <Logo />
           </Slide>
         </Grid>
       </Grid>

@@ -1,16 +1,17 @@
 const
   config = require('./webpack/config'),
   app = require('./webpack/app.config'),
-  widget = require('./webpack/widget.config')
+  widget = require('./webpack/widget.config'),
+  merge = require('webpack-merge')
 
 const
-  mode = process.env.NODE_ENV || 'development',
-  baseConfig = config({
-    mode,
+  options = {
+    mode: process.env.NODE_ENV || 'development',
     dirname: __dirname,
-  })
+  },
+  baseConfig = config(options)
 
 module.exports = [
-  Object.assign({}, baseConfig, app),
-  Object.assign({}, baseConfig, widget),
+  merge.smart(baseConfig, app(options)),
+  merge.smart(baseConfig, widget(options)),
 ]

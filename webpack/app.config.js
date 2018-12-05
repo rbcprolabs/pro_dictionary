@@ -1,102 +1,87 @@
 const
   pathResolve = require('path').resolve,
-  webpack = require('webpack'),
   OfflinePlugin = require('offline-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
-  CopyWebpackPlugin = require('copy-webpack-plugin'),
-  { version } = require('../package')
+  CopyWebpackPlugin = require('copy-webpack-plugin')
 
-module.exports = {
-  entry: {
-    app: [
-      pathResolve(__dirname, '../', 'src/app/index.jsx'),
-      // path = output.publicPath + __webpack_hmr
-      'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true',
-    ],
-  },
+module.exports = ({ mode, dirname }) => {
+  const etrypoint = [pathResolve(dirname, 'src/app/index.jsx')]
 
-  output: {
-    path: pathResolve(__dirname, '../', 'build'),
-    filename: '[name].bundle.js',
-    publicPath: '/',
-  },
+  if (mode === 'development')
+    // path = output.publicPath + __webpack_hmr
+    etrypoint.push('webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true')
 
-  module: {
-    rules: [{
-      test: /\.jsx?$/,
-      exclude: /(node_modules)/,
-      loader: ['babel-loader'],
-    },{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: ['babel-loader', 'eslint-loader'],
-    },{
-      test: /\.(svg|ico|png|jpg)$/,
-      loader: 'file-loader',
-      options: {
-        name: '[name].[ext]',
-        outputPath: 'assets/',
-      },
-    }]
-  },
-
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /node_modules/,
-          chunks: 'initial',
-          name: 'vendor',
-          enforce: true
-        },
-      }
+  return {
+    entry: {
+      app: etrypoint,
     },
-  },
 
-  plugins: [
-    new webpack.EnvironmentPlugin(['NODE_ENV']),
-    new webpack.DefinePlugin({
-      'appVersion': JSON.stringify(version),
-    }),
-    new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-      template: './src/app/index.html',
-    }),
-    new CopyWebpackPlugin([{
-      from: './src/app/manifest.json',
-      to: './',
-    }, {
-      from: './src/app/browserconfig.xml',
-      to: './',
-    }, {
-      from: './src/app/assets/icons',
-      to: './assets/icons',
-    }]),
-    new OfflinePlugin({
-      safeToUseOptionalCaches: true,
-      caches: {
-        main: [
-          'app.bundle.js',
-          'vendor.bundle.js',
-          ':rest:',
-        ],
-        additional: [
-          ':externals:',
-        ],
-      },
-      externals: [
-        '/manifest.json',
-        '/browserconfig.xml',
-        '/assets/**/*.*',
-        '/',
-      ],
-      ServiceWorker: {
-        events: true,
-        navigateFallbackURL: '/',
-        output: 'service-worker.js',
-      },
+    output: {
+      path: pathResolve(dirname, 'build'),
+      filename: '[name].bundle.js',
       publicPath: '/',
-      AppCache: false,
-    }),
-  ],
+    },
+
+    resolve: {
+      alias: {
+        '@app/components': pathResolve(dirname, 'src/app/components'),
+        '@app/containers': pathResolve(dirname, 'src/app/containers'),
+        '@app/screens': pathResolve(dirname, 'src/app/screens'),
+        '@app/stores': pathResolve(dirname, 'src/app/stores'),
+        '@app/theme': pathResolve(dirname, 'src/app/theme.js'),
+        '@app/assets': pathResolve(dirname, 'src/app/assets'),
+      },
+    },
+
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /node_modules/,
+            chunks: 'initial',
+            name: 'vendor',
+            enforce: true
+          },
+        }
+      },
+    },
+
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './src/app/index.html',
+      }),
+      new CopyWebpackPlugin([{
+        from: './src/app/manifest.json',
+        to: './',
+      }, {
+        from: './src/app/assets/icons',
+        to: './assets/icons',
+      }]),
+      new OfflinePlugin({
+        safeToUseOptionalCaches: true,
+        caches: {
+          main: [
+            'app.bundle.js',
+            'vendor.bundle.js',
+            ':rest:',
+          ],
+          additional: [
+            ':externals:',
+          ],
+        },
+        externals: [
+          '/manifest.json',
+          '/assets/**/*.*',
+          '/',
+        ],
+        ServiceWorker: {
+          events: true,
+          navigateFallbackURL: '/',
+          output: 'service-worker.js',
+        },
+        publicPath: '/',
+        AppCache: false,
+      }),
+    ],
+  }
 }

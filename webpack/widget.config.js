@@ -1,74 +1,59 @@
 const
   pathResolve = require('path').resolve,
-  webpack = require('webpack'),
   HtmlWebpackPlugin = require('html-webpack-plugin')
 
-module.exports = {
-  entry: {
-    widget: [
-      pathResolve(__dirname, '../', 'src/widget/index.jsx'),
-      // path = output.publicPath + __webpack_hmr
-      'webpack-hot-middleware/client?path=/widget__webpack_hmr&timeout=20000&reload=true',
-    ],
-  },
+module.exports = ({ mode, dirname }) => {
+  const etrypoint = [pathResolve(dirname, 'src/widget/index.jsx')]
 
-  output: {
-    path: pathResolve(__dirname, '../', 'build/widget'),
-    filename: 'bundle.js',
-    publicPath: '/widget',
-  },
+  if (mode === 'development')
+    // path = output.publicPath + __webpack_hmr
+    etrypoint.push('webpack-hot-middleware/client?path=/widget__webpack_hmr&timeout=20000&reload=true')
 
-  module: {
-    rules: [{
-      test: /\.jsx?$/,
-      exclude: /(node_modules)/,
-      loader: ['babel-loader'],
-    },{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: ['babel-loader', 'eslint-loader'],
-    },{
-      test: /\.(ico|png|jpg)$/,
-      loader: 'file-loader',
-      options: {
-        name: '[name].[ext]',
-        outputPath: 'assets/',
+  return {
+    entry: {
+      widget: etrypoint,
+    },
+
+    output: {
+      path: pathResolve(dirname, 'build/widget'),
+      filename: 'bundle.js',
+      publicPath: '/widget',
+    },
+
+    resolve: {
+      alias: {
+        '@widget/components': pathResolve(dirname, 'src/widget/components'),
+        '@widget/containers': pathResolve(dirname, 'src/widget/containers'),
+        '@widget/screens': pathResolve(dirname, 'src/widget/screens'),
+        '@widget/stores': pathResolve(dirname, 'src/widget/stores'),
+        '@widget/assets': pathResolve(dirname, 'src/widget/assets'),
       },
-    },{
-      test: /\.svg$/,
-      use: [
-        'babel-loader',
-        {
-          loader: 'react-svg-loader',
-          options: {
-            jsx: true,
-          },
-        },
-      ],
-    }, {
-      test: /\.scss$/,
-      use: [
-        'style-loader',
-        {
-          loader: 'css-loader',
-          options: {
-            modules: true,
-            importLoaders: 1,
-            localIdentName: '[name]_[local]_[hash:base64]',
-            sourceMap: true,
-            minimize: true
-          },
-        },
-        'sass-loader',
-      ],
-    }],
-  },
+    },
 
-  plugins: [
-    new webpack.EnvironmentPlugin(['NODE_ENV']),
-    new HtmlWebpackPlugin({
-      template: './src/widget/index.html',
-    }),
-    new webpack.HotModuleReplacementPlugin(),
-  ],
+    module: {
+      rules: [{
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+              localIdentName: '[name]_[local]_[hash:base64]',
+              sourceMap: true,
+              minimize: true
+            },
+          },
+          'sass-loader',
+        ],
+      }],
+    },
+
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './src/widget/index.html',
+      }),
+    ],
+  }
 }
