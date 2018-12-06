@@ -33,7 +33,7 @@ export default class App extends Component {
     this.setState({ loginWindowIsOpen: true })
     /** @type {boolean} */
     const result = await popupWindow(enviroment({
-      production: 'https://d2ih136zgu7ccp.cloudfront.net/login?widget=true',
+      production: 'https://d2jdttpnes7jtt.cloudfront.net/login?widget=true',
       development: 'https://localhost:8080/login?widget=true',
     }), 'Авторизация', 400, 380)
 
