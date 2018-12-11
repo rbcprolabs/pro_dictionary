@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
 import CenteredProgress from '@app/components/centered-progress'
+import { alphabet } from '@core/utils/sort'
 
 const
   styles = (theme) => ({
@@ -25,7 +26,7 @@ const
       margin: `${theme.spacing.unit * 4}px 0`,
     },
     list: {
-      maxHeight: 400,
+      maxHeight: '45vh',
       overflowY: 'auto',
       ...theme.mixins.scrollbar,
     },
@@ -47,9 +48,13 @@ export default class DictionaryList extends Component {
     this.props.dictionary.items.length < 1 && this.props.dictionary.getAll()
   }
 
+  sortByAlphabet(a, b) {
+    return alphabet(a.name, b.name)
+  }
+
   dictionariesList = ({ items, className }) =>
     <List className={className}>
-      {items.map(({ id, name }, index) =>
+      {items.sort(this.sortByAlphabet).map(({ id, name }, index) =>
         <Grow in={true} timeout={1000 + index * 100} key={id}>
           <ListItem button component={Link} to={`/${name}`}>
             <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />

@@ -11,6 +11,7 @@ import Button from '@widget/components/button'
 import CenteredContainer from '@widget/components/centered-container'
 import threeArray from '@core/utils/threeArray'
 import withDictionary from '@widget/containers/dictionary'
+import { alphabet } from '@core/utils/sort'
 
 @withDictionary
 @injectStore((stores) => ({
@@ -72,6 +73,10 @@ export default class Term extends Component {
     )
   }
 
+  sortByAlphabet(a, b) {
+    return alphabet(a.term, b.term)
+  }
+
   render() {
     const
       { term, extension, dictionary } = this.props,
@@ -83,12 +88,14 @@ export default class Term extends Component {
         <section className={style.TermView}>
           <div className={style.Header}>{this.renderHeaderNavigation(fullTerm || dictionary.name)}</div>
           {term.loading
-            ? <CenteredContainer>
+            ? <CenteredContainer className={style.LoaderWrapper}>
                 <Loader />
               </CenteredContainer>
             :  items.length === 0
-              ? <Hint>Словарь пуст</Hint>
-              : items.map((tag) => this.renderTermItem(tag, extension.tags.includes(tag.fullTerm)))
+              ? <Hint className={style.DictionaryEmpty}>Словарь пуст</Hint>
+              : items
+                  .sort(this.sortByAlphabet)
+                  .map((tag) => this.renderTermItem(tag, extension.tags.includes(tag.fullTerm)))
           }
         </section>
       </>

@@ -1,14 +1,24 @@
 .TermView {
   border: 1px solid #c3cfd4;
   margin-top: 16px;
+  transition: all 0.3s ease;
   .Header {
     background-color: #546171;
     padding: 16px;
     font-size: 14px;
     color: #ffffff;
+    // Hide parent border
+    margin: -1px -1px -1px;
+
     a {
       cursor: pointer;
     }
+  }
+  .LoaderWrapper {
+    margin: 32px 0;
+  }
+  .DictionaryEmpty {
+    padding: 16px;
   }
   .Item {
     padding: 12px;
