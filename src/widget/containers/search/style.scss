@@ -1,0 +1,45 @@
+.SearchIcon {
+  padding: 12px;
+}
+
+.SearchCancel {
+  margin: 6px;
+  padding: 4px 12px;
+  background: #546171;
+  border-color: #546171;
+  color: white;
+  &:hover {
+    background-color: #cd4739;
+    border-color: #cd4739;
+    color: white;
+  }
+}
+
+.Loader {
+  margin: 20px auto;
+}
+
+.SearchResuls {
+  position: absolute;
+  width: 100%;
+  background-color: #f2f5f6;
+  opacity: 0;
+  z-index: -5;
+  &.open {
+    opacity: 1;
+    z-index: 3;
+  }
+  .Item {
+    padding: 16px 24px;
+    transition: all .3s ease-in;
+    cursor: pointer;
+    &:first-child,
+    &:last-child {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    &:hover {
+      background-color: #e5ebed
+    }
+  }
+}

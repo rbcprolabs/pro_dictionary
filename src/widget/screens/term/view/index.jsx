@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import style from './style.scss'
 import { observer, inject as injectStore } from 'mobx-react'
-import Input from '@widget/components/input'
-import { ReactComponent as SearchIcon } from '@widget/assets/icons/search.svg'
 import Loader from '@widget/components/loader'
 import Hint from '@widget/components/hint'
 import Button from '@widget/components/button'
@@ -12,6 +10,7 @@ import CenteredContainer from '@widget/components/centered-container'
 import threeArray from '@core/utils/threeArray'
 import withDictionary from '@widget/containers/dictionary'
 import { alphabet } from '@core/utils/sort'
+import Search from '@widget/containers/search'
 
 @withDictionary
 @injectStore((stores) => ({
@@ -53,12 +52,12 @@ export default class Term extends Component {
     this.props.extension.addTag(fullTerm)
   }
 
-  renderTermItem = ({ term, fullTerm, childrens }, alreadyAdded) =>
+  renderTermItem = ({ id ,term, fullTerm, childrens }, alreadyAdded) =>
     <div
       className={classNames(style.Item, {
         [style.hasChilds]: !!childrens,
       })}
-      key={fullTerm}
+      key={id}
       onClick={childrens ? this.onClickTerm(fullTerm) : null}>
       <div className={style.content}>
         <label className={style.title}>{term}</label>
@@ -84,7 +83,7 @@ export default class Term extends Component {
 
     return (
       <>
-        <Input icon={SearchIcon} placeholder='Искать термин' />
+        <Search dictionaryId={dictionary.id} />
         <section className={style.TermView}>
           <div className={style.Header}>{this.renderHeaderNavigation(fullTerm || dictionary.name)}</div>
           {term.loading

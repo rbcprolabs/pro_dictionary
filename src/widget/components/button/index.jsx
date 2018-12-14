@@ -6,7 +6,7 @@ import style from './style.scss'
 const Button = ({
   children,
   className,
-  type,
+  type = 'primary',
   ...props,
 }) =>
   <button className={classNames(style.Button, style[type], className)} {...props}>
@@ -18,7 +18,7 @@ Button.propTypes = {
   type: PropTypes.oneOf([
     'primary',
     'secondary',
-  ]).isRequired,
+  ]),
 }
 
 export default Button

@@ -6,6 +6,7 @@ export default class Terms {
 
   @observable items = {}
   @observable loading = false
+  @observable searchLoading = false
 
   @action
   post = async (body) => {
@@ -32,7 +33,7 @@ export default class Terms {
       if (!this.items[parent] || loadMore && !this.items[parent].lastEvaluatedKey) {
         result = await API.get(
           'term',
-          `/getAllByParent/${encodeURIComponent(parent)}/?limit=${limit}`,
+          `/termAllByParent/${encodeURIComponent(parent)}/?limit=${limit}`,
         )
         this.items[parent] = {
           lastEvaluatedKey: result.lastEvaluatedKey,
@@ -41,7 +42,7 @@ export default class Terms {
       } else if (loadMore && !!this.items[parent].lastEvaluatedKey) {
         result = await API.get(
           'term',
-          `/getAllByParent/${encodeURIComponent(parent)}/` +
+          `/termAllByParent/${encodeURIComponent(parent)}/` +
           `?lastEvaluatedKey=${this.items[parent].lastEvaluatedKey}&limit=${limit}`,
         )
         this.items[parent].items.push(...result.items)
@@ -50,7 +51,7 @@ export default class Terms {
         result = this.items[parent]
       }
     } catch (error) {
-      if (error.response.status !== 404)
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
@@ -74,10 +75,27 @@ export default class Terms {
         )
       }
     } catch (error) {
-      if (error.response.status !== 404)
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
     } finally {
       this.loading = false
+    }
+    return result
+  }
+
+  findAllByTerm = async (dictionaryId, term) => {
+    this.searchLoading = true
+    let result = null
+    try {
+      result = await API.get(
+        'term',
+        `/termAllFind/${encodeURIComponent(dictionaryId)}/${encodeURIComponent(term)}`,
+      )
+    } catch (error) {
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
+    } finally {
+      this.searchLoading = false
     }
     return result
   }

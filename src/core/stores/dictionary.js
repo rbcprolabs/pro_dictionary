@@ -1,7 +1,7 @@
 import { action, observable, computed } from 'mobx'
 import { API } from 'aws-amplify'
 import { isEmpty } from '@core/utils/hooks/object'
-import { findByProperty } from '@core/utils/hooks/array';
+import { findByProperty } from '@core/utils/hooks/array'
 
 export default class Dictionary {
   lastEvaluatedKey = null

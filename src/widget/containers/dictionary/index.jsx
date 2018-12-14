@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Loader from '@widget/components/loader'
 import Hint from '@widget/components/hint'
+import style from './style.scss'
+import CenteredContainer from '@widget/components/centered-container';
 
 export default function withDictionary(WrappedComponent) {
   return injectStore((stores) => ({
@@ -33,7 +35,9 @@ export default function withDictionary(WrappedComponent) {
         { dictionary } = this.state
 
       return (dictionaryStore.loading
-        ? <Loader />
+        ? <CenteredContainer>
+            <Loader className={style.Loader} />
+          </CenteredContainer>
         : !dictionary
           ? <Hint>Ошибка загрузки словаря</Hint>
           : <WrappedComponent dictionary={dictionary} />
