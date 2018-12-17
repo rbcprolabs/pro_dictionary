@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Tag from '@widget/components/tag'
 import style from './style.scss'
+import NestingString from '@widget/components/string-nesting'
 
 function removeTag(fullTerm) {
   return () => this.removeTag(fullTerm)
@@ -11,7 +12,9 @@ function removeTag(fullTerm) {
 const Tags = ({extension, onAdd}) =>
   <div className={style.TagContainer}>
     {extension.tags.map((fullTerm) =>
-      <Tag key={fullTerm} removable onRemoveClick={extension::removeTag(fullTerm)}>{fullTerm}</Tag>
+      <Tag key={fullTerm} removable onRemoveClick={extension::removeTag(fullTerm)}>
+        <NestingString strings={fullTerm.split('/')} delimeter=' > ' />
+      </Tag>
     )}
     <Tag add onAddClick={onAdd} />
   </div>

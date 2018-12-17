@@ -7,12 +7,18 @@ import Input from '@widget/components/input'
 import { debounce } from 'throttle-debounce'
 import style from './style.scss'
 import Button from '@widget/components/button'
-import Loader from '@widget/components/loader';
+import Loader from '@widget/components/loader'
+import NestingString from '@widget/components/string-nesting'
+import { alphabet } from '@core/utils/sort'
 
-@injectStore('term')
+@injectStore((stores) => ({
+  extension: stores.extension,
+  term: stores.term,
+}))
 @observer
 export default class Search extends Component {
   static propTypes = {
+    extension: PropTypes.object.isRequired,
     term: PropTypes.object.isRequired,
     dictionaryId: PropTypes.string.isRequired,
   }
@@ -33,7 +39,7 @@ export default class Search extends Component {
         : []
 
     this.setState({ query, searchResults, resultsDialogOpen, loading }, () => {
-      loading && this.searchDebounced(this.state.query)
+      this.state.query.length >= 2 && this.searchDebounced(this.state.query)
     })
   }
 
@@ -41,8 +47,6 @@ export default class Search extends Component {
 
   async search(query) {
     const { items } = await this.props.term.findAllByTerm(this.props.dictionaryId, query)
-    // eslint-disable-next-line no-console
-    console.log(items)
     this.setState({
       searchResults: items,
       loading: false,
@@ -53,11 +57,43 @@ export default class Search extends Component {
     this.setState({
       query: '',
       searchResults: [],
+      resultsDialogOpen: false,
     })
   }
 
+  addTag = (fullTerm) => () => {
+    this.props.extension.addTag(fullTerm)
+  }
+
+  renderTermItem({ id, fullTerm }, alreadyAdded) {
+    return (
+      <div
+        className={style.Item}
+        key={id}
+        disabled={alreadyAdded}
+        onClick={!alreadyAdded ? this.addTag(fullTerm) : null}>
+        <NestingString strings={fullTerm.split('/')} delimeter=' > ' />
+      </div>
+    )
+  }
+
+  sortByAlphabet(a, b) {
+    return alphabet(a.term, b.term)
+  }
+
+  renderNoMatchesFound() {
+    return (
+      <div className={style.Item}>
+        Совпадений не найдено
+        <Button>Добавить термин</Button>
+      </div>
+    )
+  }
+
   render() {
-    const { query, searchResults, resultsDialogOpen, loading } = this.state
+    const
+      { extension } = this.props,
+      { query, searchResults, resultsDialogOpen, loading } = this.state
 
     return (
       <>
@@ -86,10 +122,11 @@ export default class Search extends Component {
           {loading
             ? <Loader type='cube-grid' className={style.Loader} />
             : searchResults.length > 0
-              ? searchResults.map(({id, term}) =>
-                  <div key={id} className={style.Item}>{term}</div>
-                )
-              : <div className={style.Item}>Совпадений не найдено</div>}
+              ? searchResults
+                  .slice() // mobx magic
+                  .sort(this.sortByAlphabet)
+                  .map((tag) => this.renderTermItem(tag, extension.tags.includes(tag.fullTerm)))
+              : this.renderNoMatchesFound()}
         </div>
       </>
     )

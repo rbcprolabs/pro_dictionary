@@ -46,7 +46,7 @@ export default class DictionaryAdd extends Component {
   state = {
     name: '',
     isFlat: false,
-    isOpen: false,
+    isOpen: true,
   }
 
   validateForm = () => this.state.name.length > 0
@@ -160,20 +160,24 @@ export default class DictionaryAdd extends Component {
               </RadioGroup>
             </Grow>
           </Grid>
-          <Grid item>
-            <Divider className={classes.divider} />
-          </Grid>
-          <Grid item>
-            <Grow in={true} timeout={1200}>
-              <FormControlLabel
-                name='isOpen'
-                checked={this.state.isOpen}
-                value={String(this.state.isOpen)}
-                onChange={this.handleChange}
-                control={<Checkbox />}
-                label='Можно добавлять «термин» при классификации' />
-            </Grow>
-          </Grid>
+          {this.state.isFlat && (<>
+            <Grid item>
+              <Grow in={true} timeout={800}>
+                <Divider className={classes.divider} />
+              </Grow>
+            </Grid>
+            <Grid item>
+              <Grow in={true} timeout={1000}>
+                <FormControlLabel
+                  name='isOpen'
+                  checked={this.state.isOpen}
+                  value={String(this.state.isOpen)}
+                  onChange={this.handleChange}
+                  control={<Checkbox />}
+                  label='Можно добавлять «термин» при классификации' />
+              </Grow>
+            </Grid>
+          </>)}
           <Grid item>
             <Grid
               container

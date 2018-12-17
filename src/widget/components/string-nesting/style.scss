@@ -1,0 +1,19 @@
+.NestingString {
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 12px;
+  .Wrapper {
+    white-space: nowrap;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+  }
+  .Ellips {
+    display: inline-block;
+    vertical-align: bottom;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

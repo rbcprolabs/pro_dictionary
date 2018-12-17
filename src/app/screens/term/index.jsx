@@ -43,6 +43,7 @@ const styles = (theme) => ({
 @withRouter
 @withStyles(styles)
 @injectStore((stores) => ({
+  app: stores.app,
   dictionary: stores.dictionary,
   term: stores.term,
   notification: stores.notification,
@@ -55,6 +56,7 @@ export default class Term extends Component {
     history: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     notification: PropTypes.object.isRequired,
+    app: PropTypes.object.isRequired,
     dictionary: PropTypes.object.isRequired,
     term: PropTypes.object.isRequired,
   }
@@ -100,7 +102,7 @@ export default class Term extends Component {
 
   async getData() {
     const
-      { match } = this.props,
+      { match, app } = this.props,
       dictionaryName = match.params.dictionary,
       terms = match.params.terms ? match.params.terms.split('/') : [],
       three = [dictionaryName, ...terms],
@@ -110,6 +112,9 @@ export default class Term extends Component {
     const fetchedData = await (parent
       ? this.fetchDataTerm(dictionaryName, parent, fullTerm)
       : this.fetchDataDictionary(dictionaryName, fullTerm))
+
+    if (fetchedData.dictionary)
+      app.dictionaryId = fetchedData.dictionary.id
 
     return {
       three,

@@ -11,6 +11,8 @@ export default class Extension {
   @observable dictionarySlug
   /** @type {string[]} */
   @observable tags = []
+  /** @type {string} */
+  @observable page = 'view'
 
   constructor() {
     ContentfulExtension.init((extension) => {

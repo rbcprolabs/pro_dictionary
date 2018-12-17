@@ -1,11 +1,12 @@
 {
   "name": "dictionary",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Dictionary web app",
   "main": "src/index.jsx",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=development node dev-server",
+    "start:production": "cross-env NODE_ENV=production node dev-server",
     "build:development": "cross-env NODE_ENV=development webpack",
     "build:production": "cross-env NODE_ENV=production webpack",
     "lint": "eslint --ext .jsx,.js src/",

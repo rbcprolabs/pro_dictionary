@@ -7,12 +7,17 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Button from '@material-ui/core/Button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
 import CenteredProgress from '@app/components/centered-progress'
 import { alphabet } from '@core/utils/sort'
+import LineStyle from '@material-ui/icons/LineStyle'
+import Reorder from '@material-ui/icons/Reorder'
+import Lock from '@material-ui/icons/Lock'
+import LockOpen from '@material-ui/icons/LockOpen'
 
 const
   styles = (theme) => ({
@@ -30,16 +35,24 @@ const
       overflowY: 'auto',
       ...theme.mixins.scrollbar,
     },
+    additionalIcon: {
+      width: 24,
+      marginRight: 0,
+      marginLeft: 16,
+    },
   }),
   listItemTypographyProp = { align: 'center' }
 
-
 @withStyles(styles)
-@injectStore('dictionary')
+@injectStore((stores) => ({
+  app: stores.app,
+  dictionary: stores.dictionary,
+}))
 @observer
 export default class DictionaryList extends Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    app: PropTypes.object.isRequired,
     dictionary: PropTypes.object.isRequired,
     onCreateClick: PropTypes.func,
   }
@@ -52,16 +65,34 @@ export default class DictionaryList extends Component {
     return alphabet(a.name, b.name)
   }
 
-  dictionariesList = ({ items, className }) =>
-    <List className={className}>
-      {items.sort(this.sortByAlphabet).map(({ id, name }, index) =>
-        <Grow in={true} timeout={1000 + index * 100} key={id}>
-          <ListItem button component={Link} to={`/${name}`}>
-            <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
-          </ListItem>
-        </Grow>
-      )}
-    </List>
+  dictionariesList(items, className) {
+    const { app, classes } = this.props
+
+    return (
+      <List className={className}>
+        {items.sort(this.sortByAlphabet).map(({ id, name, isFlat, isOpen = false }, index) =>
+          <Grow in={true} timeout={1000 + index * 100} key={id}>
+            <ListItem button component={Link} to={`/${name}`} selected={id === app.dictionaryId}>
+              <ListItemIcon>
+                {!isFlat
+                  ? <LineStyle />
+                  : <Reorder/>}
+              </ListItemIcon>
+              <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
+              {isFlat
+                ? <ListItemIcon className={classes.additionalIcon}>
+                    {isOpen
+                      ? <LockOpen />
+                      : <Lock />}
+                  </ListItemIcon>
+                : <div className={classes.additionalIcon} />
+              }
+            </ListItem>
+          </Grow>
+        )}
+      </List>
+    )
+  }
 
   render() {
     const {
@@ -91,7 +122,7 @@ export default class DictionaryList extends Component {
                     Словарей ещё нет
                     </Typography>
                 </Grow>
-              : <this.dictionariesList items={dictionary.items} className={classes.list} />
+              : this.dictionariesList(dictionary.items, classes.list)
           }
         </Grid>
         <Grid item className={classes.container}>

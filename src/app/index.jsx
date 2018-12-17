@@ -14,6 +14,7 @@ import {
   Term,
   Notification,
 } from '@core/stores'
+import AppStore from '@app/stores/app'
 
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -43,6 +44,7 @@ Amplify.configure({
 })
 
 const stores = {
+  app: new AppStore(),
   auth: new Auth(),
   dictionary: new Dictionary(),
   term: new Term(),

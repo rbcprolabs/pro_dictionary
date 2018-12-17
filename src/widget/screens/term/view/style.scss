@@ -1,5 +1,4 @@
 .TermView {
-  border: 1px solid #c3cfd4;
   margin-top: 16px;
   transition: all 0.3s ease;
   .Header {
@@ -7,11 +6,25 @@
     padding: 16px;
     font-size: 14px;
     color: #ffffff;
-    // Hide parent border
-    margin: -1px -1px -1px;
-
     a {
       cursor: pointer;
+    }
+  }
+  .Body {
+    border: 1px solid #c3cfd4;
+    border-top: none;
+    max-height: 600px;
+    overflow-y: auto;
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      background-color: #F5F5F5;
+    }
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: #F5F5F5;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #546171;
     }
   }
   .LoaderWrapper {

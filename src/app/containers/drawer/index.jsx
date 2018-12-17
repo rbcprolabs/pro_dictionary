@@ -115,19 +115,21 @@ export default class AppDrawer extends Component {
             authStatus
               ? <>
                   <DrawerHeader />
-                    {this.getFrameByName(frame)}
+                    {this.getFragmentByName(frame)}
                   <DrawerFooter />
                 </>
-              : this.getFrameByName('main')
+              : this.getFragmentByName('main')
           }
         </MuiThemeProvider>
       </Drawer>
     )
   }
 
-  getFrameByName = (frameName) => this._frames[frameName]
+  getFragmentByName(fragmentName) {
+    return this._fragments[fragmentName]
+  }
 
-  _frames = {
+  _fragments = {
     list: <DictionaryList onCreateClick={this.toggleDrawerSize('medium', 'add')} />,
     add: <DictionaryAdd onBackClick={this.toggleDrawerSize('small', 'list')} />,
     main: <Main />,

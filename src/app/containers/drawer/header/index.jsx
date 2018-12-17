@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { inject as injectStore } from 'mobx-react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Slide from '@material-ui/core/Slide'
@@ -22,14 +23,14 @@ const styles = (theme) => ({
   },
 })
 
-const DrawerHeader = ({ classes }) =>
+const DrawerHeader = ({ classes, app }) =>
   <Grid
     container
     justify='space-between'
     alignItems='center'
     className={classes.container}>
     <Grid item xs={4}>
-      <Link to='/'>
+      <Link to='/' onClick={app.clearDictionaryId}>
         <Slide direction='down' in={true} timeout={400} mountOnEnter unmountOnExit>
           <img src={logoUrl} />
         </Slide>
@@ -49,6 +50,7 @@ const DrawerHeader = ({ classes }) =>
 
 DrawerHeader.propTypes = {
   classes: PropTypes.object.isRequired,
+  app: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(DrawerHeader)
+export default injectStore('app')(withStyles(styles)(DrawerHeader))
