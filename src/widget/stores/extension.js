@@ -42,5 +42,13 @@ export default class Extension {
   _saveTags() {
     this._instance.field.setValue(this.tags.join(Extension.SPLIT_PATTERN))
   }
+
+  /**
+   * Navigation
+   * @param {string} pageName
+   */
+  go(pageName) {
+    this.page = pageName
+  }
 }
 

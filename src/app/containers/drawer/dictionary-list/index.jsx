@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import { observer, inject as injectStore } from 'mobx-react'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
@@ -34,6 +35,11 @@ const
       maxHeight: '45vh',
       overflowY: 'auto',
       ...theme.mixins.scrollbar,
+    },
+    listItemIcon: {
+      '& svg': {
+        fill: '#a7a7a7',
+      }
     },
     additionalIcon: {
       width: 24,
@@ -73,14 +79,14 @@ export default class DictionaryList extends Component {
         {items.sort(this.sortByAlphabet).map(({ id, name, isFlat, isOpen = false }, index) =>
           <Grow in={true} timeout={1000 + index * 100} key={id}>
             <ListItem button component={Link} to={`/${name}`} selected={id === app.dictionaryId}>
-              <ListItemIcon>
+              <ListItemIcon className={classes.listItemIcon}>
                 {!isFlat
                   ? <LineStyle />
                   : <Reorder/>}
               </ListItemIcon>
               <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
               {isFlat
-                ? <ListItemIcon className={classes.additionalIcon}>
+                ? <ListItemIcon className={classNames(classes.listItemIcon, classes.additionalIcon)}>
                     {isOpen
                       ? <LockOpen />
                       : <Lock />}

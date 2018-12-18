@@ -12,7 +12,7 @@ import Grow from '@material-ui/core/Grow'
 export default class TermAdd extends Component {
   static propTypes = {
     term: PropTypes.object.isRequired,
-    dictionaryId: PropTypes.string.isRequired,
+    dictionary: PropTypes.object.isRequired,
     termName: PropTypes.string.isRequired,
     parentId: PropTypes.string,
     onAdded: PropTypes.func.isRequired,
@@ -55,7 +55,7 @@ export default class TermAdd extends Component {
     const {
       term,
 
-      dictionaryId,
+      dictionary,
       parentId,
       onAdded,
       onError,
@@ -64,7 +64,7 @@ export default class TermAdd extends Component {
     try {
       const
         terms = this.splittedTerms.map((term) => ({ term })),
-        body = this.makeRequest(dictionaryId, terms, parentId)
+        body = this.makeRequest(dictionary.id, terms, parentId)
 
       await term.post(body)
 
@@ -78,23 +78,36 @@ export default class TermAdd extends Component {
     }
   }
 
-  render = () =>
-    <FullSizeInput
-      placeholder={`Впишите сюда новые термины в столбик для «${this.props.termName}»`}
-      value={this.state.terms}
-      id='terms'
-      onChange={this.handleChange}>
-      <Grid container justify='center'>
-        <Grow in={true} timeout={1000}>
-          <LoadingButton
-            loading={false}
-            variant='contained'
-            color='secondary'
-            disabled={!this.validateTerms}
-            onClick={::this.addTerms}>
+  makePlaceholder(termName, placeholderRule) {
+    let placeholder = `Впишите сюда новые термины в столбик для «${termName}»`
+    if (placeholderRule)
+      placeholder += `\n\nПо примеру: ${placeholderRule}`
+    return placeholder
+  }
+
+  render() {
+    const
+      { termName, dictionary } = this.props
+
+    return (
+      <FullSizeInput
+        placeholder={this.makePlaceholder(termName, dictionary.placeholderRule)}
+        value={this.state.terms}
+        id='terms'
+        onChange={this.handleChange}>
+        <Grid container justify='center'>
+          <Grow in={true} timeout={1000}>
+            <LoadingButton
+              loading={false}
+              variant='contained'
+              color='secondary'
+              disabled={!this.validateTerms}
+              onClick={::this.addTerms}>
             Добавить термины
         </LoadingButton>
         </Grow>
       </Grid>
-    </FullSizeInput>
+    </FullSizeInput >
+    )
+  }
 }

@@ -18,6 +18,7 @@ Button.propTypes = {
   type: PropTypes.oneOf([
     'primary',
     'secondary',
+    'flat',
   ]),
 }
 

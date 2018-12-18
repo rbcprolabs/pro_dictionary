@@ -10,7 +10,9 @@ import Button from '@widget/components/button'
 import Loader from '@widget/components/loader'
 import NestingString from '@widget/components/string-nesting'
 import { alphabet } from '@core/utils/sort'
+import withDictionary from '@widget/containers/dictionary'
 
+@withDictionary
 @injectStore((stores) => ({
   extension: stores.extension,
   term: stores.term,
@@ -20,7 +22,8 @@ export default class Search extends Component {
   static propTypes = {
     extension: PropTypes.object.isRequired,
     term: PropTypes.object.isRequired,
-    dictionaryId: PropTypes.string.isRequired,
+    dictionary: PropTypes.object.isRequired,
+    // dictionaryId: PropTypes.string.isRequired,
   }
 
   state = {
@@ -46,7 +49,7 @@ export default class Search extends Component {
   searchDebounced = debounce(1000, ::this.search)
 
   async search(query) {
-    const { items } = await this.props.term.findAllByTerm(this.props.dictionaryId, query)
+    const { items } = await this.props.term.findAllByDictionary(this.props.dictionary.id, query)
     this.setState({
       searchResults: items,
       loading: false,
@@ -81,11 +84,23 @@ export default class Search extends Component {
     return alphabet(a.term, b.term)
   }
 
+  addTerm() {
+    this.props.extension.go('add')
+  }
+
   renderNoMatchesFound() {
+    const { isFlat, isOpen } = this.props.dictionary
+
     return (
       <div className={style.Item}>
         Совпадений не найдено
-        <Button>Добавить термин</Button>
+        {isFlat && isOpen &&
+          <Button
+            className={style.AddTerm}
+            onClick={::this.addTerm}>
+            Добавить термин
+          </Button>
+        }
       </div>
     )
   }
@@ -98,16 +113,17 @@ export default class Search extends Component {
     return (
       <>
         <Input
+          className={style.Search}
           active={query.length > 0}
           before={() =>
             <SearchIcon
-              className={style.SearchIcon}
+              className={style.Icon}
               viewBox='0 0 14 14' />
           }
           after={({active}) =>
             <Button
               type='secondary'
-              className={style.SearchCancel}
+              className={style.Cancel}
               onClick={::this.clearInput}
               hidden={!active}>
               Отменить

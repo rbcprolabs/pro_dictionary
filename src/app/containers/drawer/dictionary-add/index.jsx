@@ -45,14 +45,28 @@ export default class DictionaryAdd extends Component {
 
   state = {
     name: '',
+    placeholderRule: '',
     isFlat: false,
     isOpen: true,
   }
 
-  validateForm = () => this.state.name.length > 0
+  _validators = {
+    form: () =>
+      this.state.name.length >= 2
+        && this._validators.name()
+        && this._validators.slug()
+        && this._validators.placeholderRule(),
+    name: () =>
+      !this.state.name || /^[а-я ]{1,80}$/gi.test(this.state.name),
+    slug: () =>
+      !this.state.slug || /^[a-z_]{1,80}$/g.test(this.state.slug),
+    placeholderRule: () =>
+      !this.state.placeholderRule || /^[а-яa-z0-9 ,.|:_-–—]{1,160}$/gi.test(this.state.placeholderRule),
+  }
 
-  validateName = (value) => /^[а-яА-Я ]+$/g.test(value)
-  validateSlug = (value) => /^[a-z_]+$/g.test(value)
+  validate(target, ...args) {
+    return this._validators[target](...args)
+  }
 
   handleChange = ({ target }) => this.setState({
     [target.name]: target.type === 'radio'
@@ -62,47 +76,47 @@ export default class DictionaryAdd extends Component {
         : target.checked
   })
 
-  handleSubmit = async (event) => {
+  async handleSubmit(event) {
     event.preventDefault()
 
     const {
       name,
+      slug = cyrillicToTranslit(name, '_').toLowerCase(),
       isFlat,
       isOpen,
-      slug = cyrillicToTranslit(name, '_').toLowerCase()
+      placeholderRule,
     } = this.state
 
+    const body = {
+      name,
+      slug,
+      isFlat,
+      ...(() => isFlat && { isOpen })(),
+      ...(() => placeholderRule && { placeholderRule })(),
+    }
+
     try {
-      await this.props.dictionary.post({
-        name,
-        slug,
-        isFlat,
-        isOpen,
-      })
+      await this.props.dictionary.post(body)
       this.props.notification.notify({
         variant: Notification.SUCCESS,
         message: 'Словарь успешно добавлен',
       })
+      this.props.onBackClick()
     } catch (error) {
       this.props.notification.notify({
         variant: Notification.ERROR,
         message: 'Ошибка добавления словаря',
       })
     }
-
-    this.props.onBackClick()
   }
 
   render() {
     const
-      {
-        classes,
-        onBackClick,
-        dictionary: {
-          loading,
-        },
-      } = this.props,
-      slug = this.state.slug || cyrillicToTranslit(this.state.name, '_').toLowerCase()
+      { classes, onBackClick, dictionary } = this.props,
+      { placeholderRule, name, isFlat, isOpen } = this.state,
+      slug = typeof this.state.slug === 'string'
+        ? this.state.slug
+        : cyrillicToTranslit(name, '_').toLowerCase()
 
     return (
       <Grid
@@ -110,7 +124,7 @@ export default class DictionaryAdd extends Component {
         alignItems='center'
         className={classes.container}
         component='form'
-        onSubmit={this.handleSubmit}>
+        onSubmit={::this.handleSubmit}>
         <Grid
           container
           spacing={24}
@@ -126,18 +140,19 @@ export default class DictionaryAdd extends Component {
           <Grid item>
             <Grow in={true} timeout={900}>
               <TextField
-                error={!!this.state.name && !this.validateName(this.state.name)}
+                error={!::this.validate('name')}
                 required
                 fullWidth
                 name='name'
                 label='Название словаря'
                 type='text'
-                value={this.state.name}
-                onChange={this.handleChange}/>
+                value={name}
+                onChange={this.handleChange}
+                margin='normal' />
             </Grow>
             <Grow in={true} timeout={1000}>
               <TextField
-                error={!!slug && !this.validateSlug(slug)}
+                error={!::this.validate('slug')}
                 required
                 fullWidth
                 name='slug'
@@ -147,20 +162,31 @@ export default class DictionaryAdd extends Component {
                 onChange={this.handleChange}
                 margin='normal' />
             </Grow>
+            <Grow in={true} timeout={1100}>
+              <TextField
+                error={!::this.validate('placeholderRule')}
+                fullWidth
+                name='placeholderRule'
+                label='Пример заполнения'
+                type='text'
+                value={placeholderRule}
+                onChange={this.handleChange}
+                margin='normal' />
+            </Grow>
           </Grid>
           <Grid item>
             <Grow in={true} timeout={1100}>
               <RadioGroup
                 aria-label='Тип'
                 name='isFlat'
-                value={String(this.state.isFlat)}
+                value={String(isFlat)}
                 onChange={this.handleChange}>
                 <FormControlLabel value='false' control={<Radio />} label='Иерархический' />
                 <FormControlLabel value='true' control={<Radio />} label='Плоский' />
               </RadioGroup>
             </Grow>
           </Grid>
-          {this.state.isFlat && (<>
+          {isFlat && (<>
             <Grid item>
               <Grow in={true} timeout={800}>
                 <Divider className={classes.divider} />
@@ -170,8 +196,8 @@ export default class DictionaryAdd extends Component {
               <Grow in={true} timeout={1000}>
                 <FormControlLabel
                   name='isOpen'
-                  checked={this.state.isOpen}
-                  value={String(this.state.isOpen)}
+                  checked={isOpen}
+                  value={String(isOpen)}
                   onChange={this.handleChange}
                   control={<Checkbox />}
                   label='Можно добавлять «термин» при классификации' />
@@ -197,11 +223,11 @@ export default class DictionaryAdd extends Component {
                 <Grow in={true} timeout={1400}>
                   <LoadingButton
                     fullWidth
-                    loading={loading}
+                    loading={dictionary.loading}
                     variant='contained'
                     color='secondary'
                     type='submit'
-                    disabled={!this.validateForm}>
+                    disabled={!::this.validate('form')}>
                     Добавить
                 </LoadingButton>
                 </Grow>

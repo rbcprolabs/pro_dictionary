@@ -83,13 +83,13 @@ export default class Terms {
     return result
   }
 
-  findAllByTerm = async (dictionaryId, term) => {
+  findAllByDictionary = async (dictionaryId, term) => {
     this.searchLoading = true
     let result = null
     try {
       result = await API.get(
         'term',
-        `/termAllFind/${encodeURIComponent(dictionaryId)}/${encodeURIComponent(term)}`,
+        `/termFindAllByDictionary/${encodeURIComponent(dictionaryId)}/${encodeURIComponent(term)}`,
       )
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)

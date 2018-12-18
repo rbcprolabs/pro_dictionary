@@ -8,7 +8,6 @@
   border: 1px solid transparent;
   border-radius: 2px;
   line-height: 18px;
-  background-size: 100% 200%;
   transition: all  0.3s ease-in;
   opacity: 1;
   &:focus {
@@ -17,20 +16,20 @@
   &[hidden] {
     opacity: 0;
   }
+  &[disabled] {
+    cursor: not-allowed;
+  }
 }
 
 .primary {
-  background: linear-gradient(to top, #3c80cf, #5b9fef);
+  background: #0EB17C;
   color: #fff;
-  border-color: #3c80cf;
   &:not([disabled]):hover {
-    background: linear-gradient(to bottom, #3c80cf, #5b9fef);
+    background: #086A4A;
   }
   &[disabled] {
-    cursor: not-allowed;
     color: #eee;
-    background: linear-gradient(to top, #659bd9, #89baf4);
-    border-color: #659bd9;
+    background: #12E09D;
   }
 }
 
@@ -38,4 +37,13 @@
   background: #e5ebed;
   color: #536171;
   border-color: #c3cfd5;
+}
+
+.flat {
+  background: transparent;
+  color: #546171;
+  &:not([disabled]):hover {
+    background-color: #c3cfd5;
+    border-color: #c3cfd5;
+  }
 }

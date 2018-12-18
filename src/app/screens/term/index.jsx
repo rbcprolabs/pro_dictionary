@@ -244,7 +244,7 @@ export default class Term extends Component {
                   lg={3}
                   xl={2}>
                   <TermAdd
-                    dictionaryId={dictionary.id}
+                    dictionary={dictionary}
                     termName={termName}
                     parentId={parent && parent.id}
                     onAdded={::this.onAdded}

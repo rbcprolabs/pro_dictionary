@@ -37,13 +37,23 @@ export default class Login extends Component {
     notification: PropTypes.object.isRequired,
   }
 
+  loginInput = React.createRef()
+
   state = {
     login: '',
     password: '',
     fromWidget: false,
   }
 
-  validateForm = () => this.state.login.length > 0 && this.state.password.length > 0
+  validateForm() {
+    // detect autofill
+    if (this.loginInput.current
+        && this.loginInput.current.matches(':-webkit-autofill')) {
+      return true
+    }
+
+    return this.state.login.length > 0 && this.state.password.length > 0
+  }
 
   handleChange = ({ target }) => this.setState({
     [target.id]: target.value,
@@ -108,9 +118,10 @@ export default class Login extends Component {
             spacing={40}
             direction='column'>
             <Grid item>
-              <Grow in timeout={700}>
+              <Grow in timeout={800}>
                 <TextField
                   autoFocus
+                  inputRef={this.loginInput}
                   id='login'
                   label='Логин'
                   className={classes.textField}
@@ -121,7 +132,7 @@ export default class Login extends Component {
               </Grow>
             </Grid>
             <Grid item>
-              <Grow in timeout={800}>
+              <Grow in timeout={900}>
                 <TextField
                   id='password'
                   label='Пароль'
@@ -139,7 +150,7 @@ export default class Login extends Component {
                 alignItems='center'
                 direction='column'>
                 <Grid item>
-                  <Grow in timeout={900}>
+                  <Grow in timeout={1000}>
                     <LoadingButton
                       loading={loading}
                       type='submit'
@@ -151,7 +162,7 @@ export default class Login extends Component {
                   </Grow>
                 </Grid>
                 <Grid item>
-                  <Grow in timeout={1000}>
+                  <Grow in timeout={1100}>
                     <Button
                       color='secondary'
                       disabled={loading}
