@@ -6,8 +6,11 @@
   border: solid 1px #d3dce0;
   box-sizing: border-box;
   display: flex;
-  &.Active {
+  &.active {
     border: solid 1px #13ce8f;
+  }
+  &.error {
+    border: solid 1px #f44336;
   }
   input {
     border: none;

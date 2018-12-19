@@ -64,8 +64,8 @@ export default class DictionaryAdd extends Component {
       !this.state.placeholderRule || /^[а-яa-z0-9 ,.|:_-–—]{1,160}$/gi.test(this.state.placeholderRule),
   }
 
-  validate(target, ...args) {
-    return this._validators[target](...args)
+  validate(target) {
+    return this._validators[target]()
   }
 
   handleChange = ({ target }) => this.setState({

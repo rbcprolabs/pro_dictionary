@@ -24,12 +24,10 @@
   margin: 20px auto;
 }
 
-.SearchResuls {
+.SearchResults {
   position: absolute;
   width: 100%;
   background-color: #f2f5f6;
-  opacity: 0;
-  z-index: -5;
   max-height: 400px;
   overflow-y: auto;
   &::-webkit-scrollbar-track {
@@ -42,10 +40,6 @@
   }
   &::-webkit-scrollbar-thumb {
     background-color: #546171;
-  }
-  &.open {
-    opacity: 1;
-    z-index: 3;
   }
   .Item {
     padding: 16px 24px;

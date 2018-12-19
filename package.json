@@ -1,6 +1,6 @@
 {
   "name": "dictionary",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Dictionary web app",
   "main": "src/index.jsx",
   "scripts": {
@@ -32,6 +32,7 @@
     "offline-plugin": "^5.0.6",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.6.3",
     "react-router-dom": "^4.3.1",
     "throttle-debounce": "^2.0.1"

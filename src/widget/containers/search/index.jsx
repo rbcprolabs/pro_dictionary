@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import classNames from 'classnames'
 import { observer, inject as injectStore } from 'mobx-react'
 import { ReactComponent as SearchIcon } from '@widget/assets/icons/search.svg'
 import Input from '@widget/components/input'
@@ -11,6 +10,7 @@ import Loader from '@widget/components/loader'
 import NestingString from '@widget/components/string-nesting'
 import { alphabet } from '@core/utils/sort'
 import withDictionary from '@widget/containers/dictionary'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 @withDictionary
 @injectStore((stores) => ({
@@ -23,7 +23,6 @@ export default class Search extends Component {
     extension: PropTypes.object.isRequired,
     term: PropTypes.object.isRequired,
     dictionary: PropTypes.object.isRequired,
-    // dictionaryId: PropTypes.string.isRequired,
   }
 
   state = {
@@ -36,7 +35,7 @@ export default class Search extends Component {
     const
       query = event.target.value,
       resultsDialogOpen = query.length >= 1,
-      loading = this.state.query.length >= 2,
+      loading = query.length >= 2,
       searchResults = (query === '')
         ? this.state.searchResults
         : []
@@ -61,6 +60,7 @@ export default class Search extends Component {
       query: '',
       searchResults: [],
       resultsDialogOpen: false,
+      loading: false,
     })
   }
 
@@ -75,7 +75,7 @@ export default class Search extends Component {
         key={id}
         disabled={alreadyAdded}
         onClick={!alreadyAdded ? this.addTag(fullTerm) : null}>
-        <NestingString strings={fullTerm.split('/')} delimeter=' > ' />
+        <NestingString strings={fullTerm.split('/')} delimeter=' ➜ ' />
       </div>
     )
   }
@@ -93,7 +93,9 @@ export default class Search extends Component {
 
     return (
       <div className={style.Item}>
-        Совпадений не найдено
+        {this.state.query.length <= 1
+          ? 'Введите более одного символа'
+          : 'Совпадений не найдено'}
         {isFlat && isOpen &&
           <Button
             className={style.AddTerm}
@@ -120,30 +122,36 @@ export default class Search extends Component {
               className={style.Icon}
               viewBox='0 0 14 14' />
           }
-          after={({active}) =>
+          after={() =>
             <Button
-              type='secondary'
+              variant='secondary'
               className={style.Cancel}
-              onClick={::this.clearInput}
-              hidden={!active}>
+              onClick={::this.clearInput}>
               Отменить
             </Button>
           }
+          hideAfter={({active}) => !active}
           placeholder='Искать термин'
           value={query}
           onChange={::this.handleSearchInput} />
-        <div className={classNames(style.SearchResuls, {
-          [style.open]: resultsDialogOpen
-        })}>
-          {loading
-            ? <Loader type='cube-grid' className={style.Loader} />
-            : searchResults.length > 0
-              ? searchResults
-                  .slice() // mobx magic
-                  .sort(this.sortByAlphabet)
-                  .map((tag) => this.renderTermItem(tag, extension.tags.includes(tag.fullTerm)))
-              : this.renderNoMatchesFound()}
-        </div>
+        <ReactCSSTransitionGroup
+          component='div'
+          transitionName='fade-in-up'
+          transitionEnterTimeout={500}
+          transitionLeaveTimeout={300}>
+          {resultsDialogOpen &&
+            <div className={style.SearchResults}>
+              {loading
+                ? <Loader type='circles' className={style.Loader} />
+                : searchResults.length > 0
+                  ? searchResults
+                      .slice() // mobx magic
+                      .sort(this.sortByAlphabet)
+                      .map((tag) => this.renderTermItem(tag, extension.tags.includes(tag.fullTerm)))
+                  : this.renderNoMatchesFound()}
+            </div>
+          }
+        </ReactCSSTransitionGroup>
       </>
     )
   }

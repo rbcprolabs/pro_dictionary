@@ -21,6 +21,7 @@ module.exports = ({ mode, dirname }) => {
         '@core/stores': pathResolve(dirname, 'src/core/stores'),
         '@core/utils': pathResolve(dirname, 'src/core/utils'),
         '@core/config': pathResolve(dirname, 'src/core/config.js'),
+        '@core/configure': pathResolve(dirname, 'src/core/configure.js'),
       },
     },
 

@@ -35,7 +35,7 @@ export default class Auth extends Component {
       <>
         <Hint>Для использования словаря вам необходимо авторизироваться</Hint>
         {!this.state.loginWindowIsOpen
-          ? <Button type='primary' onClick={::this.openPopupWindow}>Войти</Button>
+          ? <Button variant='primary' onClick={::this.openPopupWindow}>Войти</Button>
           : <Hint>Пожалуйста авторизируйтесь в открытом окне</Hint>
         }
       </>

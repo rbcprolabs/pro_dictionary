@@ -1,18 +1,25 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import style from './style.scss'
 
-const Loader = ({className, ...props}) =>
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='60'
-    height='60'
-    className={classNames(style.Loader, className)}
-    {...props}>
-    <path d='M10 30a20 20 0 0 0 20 20' />
-    <path d='M30 10a20 20 0 0 0-20 20' />
-    <path d='M50 30a20 20 0 0 0-20-20' />
-  </svg>
+const Circles = ({
+  variant = 'dark',
+  className,
+  ...props
+}) =>
+  <div className={classNames(style.Loader, style[variant], className)} {...props}>
+    <div/>
+    <div/>
+    <div/>
+    <div/>
+  </div>
 
+Circles.propTypes = {
+  variant: PropTypes.oneOf([
+    'dark',
+    'light',
+  ])
+}
 
-export default Loader
+export default Circles

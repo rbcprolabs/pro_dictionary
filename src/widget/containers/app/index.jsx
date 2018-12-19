@@ -9,6 +9,7 @@ import {
   View as TermView,
   Add as TermAdd,
 } from '@widget/screens/term'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import hmr from '@core/utils/hmr'
 
 @hmr(module)
@@ -35,7 +36,13 @@ export default class App extends Component {
   renderContent() {
     return (<>
       <Tags onAdd={::this.toggleShowAdditionals}/>
-      {this.state.showAdditional && this.page}
+      <ReactCSSTransitionGroup
+        component='div'
+        transitionName='fade-in-up'
+        transitionEnterTimeout={500}
+        transitionLeaveTimeout={300}>
+        {this.state.showAdditional && <div>{this.page}</div>}
+      </ReactCSSTransitionGroup>
     </>)
   }
 
@@ -43,13 +50,18 @@ export default class App extends Component {
     const { auth, extension } = this.props
 
     return (
-      <div className={style.FormField}>
+      <ReactCSSTransitionGroup
+        component='div'
+        className={style.FormField}
+        transitionName='fade-in-up'
+        transitionEnterTimeout={500}
+        transitionLeaveTimeout={300}>
         {auth.loading || !extension.inited
           ? this.getFragmentByName('init')
           : !auth.status
             ? this.getFragmentByName('auth')
             : this.renderContent()}
-      </div>
+      </ReactCSSTransitionGroup>
     )
   }
 

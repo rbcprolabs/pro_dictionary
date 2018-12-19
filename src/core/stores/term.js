@@ -6,7 +6,7 @@ export default class Terms {
 
   @observable items = {}
   @observable loading = false
-  @observable searchLoading = false
+  @observable findLoading = false
 
   @action
   post = async (body) => {
@@ -84,7 +84,7 @@ export default class Terms {
   }
 
   findAllByDictionary = async (dictionaryId, term) => {
-    this.searchLoading = true
+    this.findLoading = true
     let result = null
     try {
       result = await API.get(
@@ -95,7 +95,7 @@ export default class Terms {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
         console.error(error) // eslint-disable-line no-console
     } finally {
-      this.searchLoading = false
+      this.findLoading = false
     }
     return result
   }

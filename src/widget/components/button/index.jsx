@@ -6,16 +6,16 @@ import style from './style.scss'
 const Button = ({
   children,
   className,
-  type = 'primary',
+  variant = 'primary',
   ...props,
 }) =>
-  <button className={classNames(style.Button, style[type], className)} {...props}>
+  <button className={classNames(style.Button, style[variant], className)} {...props}>
     {children}
   </button>
 
 Button.propTypes = {
   children: PropTypes.node,
-  type: PropTypes.oneOf([
+  variant: PropTypes.oneOf([
     'primary',
     'secondary',
     'flat',
