@@ -1,0 +1,9 @@
+.FormField {
+  margin-bottom: 2em;
+  // fix jerking movement
+  overflow: hidden;
+  & > label {
+    display: block;
+    margin-bottom: 0.65em;
+  }
+}

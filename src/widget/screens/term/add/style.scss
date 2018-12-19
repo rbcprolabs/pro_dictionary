@@ -1,0 +1,25 @@
+.TermAdd {
+  padding: 32px;
+  background-color: #f0f3f5;
+  .Title,
+  .SubTitle {
+    font-weight: bold;
+  }
+  .Title {
+    margin: 0 0 16px;
+  }
+  .SubTitle {
+    margin: 8px 0 4px;
+  }
+  .Input {
+    margin-bottom: 16px;
+  }
+  .BottomBar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+    & > *:not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+}

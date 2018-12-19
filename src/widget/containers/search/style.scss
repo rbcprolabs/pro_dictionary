@@ -1,0 +1,66 @@
+.Search {
+  input {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .Icon {
+    padding: 12px;
+  }
+  .Cancel {
+    margin: 6px;
+    padding: 4px 12px;
+    background: #546171;
+    border-color: #546171;
+    color: white;
+    &:hover {
+      background-color: #cd4739;
+      border-color: #cd4739;
+      color: white;
+    }
+  }
+}
+
+.Loader {
+  margin: 20px auto;
+}
+
+.SearchResults {
+  position: absolute;
+  width: 100%;
+  background-color: #f2f5f6;
+  max-height: 400px;
+  overflow-y: auto;
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+  }
+  &::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #546171;
+  }
+  .Item {
+    padding: 16px 24px;
+    transition: all .3s ease-in;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    &:first-child,
+    &:last-child {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    &:hover {
+      background-color: #e5ebed
+    }
+    &[disabled] {
+      cursor: not-allowed;
+    }
+    .AddTerm {
+      margin-left: auto;
+      padding: 4px 12px;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+.Checkbox {
+  input[type='checkbox'] {
+    display: none;
+    + label {
+      display: block;
+      margin: 2px 0;
+      cursor: pointer;
+      padding: 2px 0;
+      user-select: none;
+      &:before {
+        content: '\2714';
+        border: 2px solid #546171;
+        display: inline-block;
+        box-sizing: border-box;
+        width: 24px;
+        height: 24px;
+        padding-left: 4px;
+        margin-right: 8px;
+        color: transparent;
+        transition: .2s;
+        font-size: 14px;
+        line-height: 22px;
+      }
+    }
+    &:not(:disabled):not(:checked) + label {
+      &:hover::before {
+        border-color: #086A4A;
+        color: rgba(8, 106, 84, 0.5);
+      }
+      &:active::before {
+        color: #086A4A;
+      }
+    }
+    &:not(:disabled):checked + label {
+      &:hover::before {
+        border-color: #086A4A;
+        background-color: #086A4A;
+      }
+      &:active::before {
+        background-color: transparent;
+        color: #086A4A;
+      }
+    }
+    &:checked + label::before {
+      background-color: #0EB17C;
+      border-color: #0EB17C;
+      color: #fff;
+    }
+    &:disabled + label::before {
+      border-color: #aaa;
+    }
+    &:not(:checked):disabled + label::before {
+      content: '\2716';
+      color: #aaa;
+    }
+    &:checked:disabled + label::before {
+      background-color: #12E09D;
+      border-color: #12E09D;
+    }
+  }
+}

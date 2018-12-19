@@ -3,11 +3,23 @@
       "experimentalDecorators": true,
       "baseUrl": "./",
       "paths": {
-        "components/*": ["src/components/*"],
-        "containers/*": ["src/containers/*"],
-        "screens/*": ["src/screens/*"],
-        "stores/*": ["src/stores/*"],
-        "utils/*": ["src/utils/*"]
+        /* Common */
+        "@core/stores/*": ["src/core/stores/*"],
+        "@core/utils/*": ["src/core/utils/*"],
+        "@core/config/*": ["src/core/config.js"],
+        /* Admin site */
+        "@app/components/*": ["src/app/components/*"],
+        "@app/containers/*": ["src/app/containers/*"],
+        "@app/screens/*": ["src/app/screens/*"],
+        "@app/stores/*": ["src/app/stores/*"],
+        "@app/theme/*": ["src/app/theme.js"],
+        "@app/assets/*": ["src/app/assets/*"],
+        /* Contentful widget */
+        "@widget/components/*": ["src/widget/components/*"],
+        "@widget/containers/*": ["src/widget/containers/*"],
+        "@widget/screens/*": ["src/widget/screens/*"],
+        "@widget/stores/*": ["src/widget/stores/*"],
+        "@widget/assets/*": ["src/widget/assets/*"],
       }
   }
 }

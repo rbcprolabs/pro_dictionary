@@ -1,0 +1,7 @@
+.Hint {
+  color: #808080;
+  font-size: 13px;
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}

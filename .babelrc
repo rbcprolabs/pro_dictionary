@@ -1,10 +1,19 @@
 {
   "presets": [
-    "@babel/preset-env",
+    ["@babel/preset-env", {
+      "targets": {
+        "browsers": ["last 2 versions"]
+      },
+      "exclude": ["transform-async-to-generator", "transform-regenerator"],
+      "loose": true
+    }],
     "@babel/preset-react"
   ],
   "plugins": [
+    ["module:fast-async", { "spec": true }],
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
-    ["@babel/plugin-proposal-class-properties", { "loose": true }]
+    ["@babel/plugin-proposal-class-properties", { "loose": true }],
+    "@babel/plugin-proposal-function-bind",
+    "react-hot-loader/babel"
   ]
 }
