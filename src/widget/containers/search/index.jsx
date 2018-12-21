@@ -69,13 +69,20 @@ export default class Search extends Component {
   }
 
   renderTermItem({ id, fullTerm }, alreadyAdded) {
+    const
+      fulTermSplitted = fullTerm.split('/'),
+      fulTermWODictionaryName = fulTermSplitted.slice(1, fulTermSplitted.length)
+
     return (
       <div
         className={style.Item}
         key={id}
         disabled={alreadyAdded}
         onClick={!alreadyAdded ? this.addTag(fullTerm) : null}>
-        <NestingString strings={fullTerm.split('/')} delimeter=' ➜ ' />
+        <NestingString
+          strings={fulTermWODictionaryName}
+          highlight={this.state.query}
+          delimeter=' ➜ ' />
       </div>
     )
   }

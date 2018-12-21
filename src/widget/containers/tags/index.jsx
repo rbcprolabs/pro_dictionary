@@ -10,24 +10,33 @@ function removeTag(fullTerm) {
   return () => this.removeTag(fullTerm)
 }
 
-const Tags = ({extension, onAdd}) =>
+const Tags = ({extension, after: After}) =>
   <ReactCSSTransitionGroup
     component='div'
     className={style.TagContainer}
     transitionName='fade-in-left'
     transitionEnterTimeout={500}
     transitionLeaveTimeout={300}>
-    {extension.tags.map((fullTerm) =>
-      <Tag key={fullTerm} removable onRemoveClick={extension::removeTag(fullTerm)}>
-        <NestingString strings={fullTerm.split('/')} delimeter=' ➜ ' />
-      </Tag>
-    )}
-    <Tag add onAddClick={onAdd} />
+    {extension.tags.map((fullTerm) => {
+      const
+        fulTermSplitted = fullTerm.split('/'),
+        fulTermWODictionaryName = fulTermSplitted.slice(1, fulTermSplitted.length)
+
+      return (
+        <Tag key={fullTerm} removable onRemoveClick={extension::removeTag(fullTerm)}>
+          <NestingString strings={fulTermWODictionaryName} delimeter=' ➜ ' />
+        </Tag>
+      )
+    })}
+    <div>
+      {After}
+    </div>
   </ReactCSSTransitionGroup>
 
 Tags.propTypes = {
   extension: PropTypes.object.isRequired,
-  onAdd: PropTypes.func.isRequired,
+  // onAdd: PropTypes.func.isRequired,
+  after: PropTypes.node.isRequired,
 }
 
 export default injectStore('extension')(observer(Tags))

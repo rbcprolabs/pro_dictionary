@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { ReactComponent as CloseIcon } from '@widget/assets/icons/remove.svg'
-import { ReactComponent as AddIcon } from '@widget/assets/icons/add.svg'
 import style from './style.scss'
 
 const Tag = ({
@@ -9,23 +8,14 @@ const Tag = ({
   onClick,
   removable,
   onRemoveClick,
-  add,
-  onAddClick,
+  ...props,
 }) =>
-  <div className={style.Tag}>
-    {
-      !add && <label onClick={onClick}>{children}</label>
-    }
-    {
-      !add && removable &&
+  <div className={style.Tag} {...props}>
+    <label onClick={onClick}>{children}</label>
+    {removable &&
       <div className={style.CloseIcon} onClick={onRemoveClick}>
         <CloseIcon />
-      </div>
-      || add && !removable &&
-      <div className={style.AddIcon} onClick={onAddClick}>
-        <AddIcon />
-      </div>
-    }
+      </div>}
   </div>
 
 Tag.propTypes = {
@@ -33,8 +23,6 @@ Tag.propTypes = {
   onClick: PropTypes.func,
   removable: PropTypes.bool,
   onRemoveClick: PropTypes.func,
-  add: PropTypes.bool,
-  onAddClick: PropTypes.func,
 }
 
 export default Tag

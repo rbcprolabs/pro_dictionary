@@ -61,7 +61,6 @@ module.exports = ({ mode, dirname }) => {
     },
 
     plugins: [
-      // new webpack.EnvironmentPlugin(['NODE_ENV']),
       new webpack.DefinePlugin({
         'appVersion': JSON.stringify(version),
       }),

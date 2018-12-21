@@ -5,11 +5,14 @@ import Auth from '@widget/screens/auth'
 import style from './style.scss'
 import Init from '@widget/screens/init'
 import Tags from '@widget/containers/tags'
+import ToggleIcon from '@widget/components/toggle-icon'
 import {
   View as TermView,
   Add as TermAdd,
 } from '@widget/screens/term'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { ReactComponent as CloseIcon } from '@widget/assets/icons/arrow-up.svg'
+import { ReactComponent as AddIcon } from '@widget/assets/icons/add.svg'
 import hmr from '@core/utils/hmr'
 
 @hmr(module)
@@ -24,6 +27,8 @@ export default class App extends Component {
     auth: PropTypes.object.isRequired,
   }
 
+  contentContainer = React.createRef()
+
   state = {
     /** @type {boolean} */
     showAdditional: false,
@@ -35,7 +40,13 @@ export default class App extends Component {
 
   renderContent() {
     return (<>
-      <Tags onAdd={::this.toggleShowAdditionals}/>
+      <Tags after={
+        <ToggleIcon
+          active={this.state.showAdditional}
+          activeIcon={<CloseIcon />}
+          inactiveIcon={<AddIcon />}
+          onClick={::this.toggleShowAdditionals}/>
+      }/>
       <ReactCSSTransitionGroup
         component='div'
         transitionName='fade-in-up'

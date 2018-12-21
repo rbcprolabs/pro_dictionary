@@ -6,7 +6,6 @@ import Input from '@widget/components/input'
 import Button from '@widget/components/button'
 import style from './style.scss'
 import LoadingButton from '@widget/components/loading-button'
-import Checkbox from '@widget/components/checkbox'
 
 @withDictionary
 @injectStore(({
@@ -29,13 +28,10 @@ export default class TermAdd extends Component {
 
   state = {
     term: '',
-    addToTags: false,
   }
 
   handleChange = ({ target }) => this.setState({
-    [target.name]: target.type === 'text'
-      ? target.value
-      : target.checked
+    [target.name]: target.value
   })
 
   _validators = {
@@ -59,8 +55,7 @@ export default class TermAdd extends Component {
       })
 
       // add to all extension terms
-      if (this.state.addToTags)
-        extension.addTag(result.fullTerm)
+      extension.addTag(result.fullTerm)
 
       // reload terms
       await term.get(dictionary.name, true)
@@ -79,8 +74,6 @@ export default class TermAdd extends Component {
   }
 
   render() {
-    const{ term, addToTags } = this.state
-
     return (
       <section className={style.TermAdd}>
         <h2 className={style.Title}>Добавление нового термина</h2>
@@ -89,15 +82,9 @@ export default class TermAdd extends Component {
           placeholder={this.makePlaceholder(this.props.dictionary.placeholderRule)}
           className={style.Input}
           name='term'
-          value={term}
+          value={this.state.term}
           onChange={this.handleChange}
           error={!::this.validate('term')} />
-        <Checkbox
-          name='addToTags'
-          checked={addToTags}
-          onChange={this.handleChange}>
-          Добавить к тегам
-        </Checkbox>
         <div className={style.BottomBar}>
           <Button variant='flat' onClick={::this.goBack}>Оменить</Button>
           <LoadingButton

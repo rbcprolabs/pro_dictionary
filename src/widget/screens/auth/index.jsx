@@ -22,7 +22,9 @@ export default class Auth extends Component {
     this.setState({ loginWindowIsOpen: true })
     /** @type {boolean} */
     const result = await popupWindow(enviroment({
-      production: 'https://d2jdttpnes7jtt.cloudfront.net/login?widget=true',
+      production: location.host.includes('localhost')
+        ? 'https://localhost:8080/login?widget=true'
+        : 'https://d2jdttpnes7jtt.cloudfront.net/login?widget=true',
       development: 'https://localhost:8080/login?widget=true',
     }), 'Авторизация', 400, 380)
 

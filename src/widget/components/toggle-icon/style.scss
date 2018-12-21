@@ -1,0 +1,32 @@
+.ToggleIcon {
+  border-radius: 2px;
+  padding: 10px;
+  display: flex;
+  transition: all .15s ease-in;
+  cursor: pointer;
+
+  &.active {
+    background-color: #0eb87f;
+    &:hover {
+      background-color: #546171;
+      svg path {
+        transition: all .15s ease-in;
+
+        fill: #fff;
+        stroke: #fff;
+      }
+    }
+  }
+  &.inactive {
+    background-color: #e5ebed;
+    &:hover {
+      background-color: #0eb87f;
+      svg path {
+        transition: all .15s ease-in;
+
+        fill: #fff;
+        stroke: #fff;
+      }
+    }
+  }
+}
