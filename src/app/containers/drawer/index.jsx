@@ -6,51 +6,54 @@ import withStyles from '@material-ui/core/styles/withStyles'
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
 import DrawerHeader from './header'
 import DrawerFooter from './footer'
-import DictionaryList from './dictionary-list'
-import DictionaryAdd from './dictionary-add'
+import DictionaryList from './dictionary/list'
+import DictionaryAdd from './dictionary/add'
+import DictionaryEdit from './dictionary/edit'
 import Main from './main'
 import Drawer from '@material-ui/core/Drawer'
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import { darkTheme } from '@app/theme'
 
-const styles = (theme) => ({
-  drawerPaper: {
-    overflow: 'hidden',
-    backgroundColor: theme.color.dark,
-  },
-  ['drawer-small']: {
-    width: theme.drawerWidth.small,
-    [theme.breakpoints.up('sm')]: {
-      position: 'relative',
+const
+  styles = (theme) => ({
+    drawerPaper: {
+      overflow: 'hidden',
+      backgroundColor: theme.color.dark,
     },
-  },
-  ['drawer-medium']: {
-    width: theme.drawerWidth.medium,
-    [theme.breakpoints.up('sm')]: {
-      position: 'relative',
+    ['drawer-small']: {
+      width: theme.drawerWidth.small,
+      [theme.breakpoints.up('sm')]: {
+        position: 'relative',
+      },
     },
-  },
-  ['drawer-large']: {
-    width: theme.drawerWidth.large,
-    height: '100%',
-  },
-  open: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  close: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  }
-})
+    ['drawer-medium']: {
+      width: theme.drawerWidth.medium,
+      [theme.breakpoints.up('sm')]: {
+        position: 'relative',
+      },
+    },
+    ['drawer-large']: {
+      width: theme.drawerWidth.large,
+      height: '100%',
+    },
+    open: {
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    close: {
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    }
+  }),
+  paperProps = { elevation: 2 }
 
 @withStyles(styles)
 @withWidth()
-@injectStore(stores => ({
+@injectStore((stores) => ({
   authStatus: stores.auth.status,
 }))
 @observer
@@ -68,12 +71,16 @@ export default class AppDrawer extends Component {
   }
 
   state = {
-    frame: 'list',
+    fragment: 'list',
     openDrawer: false,
     size: 'small',
+    editId: null,
   }
 
-  toggleDrawerSize = (size, frame) => () => this.setState({ size, frame })
+  openFragment = (fragment, editId = null) => () => {
+    const { __drawerSize__: size } = this.getFragmentByName(fragment).type
+    this.setState({ fragment, size, editId })
+  }
 
   componentDidUpdate(_prevProps, prevState) {
     if (this._sizes[prevState.size] < this._sizes[this.state.size] && this.state.openDrawer !== true)
@@ -82,22 +89,25 @@ export default class AppDrawer extends Component {
       this.state.openDrawer = false // eslint-disable-line react/no-direct-mutation-state
   }
 
+  renderContent() {
+    return (
+      <>
+        <DrawerHeader />
+          {this.getFragmentByName(this.state.fragment, this.state.editId)}
+        <DrawerFooter />
+      </>
+    )
+  }
+
   render() {
     const
-      {
-        classes,
-        authStatus,
-        width,
-      } = this.props,
-      {
-        size,
-        openDrawer,
-        frame,
-      } = this.state
+      { classes, authStatus, width } = this.props,
+      { size, openDrawer } = this.state,
+      widthUpSm = isWidthUp('sm', width)
 
     return (
       <Drawer
-        variant={isWidthUp('sm', width) && size !== 'large' ? 'permanent' : 'temporary'}
+        variant={widthUpSm && size !== 'large' ? 'permanent' : 'temporary'}
         classes={{
           paper: classNames(
             classes.drawerPaper,
@@ -105,33 +115,29 @@ export default class AppDrawer extends Component {
             classes[openDrawer ? 'open' : 'close'],
           ),
         }}
-        PaperProps={{
-          elevation: 2,
-        }}
-        open={isWidthUp('sm', width) && size === 'large'}
+        PaperProps={paperProps}
+        open={widthUpSm && size === 'large'}
         anchor={'left'}>
         <MuiThemeProvider theme={darkTheme}>
-          {
-            authStatus
-              ? <>
-                  <DrawerHeader />
-                    {this.getFragmentByName(frame)}
-                  <DrawerFooter />
-                </>
-              : this.getFragmentByName('main')
+          {authStatus
+            ? this.renderContent()
+            : this.getFragmentByName('main')
           }
         </MuiThemeProvider>
       </Drawer>
     )
   }
 
-  getFragmentByName(fragmentName) {
-    return this._fragments[fragmentName]
+  getFragmentByName(fragmentName, ...args) {
+    return this._fragments[fragmentName](...args)
   }
 
   _fragments = {
-    list: <DictionaryList onCreateClick={this.toggleDrawerSize('medium', 'add')} />,
-    add: <DictionaryAdd onBackClick={this.toggleDrawerSize('small', 'list')} />,
-    main: <Main />,
+    list: () => <DictionaryList
+      onCreateClick={this.openFragment('add')}
+      onEditClick={(id) => this.openFragment('edit', id)} />,
+    add: () => <DictionaryAdd onBackClick={this.openFragment('list')} />,
+    edit: (id) => <DictionaryEdit id={id} onBackClick={this.openFragment('list')} />,
+    main: () => <Main />,
   }
 }

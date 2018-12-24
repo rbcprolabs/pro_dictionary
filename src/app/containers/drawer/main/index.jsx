@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Slide from '@material-ui/core/Slide'
 import { ReactComponent as Logo } from '@app/assets/images/logo.svg'
+import withDrawerSize from '@app/containers/drawer/withDraweSize'
 
 const styles = (theme) => ({
   container: {
@@ -61,12 +62,14 @@ const Main = ({ classes }) =>
       container
       justify='center'
       className={classes.appVersion}>
-      <Typography
-        variant='subtitle1'
-        align='center'
-        color='textSecondary'>
-        v {appVersion}
-      </Typography>
+      <Slide direction='up' in={true} timeout={600} mountOnEnter unmountOnExit>
+        <Typography
+          variant='subtitle1'
+          align='center'
+          color='textSecondary'>
+          v {appVersion}
+        </Typography>
+      </Slide>
     </Grid>
   </Grid>
 
@@ -74,4 +77,4 @@ Main.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(Main)
+export default withDrawerSize('small')(withStyles(styles)(Main))

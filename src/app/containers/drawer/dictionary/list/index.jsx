@@ -10,6 +10,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Button from '@material-ui/core/Button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
@@ -17,8 +18,11 @@ import CenteredProgress from '@app/components/centered-progress'
 import { alphabet } from '@core/utils/sort'
 import LineStyle from '@material-ui/icons/LineStyle'
 import Reorder from '@material-ui/icons/Reorder'
+import IconButton from '@material-ui/core/IconButton'
 import Lock from '@material-ui/icons/Lock'
 import LockOpen from '@material-ui/icons/LockOpen'
+import EditIcon from '@material-ui/icons/Edit'
+import withDrawerSize from '@app/containers/drawer/withDraweSize'
 
 const
   styles = (theme) => ({
@@ -37,6 +41,7 @@ const
       ...theme.mixins.scrollbar,
     },
     listItemIcon: {
+      marginRight: 0,
       '& svg': {
         fill: '#a7a7a7',
       }
@@ -44,15 +49,19 @@ const
     additionalIcon: {
       width: 24,
       marginRight: 0,
-      marginLeft: 16,
+      marginLeft: -8,
     },
   }),
   listItemTypographyProp = { align: 'center' }
 
+@withDrawerSize('small')
 @withStyles(styles)
-@injectStore((stores) => ({
-  app: stores.app,
-  dictionary: stores.dictionary,
+@injectStore(({
+  app,
+  dictionary,
+}) => ({
+  app,
+  dictionary,
 }))
 @observer
 export default class DictionaryList extends Component {
@@ -61,6 +70,15 @@ export default class DictionaryList extends Component {
     app: PropTypes.object.isRequired,
     dictionary: PropTypes.object.isRequired,
     onCreateClick: PropTypes.func,
+    onEditClick: PropTypes.func,
+  }
+
+  state = {
+    edit: false,
+  }
+
+  toggleEdit() {
+    this.setState({ edit: !this.state.edit })
   }
 
   componentDidMount() {
@@ -71,32 +89,37 @@ export default class DictionaryList extends Component {
     return alphabet(a.name, b.name)
   }
 
-  dictionariesList(items, className) {
-    const { app, classes } = this.props
+  renderItem({ id, name, isFlat, isOpen = false }, index) {
+    const
+      { app, classes, onEditClick } = this.props,
+      { edit } = this.state
 
     return (
-      <List className={className}>
-        {items.sort(this.sortByAlphabet).map(({ id, name, isFlat, isOpen = false }, index) =>
-          <Grow in={true} timeout={1000 + index * 100} key={id}>
-            <ListItem button component={Link} to={`/${name}`} selected={id === app.dictionaryId}>
-              <ListItemIcon className={classes.listItemIcon}>
-                {!isFlat
-                  ? <LineStyle />
-                  : <Reorder/>}
-              </ListItemIcon>
-              <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
-              {isFlat
-                ? <ListItemIcon className={classNames(classes.listItemIcon, classes.additionalIcon)}>
-                    {isOpen
-                      ? <LockOpen />
-                      : <Lock />}
-                  </ListItemIcon>
-                : <div className={classes.additionalIcon} />
-              }
-            </ListItem>
-          </Grow>
-        )}
-      </List>
+      <Grow in={true} timeout={1000 + index * 100} key={id}>
+        <ListItem button component={Link} to={`/${name}`} selected={id === app.dictionaryId}>
+          <ListItemIcon className={classes.listItemIcon}>
+            {!isFlat
+              ? <LineStyle />
+              : <Reorder />}
+          </ListItemIcon>
+          <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
+          {isFlat && !edit
+            ? <ListItemIcon className={classNames(classes.listItemIcon, classes.additionalIcon)}>
+              {isOpen
+                ? <LockOpen />
+                : <Lock />}
+            </ListItemIcon>
+            : !edit && <div className={classes.additionalIcon} />
+          }
+          {edit &&
+            <ListItemSecondaryAction>
+              <IconButton aria-label='Edit' onClick={onEditClick(id)}>
+                <EditIcon/>
+              </IconButton>
+            </ListItemSecondaryAction>
+          }
+        </ListItem>
+      </Grow>
     )
   }
 
@@ -119,16 +142,17 @@ export default class DictionaryList extends Component {
           </Grow>
         </Grid>
         <Grid item className={classes.offset}>
-          {
-            dictionary.items.length < 1
-              ? dictionary.loading
-                ? <CenteredProgress />
-                : <Grow direction='down' in={true} timeout={1000} mountOnEnter unmountOnExit>
+          {dictionary.items.length < 1
+            ? dictionary.loading
+              ? <CenteredProgress />
+              : <Grow direction='down' in={true} timeout={1000} mountOnEnter unmountOnExit>
                   <Typography variant='h6' color='textSecondary' align='center'>
                     Словарей ещё нет
-                    </Typography>
+                  </Typography>
                 </Grow>
-              : this.dictionariesList(dictionary.items, classes.list)
+            : <List className={classes.list}>
+                {dictionary.items.sort(this.sortByAlphabet).map(::this.renderItem)}
+              </List>
           }
         </Grid>
         <Grid item className={classes.container}>
@@ -139,6 +163,18 @@ export default class DictionaryList extends Component {
                 color='secondary'
                 onClick={onCreateClick}>
                 Добавить словарь
+              </Button>
+            </Grow>
+          </Grid>
+        </Grid>
+        <Grid item className={classes.container}>
+          <Grid container justify='center'>
+            <Grow direction='down' in={true} timeout={700} mountOnEnter unmountOnExit>
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={::this.toggleEdit}>
+                Редактировать словари
               </Button>
             </Grow>
           </Grid>

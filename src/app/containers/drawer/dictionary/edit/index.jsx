@@ -15,6 +15,7 @@ import Grow from '@material-ui/core/Grow'
 import LoadingButton from '@app/components/loading-button'
 import Notification from '@core/stores/notification'
 import cyrillicToTranslit from '@core/utils/cyrillic-to-translit'
+import withDrawerSize from '@app/containers/drawer/withDraweSize'
 
 const styles = (theme) => ({
   container: {
@@ -29,17 +30,22 @@ const styles = (theme) => ({
   },
 })
 
+@withDrawerSize('medium')
 @withStyles(styles)
-@injectStore((stores) => ({
-  dictionary: stores.dictionary,
-  notification: stores.notification,
+@injectStore(({
+  dictionary,
+  notification,
+}) => ({
+  dictionary,
+  notification,
 }))
 @observer
-export default class DictionaryAdd extends Component {
+export default class DictionaryEdit extends Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dictionary: PropTypes.object.isRequired,
     notification: PropTypes.object.isRequired,
+    id: PropTypes.string.isRequired,
     onBackClick: PropTypes.func.isRequired,
   }
 
@@ -48,6 +54,11 @@ export default class DictionaryAdd extends Component {
     placeholderRule: '',
     isFlat: false,
     isOpen: true,
+  }
+
+  async componentDidMount() {
+    const data = await this.props.dictionary.getById(this.props.id)
+    this.setState(data)
   }
 
   _validators = {
@@ -96,16 +107,16 @@ export default class DictionaryAdd extends Component {
     }
 
     try {
-      await this.props.dictionary.post(body)
+      await this.props.dictionary.update(this.props.id, body)
       this.props.notification.notify({
         variant: Notification.SUCCESS,
-        message: 'Словарь успешно добавлен',
+        message: 'Словарь успешно изменен',
       })
       this.props.onBackClick()
     } catch (error) {
       this.props.notification.notify({
         variant: Notification.ERROR,
-        message: 'Ошибка добавления словаря',
+        message: 'Ошибка изменения словаря',
       })
     }
   }
@@ -133,7 +144,7 @@ export default class DictionaryAdd extends Component {
           <Grid item>
             <Grow in={true} timeout={800}>
               <Typography variant='h5'>
-                Добавление словаря
+                Редактирование словаря
               </Typography>
             </Grow>
           </Grid>
@@ -228,7 +239,7 @@ export default class DictionaryAdd extends Component {
                     color='secondary'
                     type='submit'
                     disabled={!::this.validate('form')}>
-                    Добавить
+                    Редактировать
                 </LoadingButton>
                 </Grow>
               </Grid>

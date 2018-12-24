@@ -11,8 +11,28 @@ export default class Dictionary {
   @observable _items = {}
 
   @computed
-  get items () {
+  get items() {
     return Object.values(this._items)
+  }
+
+  _has(id) {
+    return !!this._items[id]
+  }
+
+  _get(id) {
+    return this._items[id]
+  }
+
+  _set(id, dictionary) {
+    this._items[id] = dictionary
+  }
+
+  _remove(id) {
+    delete this._items[id]
+  }
+
+  _isEmpty() {
+    return this._items::isEmpty()
   }
 
   @action
@@ -21,7 +41,7 @@ export default class Dictionary {
     let result = null
     try {
       result = await API.post('dictionary', '/dictionary/', { body })
-      this._items[result.name] = result
+      this._set(result.id, result)
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
       throw error
@@ -36,13 +56,13 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      if (this._items::isEmpty() || loadMore && this.lastEvaluatedKey === null) {
+      if (this._isEmpty() || loadMore && this.lastEvaluatedKey === null) {
         result = await API.get(
           'dictionary',
           `/dictionary?limit=${limit}`,
         )
         result.items.forEach((dictionary) =>
-          this._items[dictionary.name] = dictionary
+          this._set(dictionary.id, dictionary)
         )
         if (result.lastEvaluatedKey)
           this.lastEvaluatedKey = result.lastEvaluatedKey
@@ -52,7 +72,7 @@ export default class Dictionary {
           `/dictionary?lastEvaluatedKey=${this.lastEvaluatedKey}&limit=${limit}`,
         )
         result.items.forEach((dictionary) =>
-          this._items[dictionary.name] = dictionary
+          this._set(dictionary.id, dictionary)
         )
         if (result.lastEvaluatedKey)
           this.lastEvaluatedKey = result.lastEvaluatedKey
@@ -76,12 +96,11 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      if (!this._items::isEmpty())
-        result = this.items::findByProperty('id', id)
-
-      if (!result) {
+      if (this._has(id)) {
+        result = this._get(id)
+      } else {
         result = await API.get('dictionary', `/dictionary/${id}`)
-        this._items[result.name] = result
+        this._set(id, result)
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
@@ -97,12 +116,12 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      if (!this._items::isEmpty())
+      if (!this._isEmpty())
         result = this.items::findByProperty('slug', slug)
 
       if (!result) {
         result = await API.get('dictionary', `/dictionaryBySlug/${slug}`)
-        this._items[result.name] = result
+        this._set(result.id, result)
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
@@ -118,11 +137,12 @@ export default class Dictionary {
     this.loading = true
     let result = null
     try {
-      if (this._items[name]) {
-        result = this._items[name]
-      } else {
+      if (!this._isEmpty())
+        result = this.items::findByProperty('name', name)
+
+      if (!result) {
         result = await API.get('dictionary', `/dictionaryByName/${name}`)
-        this._items[name] = result
+        this._set(result.id, result)
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
@@ -139,6 +159,10 @@ export default class Dictionary {
     let result = null
     try {
       result = await API.put('dictionary', `/dictionary/${id}`, { body })
+      // Recreat cached dictionary
+      if (!this._isEmpty() && this._has(id)) {
+        this._set(id, {...body, id})
+      }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -153,6 +177,10 @@ export default class Dictionary {
     let result = null
     try {
       result = await API.del('dictionary', `/dictionary/${id}`)
+      // Remove cached dictionary
+      if (!this._isEmpty() && this._has(id)) {
+        this._remove(id)
+      }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {

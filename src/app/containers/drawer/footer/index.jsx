@@ -28,7 +28,7 @@ export default class DrawerFooter extends Component {
     deferredPrompt: null,
   }
 
-  beforeInstallPrompt = (event) => {
+  beforeInstallPrompt(event) {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     event.preventDefault()
     // Stash the event so it can be triggered later.
@@ -38,16 +38,18 @@ export default class DrawerFooter extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('beforeinstallprompt', this.beforeInstallPrompt)
+    window.addEventListener('beforeinstallprompt', ::this.beforeInstallPrompt)
   }
 
   componentWillUnmount() {
-    window.removeEventListener('beforeinstallprompt', this.beforeInstallPrompt)
+    window.removeEventListener('beforeinstallprompt', ::this.beforeInstallPrompt)
   }
 
-  handleLogout = () => this.props.auth.signOut()
+  handleLogout() {
+    this.props.auth.signOut()
+  }
 
-  addToHomeScreen = () => {
+  addToHomeScreen() {
     if (!this.state.deferredPrompt) return
     // Show the prompt
     this.state.deferredPrompt.prompt()
@@ -65,15 +67,17 @@ export default class DrawerFooter extends Component {
         alignItems='center'
         wrap='nowrap'
         className={this.props.classes.container}>
-        <Button
-          onClick={this.addToHomeScreen}
-          color='secondary'
-          disabled={!this.state.deferredPrompt}>
-          Добавить на главный экран
-      </Button>
+        <Slide direction='up' in={true} timeout={400} mountOnEnter unmountOnExit>
+          <Button
+              onClick={::this.addToHomeScreen}
+              color='secondary'
+              disabled={!this.state.deferredPrompt}>
+              Добавить на главный экран
+          </Button>
+        </Slide>
         <Slide direction='up' in={true} timeout={400} mountOnEnter unmountOnExit>
           <IconButton
-            onClick={this.handleLogout}
+            onClick={::this.handleLogout}
             color='secondary'>
             <PowerSettings />
           </IconButton>

@@ -230,7 +230,7 @@ export default class Term extends Component {
                   xs={12}
                   md={6}
                   lg={9}
-                  xl={10}
+                  xl={9}
                   className={classes.itemsContainer}>
                     {term.loading || dictionaryStore.loading
                       ? <CenteredProgress fullHeight />
@@ -242,7 +242,7 @@ export default class Term extends Component {
                   xs={12}
                   md={6}
                   lg={3}
-                  xl={2}>
+                  xl={3}>
                   <TermAdd
                     dictionary={dictionary}
                     termName={termName}

@@ -16,7 +16,7 @@ const mixins = {
   },
 }
 
-export default createMuiTheme({
+const lightTheme = createMuiTheme({
   typography: {
     useNextVariants: true,
   },
@@ -47,6 +47,8 @@ export default createMuiTheme({
   },
   mixins,
 })
+
+export default lightTheme
 
 export const darkTheme = createMuiTheme({
   typography: {
