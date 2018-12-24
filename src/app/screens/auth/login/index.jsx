@@ -56,7 +56,7 @@ export default class Login extends Component {
   }
 
   handleChange = ({ target }) => this.setState({
-    [target.id]: target.value,
+    [target.name]: target.value,
   })
 
   handleSubmit = async (event) => {
@@ -122,7 +122,7 @@ export default class Login extends Component {
                 <TextField
                   autoFocus
                   inputRef={this.loginInput}
-                  id='login'
+                  name='login'
                   label='Логин'
                   className={classes.textField}
                   value={this.state.login}
@@ -134,7 +134,7 @@ export default class Login extends Component {
             <Grid item>
               <Grow in timeout={900}>
                 <TextField
-                  id='password'
+                  name='password'
                   label='Пароль'
                   className={classes.textField}
                   value={this.state.password}

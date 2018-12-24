@@ -15,9 +15,11 @@ import Grow from '@material-ui/core/Grow'
 import Slide from '@material-ui/core/Slide'
 import Notification from '@core/stores/notification'
 import threeArray from '@core/utils/threeArray'
+import { updateByProperty } from '@core/utils/hooks/array'
 
 import TermList from './list'
 import TermAdd from './add'
+import TermEdit from '@app/containers/term-edit'
 
 const styles = (theme) => ({
   nestedStringText: {
@@ -72,6 +74,7 @@ export default class Term extends Component {
     fullTerm: '',
     dictionary: null,
     items: [],
+    editFullTerm: null,
   }
 
   async fetchDataDictionary(dictionaryName, fullTerm) {
@@ -179,6 +182,20 @@ export default class Term extends Component {
     })
   }
 
+  onEdit = (parent, id) => () => this.setState({ editFullTerm: {
+    parent,
+    id,
+  }})
+
+  onEditSuccess(result) {
+    const items = this.state.items::updateByProperty('id', result.id, result)
+    this.setState({ editFullTerm: null, items })
+  }
+
+  onEditCancel() {
+    this.setState({ editFullTerm: null })
+  }
+
   render() {
     const
       {
@@ -192,10 +209,11 @@ export default class Term extends Component {
         three,
         termName,
         parent,
+        editFullTerm,
       } = this.state
 
     const content = !!dictionary && items.length > 0
-      ? <TermList items={items} isFlat={dictionary.isFlat} />
+      ? <TermList items={items} isFlat={dictionary.isFlat} onEdit={this.onEdit} />
       : <CenteredContainer fullHeight>
           <Typography
             variant='h6'
@@ -253,6 +271,11 @@ export default class Term extends Component {
               </>
           }
         </Grid>
+        <TermEdit
+          open={editFullTerm !== null}
+          editData={editFullTerm}
+          onClose={::this.onEditCancel}
+          onSuccess={::this.onEditSuccess} />
       </>
     )
   }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Link from 'react-router-dom/Link'
@@ -29,65 +29,57 @@ const
   }),
   listItemTypographyPropsPreset = (className) => ({ noWrap: true, className })
 
-const TermListItem = ({ term, fullTerm, childrens, listItemTypographyProps }) =>
-  <>
+const termListItem = ({ id, term, parent, fullTerm, childrens }, listItemTypographyProps, onEdit) =>
+  <Fragment key={id}>
     <ListItem button component={Link} to={`/${fullTerm}`}>
       <ListItemText
         primary={term}
         secondary={childrens && childrens.join(', ')}
         secondaryTypographyProps={listItemTypographyProps} />
       <ListItemSecondaryAction>
-        <IconButton aria-label='Edit'>
+        <IconButton aria-label='Edit' onClick={onEdit(parent, id)}>
           <EditIcon />
         </IconButton>
       </ListItemSecondaryAction>
     </ListItem>
     <Divider />
-  </>
+  </Fragment>
 
-TermListItem.propTypes = {
+termListItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  parent: PropTypes.string.isRequired,
   term: PropTypes.string.isRequired,
   fullTerm: PropTypes.string.isRequired,
-  childrens: PropTypes.instanceOf(Object),
-  listItemTypographyProps: PropTypes.object.isRequired,
+  childrens: PropTypes.arrayOf(PropTypes.string),
 }
 
-const TermListFlatItem = ({ term }) =>
-  <>
+const termListFlatItem = ({ id, term, parent }, onEdit) =>
+  <Fragment key={id}>
     <ListItem>
       <ListItemText primary={term}/>
       <ListItemSecondaryAction>
-        <IconButton aria-label='Edit'>
+        <IconButton aria-label='Edit' onClick={onEdit(parent, id)}>
           <EditIcon />
         </IconButton>
       </ListItemSecondaryAction>
     </ListItem>
     <Divider />
-  </>
+  </Fragment>
 
-TermListFlatItem.propTypes = {
+termListFlatItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  parent: PropTypes.string.isRequired,
   term: PropTypes.string.isRequired,
 }
 
-const TermList = ({ classes, items, isFlat }) => {
+const TermList = ({ classes, items, isFlat, onEdit }) => {
   const listItemTypographyProps = listItemTypographyPropsPreset(classes.itemSubTitle)
 
   return (
     <List>
       {!isFlat
-      ? items.map(({ fullTerm, term, childrens }) =>
-          <TermListItem
-            key={term}
-            term={term}
-            fullTerm={fullTerm}
-            listItemTypographyProps={listItemTypographyProps}
-            childrens={childrens} />
-        )
-      : items.map(({ term }) =>
-        <TermListFlatItem
-          key={term}
-          term={term}/>
-      )}
+        ? items.map((term) => termListItem(term, listItemTypographyProps, onEdit))
+        : items.map((term) => termListFlatItem(term, onEdit))}
     </List>
   )
 }
@@ -96,6 +88,7 @@ TermList.propTypes = {
   classes: PropTypes.object.isRequired,
   items: PropTypes.array,
   isFlat: PropTypes.bool.isRequired,
+  onEdit: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(TermList)

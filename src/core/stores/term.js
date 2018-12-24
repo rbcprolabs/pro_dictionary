@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx'
 import { API } from 'aws-amplify'
+import { findByProperty, updateByProperty } from '@core/utils/hooks/array'
 
 export default class Terms {
   limit = 100
@@ -59,15 +60,34 @@ export default class Terms {
     return result ? result.items : []
   }
 
+  getById = async (parent, id) => {
+    this.loading = true
+    let result = null
+    try {
+      if (this.items[parent]) {
+        result = this.items[parent].items::findByProperty('id', id)
+      } else {
+        result = await API.get(
+          'term',
+          `/term/${encodeURIComponent(id)}`,
+        )
+      }
+    } catch (error) {
+      if (!('response' in error) || 'response' in error && error.response.status !== 404)
+        console.error(error) // eslint-disable-line no-console
+    } finally {
+      this.loading = false
+    }
+    return result
+  }
+
   @action
   getByFullTerm = async (parent, fullTerm) => {
     this.loading = true
     let result = null
     try {
       if (this.items[parent]) {
-        result = this.items[parent].items.find((element) =>
-          element.fullTerm === fullTerm
-        )
+        result = this.items[parent].items::findByProperty('fullTerm', fullTerm)
       } else {
         result = await API.get(
           'term',
@@ -96,6 +116,24 @@ export default class Terms {
         console.error(error) // eslint-disable-line no-console
     } finally {
       this.findLoading = false
+    }
+    return result
+  }
+
+  @action
+  update = async (id, body) => {
+    this.loading = true
+    let result = null
+    try {
+      result = await API.put('term', `/term/${id}`, { body })
+      // Recreat cached term
+      if (this.items[body.parent]) {
+        this.items[body.parent].items = this.items[body.parent].items::updateByProperty('id', id, result)
+      }
+    } catch (error) {
+      console.error(error) // eslint-disable-line no-console
+    } finally {
+      this.loading = false
     }
     return result
   }
