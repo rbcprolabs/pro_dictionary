@@ -47,7 +47,7 @@ export default class TermEdit extends React.Component {
     open: PropTypes.bool,
     editData: PropTypes.object,
     onClose: PropTypes.func.isRequired,
-    onAdd: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
     onRemove: PropTypes.func.isRequired,
   }
 
@@ -113,7 +113,7 @@ export default class TermEdit extends React.Component {
 
     try {
       const result = await this.props.term.update(this.state.id, body)
-      this.props.onAdd(result)
+      this.props.onUpdate(result)
       this.props.notification.notify({
         variant: Notification.SUCCESS,
         message: 'Термин успешно обновлен',

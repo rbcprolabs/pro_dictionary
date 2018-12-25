@@ -44,7 +44,7 @@ export function findByProperty(key, value) {
  */
 export function updateByProperty(key, value, newItem) {
   const itemIndex = _indexOfByProperty(this, key, value)
-  if (!itemIndex) return undefined
+  if (itemIndex === undefined) return undefined
   const newArray = this.slice()
   newArray[itemIndex] = newItem
   return newArray
@@ -58,7 +58,7 @@ export function updateByProperty(key, value, newItem) {
  */
 export function removeByProperty(key, value) {
   const itemIndex = _indexOfByProperty(this, key, value)
-  if (!itemIndex) return undefined
+  if (itemIndex === undefined) return undefined
   const newArray = this.slice()
   newArray.splice(itemIndex, 1)
   return newArray

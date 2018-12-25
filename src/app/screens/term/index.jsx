@@ -187,7 +187,7 @@ export default class Term extends Component {
     id,
   }})
 
-  onEditAdd(result) {
+  onEditUpdate(result) {
     const items = this.state.items::updateByProperty('id', result.id, result)
     this.setState({ editFullTerm: null, items })
   }
@@ -280,7 +280,7 @@ export default class Term extends Component {
           open={editFullTerm !== null}
           editData={editFullTerm}
           onClose={::this.onEditCancel}
-          onAdd={::this.onEditAdd}
+          onUpdate={::this.onEditUpdate}
           onRemove={::this.onEditRemove} />
       </>
     )
