@@ -13,6 +13,8 @@ export default class Extension {
   @observable tags = []
   /** @type {string} */
   @observable page = 'view'
+  /** @type {string} */
+  @observable searchQuery = ''
 
   constructor() {
     ContentfulExtension.init((extension) => {
@@ -47,8 +49,9 @@ export default class Extension {
    * Navigation
    * @param {string} pageName
    */
-  go(pageName) {
+  go(pageName, searchQuery = '') {
     this.page = pageName
+    this.searchQuery = searchQuery
   }
 }
 

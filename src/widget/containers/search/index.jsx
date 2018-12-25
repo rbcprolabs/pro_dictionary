@@ -92,7 +92,7 @@ export default class Search extends Component {
   }
 
   addTerm() {
-    this.props.extension.go('add')
+    this.props.extension.go('add', this.state.query)
   }
 
   renderNoMatchesFound() {

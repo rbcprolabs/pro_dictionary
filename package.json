@@ -16,7 +16,8 @@
     "contentful:login": "contentful login",
     "contentful:logout": "contentful logout",
     "deploy": "aws s3 sync build/ s3://pro-dictionary",
-    "release": "npm run build:production & npm run deploy"
+    "postdeploy": "aws cloudfront create-invalidation --distribution-id E3I7NCZQEHFG9M --paths \"/*\"",
+    "release": "npm run build:production & npm run deploy & npm run postdeploy"
   },
   "author": "Serge Shkurko",
   "license": "ISC",

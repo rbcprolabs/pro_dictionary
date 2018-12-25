@@ -27,7 +27,7 @@ export default class TermAdd extends Component {
   }
 
   state = {
-    term: '',
+    term: this.props.extension.searchQuery,
   }
 
   handleChange = ({ target }) => this.setState({
