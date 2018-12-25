@@ -15,7 +15,7 @@
     "widget:local": "contentful extension update --space-id tu25wwmnykjr --force --src https://localhost:8080/widget",
     "contentful:login": "contentful login",
     "contentful:logout": "contentful logout",
-    "deploy": "aws s3 sync build/ s3://pro-dictionary --no-guess-mime-type",
+    "deploy": "aws s3 sync build/ s3://pro-dictionary",
     "release": "npm run build:production & npm run deploy"
   },
   "author": "Serge Shkurko",
