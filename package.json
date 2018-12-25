@@ -1,6 +1,6 @@
 {
   "name": "dictionary",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Dictionary web app",
   "main": "src/index.jsx",
   "scripts": {
@@ -15,7 +15,7 @@
     "widget:local": "contentful extension update --space-id tu25wwmnykjr --force --src https://localhost:8080/widget",
     "contentful:login": "contentful login",
     "contentful:logout": "contentful logout",
-    "deploy": "aws s3 sync build/ s3://pro-dictionary",
+    "deploy": "aws s3 sync build/ s3://pro-dictionary --no-guess-mime-type",
     "release": "npm run build:production & npm run deploy"
   },
   "author": "Serge Shkurko",

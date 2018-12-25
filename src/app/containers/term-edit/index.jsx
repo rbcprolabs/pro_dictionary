@@ -14,6 +14,7 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
 import Grow from '@material-ui/core/Grow'
 import AddIcon from '@material-ui/icons/Add'
+import DeleteIcon from '@material-ui/icons/Delete'
 import removeSpaces from '@core/utils/remove-spaces'
 
 const styles = (theme) => ({
@@ -24,6 +25,13 @@ const styles = (theme) => ({
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
   },
+  deleteButton: {
+    marginRight: 'auto',
+    color: '#B71C1C',
+  },
+  deleteButtonIcon: {
+    marginRight: theme.spacing.unit,
+  }
 })
 
 @withStyles(styles)
@@ -39,7 +47,8 @@ export default class TermEdit extends React.Component {
     open: PropTypes.bool,
     editData: PropTypes.object,
     onClose: PropTypes.func.isRequired,
-    onSuccess: PropTypes.func.isRequired,
+    onAdd: PropTypes.func.isRequired,
+    onRemove: PropTypes.func.isRequired,
   }
 
   state = {
@@ -92,7 +101,7 @@ export default class TermEdit extends React.Component {
     event.preventDefault()
 
     const body = {
-      parent: this.props.editData.parent,
+      parent: this.state.parent,
       term: this.state.term,
     }
 
@@ -103,8 +112,8 @@ export default class TermEdit extends React.Component {
       body.synonyms = this.state.synonyms
 
     try {
-      const result = await this.props.term.update(this.props.editData.id, body)
-      this.props.onSuccess(result)
+      const result = await this.props.term.update(this.state.id, body)
+      this.props.onAdd(result)
       this.props.notification.notify({
         variant: Notification.SUCCESS,
         message: 'Термин успешно обновлен',
@@ -113,6 +122,22 @@ export default class TermEdit extends React.Component {
       this.props.notification.notify({
         variant: Notification.ERROR,
         message: 'Ошибка обновления термина',
+      })
+    }
+  }
+
+  async removeTerm() {
+    try {
+      await this.props.term.delete(this.state.parent, this.state.id)
+      this.props.onRemove(this.state.id)
+      this.props.notification.notify({
+        variant: Notification.SUCCESS,
+        message: 'Термин успешно удален',
+      })
+    } catch (error) {
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message: 'Ошибка удаления термина',
       })
     }
   }
@@ -175,8 +200,18 @@ export default class TermEdit extends React.Component {
               </Grow>
           </DialogContent>
           <DialogActions>
+            <Grow in timeout={1100}>
+              <Button
+                classes={{root: classes.deleteButton}}
+                onClick={::this.removeTerm}>
+                <DeleteIcon className={classes.deleteButtonIcon} />
+                Удалить термин
+              </Button>
+            </Grow>
             <Grow in timeout={1200}>
-              <Button onClick={this.props.onClose} color='primary'>
+              <Button
+                onClick={this.props.onClose}
+                color='primary'>
                 Отменить
               </Button>
             </Grow>

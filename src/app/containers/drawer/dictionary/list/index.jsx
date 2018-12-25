@@ -38,6 +38,8 @@ const
     list: {
       maxHeight: '45vh',
       overflowY: 'auto',
+      paddingTop: 0,
+      paddingBottom: 0,
       ...theme.mixins.scrollbar,
     },
     listItemIcon: {

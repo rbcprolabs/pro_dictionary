@@ -49,3 +49,17 @@ export function updateByProperty(key, value, newItem) {
   newArray[itemIndex] = newItem
   return newArray
 }
+
+/**
+ * Remove element from array by propery
+ * @param {string|number} key
+ * @param {*} value
+ * @returns {any[]} new array
+ */
+export function removeByProperty(key, value) {
+  const itemIndex = _indexOfByProperty(this, key, value)
+  if (!itemIndex) return undefined
+  const newArray = this.slice()
+  newArray.splice(itemIndex, 1)
+  return newArray
+}

@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx'
 import { API } from 'aws-amplify'
-import { findByProperty, updateByProperty } from '@core/utils/hooks/array'
+import { findByProperty, updateByProperty, removeByProperty } from '@core/utils/hooks/array'
 
 export default class Terms {
   limit = 100
@@ -129,6 +129,24 @@ export default class Terms {
       // Recreat cached term
       if (this.items[body.parent]) {
         this.items[body.parent].items = this.items[body.parent].items::updateByProperty('id', id, result)
+      }
+    } catch (error) {
+      console.error(error) // eslint-disable-line no-console
+    } finally {
+      this.loading = false
+    }
+    return result
+  }
+
+  @action
+  delete = async (parent, id) => {
+    this.loading = true
+    let result = null
+    try {
+      result = await API.del('term', `/term/${id}`)
+      // Remove cached term
+      if (this.items[parent]) {
+        this.items[parent].items = this.items[parent].items::removeByProperty('id', id)
       }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console

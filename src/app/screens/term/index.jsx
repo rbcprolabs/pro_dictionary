@@ -15,7 +15,7 @@ import Grow from '@material-ui/core/Grow'
 import Slide from '@material-ui/core/Slide'
 import Notification from '@core/stores/notification'
 import threeArray from '@core/utils/threeArray'
-import { updateByProperty } from '@core/utils/hooks/array'
+import { updateByProperty, removeByProperty } from '@core/utils/hooks/array'
 
 import TermList from './list'
 import TermAdd from './add'
@@ -187,8 +187,13 @@ export default class Term extends Component {
     id,
   }})
 
-  onEditSuccess(result) {
+  onEditAdd(result) {
     const items = this.state.items::updateByProperty('id', result.id, result)
+    this.setState({ editFullTerm: null, items })
+  }
+
+  onEditRemove(id) {
+    const items = this.state.items::removeByProperty('id', id)
     this.setState({ editFullTerm: null, items })
   }
 
@@ -275,7 +280,8 @@ export default class Term extends Component {
           open={editFullTerm !== null}
           editData={editFullTerm}
           onClose={::this.onEditCancel}
-          onSuccess={::this.onEditSuccess} />
+          onAdd={::this.onEditAdd}
+          onRemove={::this.onEditRemove} />
       </>
     )
   }
