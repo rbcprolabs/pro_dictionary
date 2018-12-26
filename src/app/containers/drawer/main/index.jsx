@@ -41,13 +41,13 @@ const Main = ({ classes }) =>
         <Grid
           container
           justify='center'>
-          <Slide direction='down' in={true} timeout={600} mountOnEnter unmountOnExit>
+          <Slide direction='down' in={true} timeout={600}>
             <Logo />
           </Slide>
         </Grid>
       </Grid>
       <Grid item>
-        <Slide direction='up' in={true} timeout={600} mountOnEnter unmountOnExit>
+        <Slide direction='up' in={true} timeout={600}>
           <Typography
             variant='h6'
             align='center'
@@ -62,7 +62,7 @@ const Main = ({ classes }) =>
       container
       justify='center'
       className={classes.appVersion}>
-      <Slide direction='up' in={true} timeout={600} mountOnEnter unmountOnExit>
+      <Slide direction='up' in={true} timeout={800}>
         <Typography
           variant='subtitle1'
           align='center'

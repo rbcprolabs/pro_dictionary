@@ -5,32 +5,31 @@ import { observer, inject as injectStore } from 'mobx-react'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import Button from '@material-ui/core/Button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
 import CenteredProgress from '@app/components/centered-progress'
 import { alphabet } from '@core/utils/sort'
-import LineStyle from '@material-ui/icons/LineStyle'
-import Reorder from '@material-ui/icons/Reorder'
+import Tooltip from '@material-ui/core/Tooltip'
+import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import Lock from '@material-ui/icons/Lock'
-import LockOpen from '@material-ui/icons/LockOpen'
+import ReorderIcon from '@material-ui/icons/Reorder'
+import LineStyleIcon from '@material-ui/icons/LineStyle'
+import LockIcon from '@material-ui/icons/Lock'
+import LockOpenIcon from '@material-ui/icons/LockOpen'
+import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
+import CancelIcon from '@material-ui/icons/Cancel'
 import withDrawerSize from '@app/containers/drawer/withDraweSize'
 
 const
   styles = (theme) => ({
-    root: {
-      marginTop: theme.spacing.unit * 6,
-    },
     container: {
-      padding: theme.spacing.unit * 3,
+      padding: theme.spacing.unit * 2,
     },
     offset: {
       margin: `${theme.spacing.unit * 4}px 0`,
@@ -47,6 +46,12 @@ const
       '& svg': {
         fill: '#a7a7a7',
       }
+    },
+    addButton: {
+      height: 42,
+    },
+    leftIcon: {
+      marginRight: theme.spacing.unit,
     },
     additionalIcon: {
       width: 24,
@@ -101,15 +106,15 @@ export default class DictionaryList extends Component {
         <ListItem button component={Link} to={`/${name}`} selected={id === app.dictionaryId}>
           <ListItemIcon className={classes.listItemIcon}>
             {!isFlat
-              ? <LineStyle />
-              : <Reorder />}
+              ? <LineStyleIcon />
+              : <ReorderIcon />}
           </ListItemIcon>
           <ListItemText primary={name} primaryTypographyProps={listItemTypographyProp} />
           {isFlat && !edit
             ? <ListItemIcon className={classNames(classes.listItemIcon, classes.additionalIcon)}>
               {isOpen
-                ? <LockOpen />
-                : <Lock />}
+                ? <LockOpenIcon />
+                : <LockIcon />}
             </ListItemIcon>
             : !edit && <div className={classes.additionalIcon} />
           }
@@ -126,28 +131,15 @@ export default class DictionaryList extends Component {
   }
 
   render() {
-    const {
-      onCreateClick,
-      classes,
-      dictionary,
-    } = this.props
+    const { onCreateClick, classes, dictionary } = this.props
 
     return (
-      <Grid container direction='column' className={classes.root}>
-        <Grid item className={classes.container}>
-          <Grow direction='down' in={true} timeout={600} mountOnEnter unmountOnExit>
-            <TextField
-              fullWidth
-              id='search'
-              label='Поиск терминов'
-              type='text' />
-          </Grow>
-        </Grid>
+      <Grid container direction='column'>
         <Grid item className={classes.offset}>
           {dictionary.items.length < 1
             ? dictionary.loading
               ? <CenteredProgress />
-              : <Grow direction='down' in={true} timeout={1000} mountOnEnter unmountOnExit>
+              : <Grow direction='down' in={true} timeout={1000}>
                   <Typography variant='h6' color='textSecondary' align='center'>
                     Словарей ещё нет
                   </Typography>
@@ -158,26 +150,31 @@ export default class DictionaryList extends Component {
           }
         </Grid>
         <Grid item className={classes.container}>
-          <Grid container justify='center'>
-            <Grow direction='down' in={true} timeout={700} mountOnEnter unmountOnExit>
+          <Grid container justify='space-between' alignItems='center'>
+            <Grow direction='down' in={true} timeout={1200}>
               <Button
                 variant='contained'
                 color='secondary'
+                className={classes.addButton}
                 onClick={onCreateClick}>
-                Добавить словарь
+                <AddIcon className={classes.leftIcon} />
+                Добавить
               </Button>
             </Grow>
-          </Grid>
-        </Grid>
-        <Grid item className={classes.container}>
-          <Grid container justify='center'>
-            <Grow direction='down' in={true} timeout={700} mountOnEnter unmountOnExit>
-              <Button
-                variant='contained'
-                color='secondary'
-                onClick={::this.toggleEdit}>
-                Редактировать словари
-              </Button>
+            <Grow direction='down' in={true} timeout={1300}>
+              <Tooltip
+                title={`${!this.state.edit ? 'Включить' : 'Выключить'} режим редактирования словарей`}
+                aria-label='Редактировать'
+                placement='top-end'>
+                <IconButton
+                  variant='contained'
+                  color='secondary'
+                  onClick={::this.toggleEdit}>
+                  {!this.state.edit
+                    ? <EditIcon />
+                    : <CancelIcon />}
+                </IconButton>
+              </Tooltip>
             </Grow>
           </Grid>
         </Grid>

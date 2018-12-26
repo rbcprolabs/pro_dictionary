@@ -19,6 +19,11 @@ const
     drawerPaper: {
       overflow: 'hidden',
       backgroundColor: theme.color.dark,
+      borderRightColor: theme.color.dark,
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
     ['drawer-small']: {
       width: theme.drawerWidth.small,
@@ -32,22 +37,6 @@ const
         position: 'relative',
       },
     },
-    ['drawer-large']: {
-      width: theme.drawerWidth.large,
-      height: '100%',
-    },
-    open: {
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    close: {
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    }
   }),
   paperProps = { elevation: 2 }
 
@@ -67,12 +56,10 @@ export default class AppDrawer extends Component {
   _sizes = {
     small: 0,
     medium: 1,
-    large: 2,
   }
 
   state = {
     fragment: 'list',
-    openDrawer: false,
     size: 'small',
     editId: null,
   }
@@ -80,13 +67,6 @@ export default class AppDrawer extends Component {
   openFragment = (fragment, editId = null) => () => {
     const { __drawerSize__: size } = this.getFragmentByName(fragment).type
     this.setState({ fragment, size, editId })
-  }
-
-  componentDidUpdate(_prevProps, prevState) {
-    if (this._sizes[prevState.size] < this._sizes[this.state.size] && this.state.openDrawer !== true)
-      this.state.openDrawer = true // eslint-disable-line react/no-direct-mutation-state
-    else if (this._sizes[prevState.size] > this._sizes[this.state.size] && this.state.openDrawer !== false)
-      this.state.openDrawer = false // eslint-disable-line react/no-direct-mutation-state
   }
 
   renderContent() {
@@ -102,29 +82,27 @@ export default class AppDrawer extends Component {
   render() {
     const
       { classes, authStatus, width } = this.props,
-      { size, openDrawer } = this.state,
+      { size } = this.state,
       widthUpSm = isWidthUp('sm', width)
 
     return (
-      <Drawer
-        variant={widthUpSm && size !== 'large' ? 'permanent' : 'temporary'}
-        classes={{
-          paper: classNames(
-            classes.drawerPaper,
-            classes[`drawer-${size}`],
-            classes[openDrawer ? 'open' : 'close'],
-          ),
-        }}
-        PaperProps={paperProps}
-        open={widthUpSm && size === 'large'}
-        anchor={'left'}>
-        <MuiThemeProvider theme={darkTheme}>
+      <MuiThemeProvider theme={darkTheme}>
+        <Drawer
+          variant={widthUpSm ? 'permanent' : 'temporary'}
+          classes={{
+            paper: classNames(
+              classes.drawerPaper,
+              classes[`drawer-${size}`],
+            ),
+          }}
+          PaperProps={paperProps}
+          anchor={'left'}>
           {authStatus
             ? this.renderContent()
             : this.getFragmentByName('main')
           }
-        </MuiThemeProvider>
-      </Drawer>
+        </Drawer>
+      </MuiThemeProvider>
     )
   }
 

@@ -43,7 +43,6 @@ const lightTheme = createMuiTheme({
   drawerWidth: {
     small: 300,
     medium: 400,
-    large: '70%',
   },
   mixins,
 })

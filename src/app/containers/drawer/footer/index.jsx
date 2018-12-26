@@ -4,15 +4,15 @@ import { inject as injectStore } from 'mobx-react'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import PowerSettings from '@material-ui/icons/PowerSettingsNew'
+import Tooltip from '@material-ui/core/Tooltip'
+import PowerSettingsIcon from '@material-ui/icons/PowerSettingsNew'
 import Slide from '@material-ui/core/Slide'
 import withStyles from '@material-ui/core/styles/withStyles'
 
 const styles = (theme) => ({
   container: {
-    position: 'absolute',
-    bottom: 0,
-    padding: theme.spacing.unit * 3,
+    marginTop: 'auto',
+    padding: theme.spacing.unit * 2,
   },
 })
 
@@ -63,24 +63,26 @@ export default class DrawerFooter extends Component {
     return (
       <Grid
         container
-        justify='flex-end'
+        justify='space-between'
         alignItems='center'
         wrap='nowrap'
         className={this.props.classes.container}>
-        <Slide direction='up' in={true} timeout={400} mountOnEnter unmountOnExit>
+        <Slide direction='up' in={true} timeout={400}>
           <Button
-              onClick={::this.addToHomeScreen}
-              color='secondary'
-              disabled={!this.state.deferredPrompt}>
-              Добавить на главный экран
+            onClick={::this.addToHomeScreen}
+            color='secondary'
+            disabled={!this.state.deferredPrompt}>
+            Добавить на главный экран
           </Button>
         </Slide>
-        <Slide direction='up' in={true} timeout={400} mountOnEnter unmountOnExit>
-          <IconButton
-            onClick={::this.handleLogout}
-            color='secondary'>
-            <PowerSettings />
-          </IconButton>
+        <Slide direction='up' in={true} timeout={400}>
+          <Tooltip title='Выход из аккаунта' aria-label='Выход' placement='top-end'>
+            <IconButton
+              onClick={::this.handleLogout}
+              color='secondary'>
+              <PowerSettingsIcon />
+            </IconButton>
+          </Tooltip>
         </Slide>
       </Grid>
     )

@@ -3,28 +3,36 @@ import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Grid from '@material-ui/core/Grid'
 import FullSizeInput from '@app/components/fullsize-input'
-import LoadingButton from '@app/components/loading-button'
 import Grow from '@material-ui/core/Grow'
+import AddIcon from '@material-ui/icons/Add'
+import LoadingFab from '@app/components/loading-fab';
+import Notification from '@core/stores/notification'
 
-
-@injectStore('term')
+@injectStore(({
+  term,
+  notification,
+}) => ({
+  term,
+  notification,
+}))
 @observer
 export default class TermAdd extends Component {
   static propTypes = {
     term: PropTypes.object.isRequired,
+    notification: PropTypes.object.isRequired,
     dictionary: PropTypes.object.isRequired,
     termName: PropTypes.string.isRequired,
     parentId: PropTypes.string,
     onAdded: PropTypes.func.isRequired,
-    onError: PropTypes.func.isRequired,
   }
 
   state = {
     terms: '',
+    loading: false,
   }
 
   handleChange = ({ target }) => this.setState({
-    [target.id]: target.value,
+    [target.name]: target.value,
   })
 
   get splittedTerms() {
@@ -54,14 +62,14 @@ export default class TermAdd extends Component {
   async addTerms() {
     const {
       term,
-
       dictionary,
       parentId,
       onAdded,
-      onError,
     } = this.props
 
     try {
+      this.setState({ loading: true })
+
       const
         terms = this.splittedTerms.map((term) => ({ term })),
         body = this.makeRequest(dictionary.id, terms, parentId)
@@ -72,9 +80,18 @@ export default class TermAdd extends Component {
 
       this.setState({
         terms: '',
+        loading: false,
+      })
+      this.props.notification.notify({
+        variant: Notification.SUCCESS,
+        message: 'Термины успешно добавлены',
       })
     } catch (error) {
-      onError(error)
+      this.props.notification.notify({
+        variant: Notification.ERROR,
+        message: 'Ошибка добавления терминов',
+      })
+      this.setState({ loading: false })
     }
   }
 
@@ -86,25 +103,23 @@ export default class TermAdd extends Component {
   }
 
   render() {
-    const
-      { termName, dictionary } = this.props
+    const { termName, dictionary } = this.props
 
     return (
       <FullSizeInput
         placeholder={this.makePlaceholder(termName, dictionary.placeholderRule)}
         value={this.state.terms}
-        id='terms'
+        name='terms'
         onChange={this.handleChange}>
-        <Grid container justify='center'>
+        <Grid container justify='flex-end'>
           <Grow in={true} timeout={1000}>
-            <LoadingButton
-              loading={false}
-              variant='contained'
+            <LoadingFab
+              loading={this.state.loading}
               color='secondary'
               disabled={!this.validateTerms}
               onClick={::this.addTerms}>
-            Добавить термины
-        </LoadingButton>
+              <AddIcon />
+          </LoadingFab>
         </Grow>
       </Grid>
     </FullSizeInput >

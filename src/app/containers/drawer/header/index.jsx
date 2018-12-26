@@ -10,8 +10,7 @@ import logoUrl from '@app/assets/images/logo.svg'
 
 const styles = (theme) => ({
   container: {
-    position: 'absolute',
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 2,
     '& img': {
       width: '100%',
       height: '100%',
@@ -31,16 +30,17 @@ const DrawerHeader = ({ classes, app }) =>
     className={classes.container}>
     <Grid item xs={4}>
       <Link to='/' onClick={app.clearDictionaryId}>
-        <Slide direction='down' in={true} timeout={400} mountOnEnter unmountOnExit>
+        <Slide direction='down' in={true} timeout={400}>
           <img src={logoUrl} />
         </Slide>
       </Link>
     </Grid>
-    <Grid item xs={3}>
-      <Slide direction='down' in={true} timeout={400} mountOnEnter unmountOnExit>
+    <Grid item xs={4}>
+      <Slide direction='down' in={true} timeout={400}>
         <Typography
           variant='body2'
           color='textSecondary'
+          align='right'
           className={classes.title}>
           Словари
         </Typography>

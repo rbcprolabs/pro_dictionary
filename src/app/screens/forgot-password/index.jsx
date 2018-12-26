@@ -49,12 +49,7 @@ export default class ForgotPassword extends Component {
   }
 
   render() {
-    const {
-      classes,
-      auth: {
-        loading,
-      },
-    } = this.props
+    const { classes, auth } = this.props
 
     return (
       <Grid
@@ -102,7 +97,7 @@ export default class ForgotPassword extends Component {
                 <Grid item xs={4}>
                   <Grow in={true} timeout={800}>
                     <LoadingButton
-                      loading={loading}
+                      loading={auth.loading}
                       type='submit'
                       disabled={!this.validateForm()}
                       variant='contained'

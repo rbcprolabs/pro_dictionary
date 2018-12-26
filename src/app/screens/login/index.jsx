@@ -45,6 +45,20 @@ export default class Login extends Component {
     fromWidget: false,
   }
 
+  componentDidMount() {
+    const params = new URLSearchParams(window.location.search)
+    if (params.has('widget')) {
+      // Default auth status (if window closed before login)
+      window.returnValue = false
+      // Say react about page started in window
+      this.setState({ fromWidget: true })
+    }
+  }
+
+  handleChange = ({ target }) => this.setState({
+    [target.name]: target.value,
+  })
+
   validateForm() {
     // detect autofill
     if (this.loginInput.current
@@ -55,11 +69,7 @@ export default class Login extends Component {
     return this.state.login.length > 0 && this.state.password.length > 0
   }
 
-  handleChange = ({ target }) => this.setState({
-    [target.name]: target.value,
-  })
-
-  handleSubmit = async (event) => {
+  async handleSubmit(event) {
     event.preventDefault()
 
     try {
@@ -80,23 +90,8 @@ export default class Login extends Component {
     }
   }
 
-  componentDidMount() {
-    const params = new URLSearchParams(window.location.search)
-    if (params.has('widget')) {
-      // Default auth status (if window closed before login)
-      window.returnValue = false
-      // Say react about page started in window
-      this.setState({ fromWidget: true })
-    }
-  }
-
   render() {
-    const {
-      classes,
-      auth: {
-        loading = false,
-      },
-    } = this.props
+    const { classes, auth } = this.props
 
     return (
       <Grid
@@ -104,15 +99,9 @@ export default class Login extends Component {
         justify='center'
         alignItems='center'
         component='form'
-        onSubmit={this.handleSubmit}
+        onSubmit={::this.handleSubmit}
         className={classes.form}>
-        <Grid
-          item
-          xs={10}
-          sm={8}
-          md={4}
-          lg={3}
-          xl={2}>
+        <Grid item xs={10} sm={8} md={4} lg={3} xl={2}>
           <Grid
             container
             spacing={40}
@@ -152,7 +141,7 @@ export default class Login extends Component {
                 <Grid item>
                   <Grow in timeout={1000}>
                     <LoadingButton
-                      loading={loading}
+                      loading={auth.loading}
                       type='submit'
                       disabled={!this.validateForm()}
                       variant='contained'
@@ -165,7 +154,7 @@ export default class Login extends Component {
                   <Grow in timeout={1100}>
                     <Button
                       color='secondary'
-                      disabled={loading}
+                      disabled={auth.loading}
                       component={Link}
                       to='/forgot-password'
                       className={classes.clearTextTransform}>

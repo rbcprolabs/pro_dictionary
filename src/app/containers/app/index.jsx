@@ -5,41 +5,25 @@ import Routes from '@app/containers/routes'
 import Drawer from '@app/containers/drawer'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
-import Zoom from '@material-ui/core/Zoom'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import CenteredProgress from '@app/components/centered-progress'
 import Notification from '@app/containers/notification'
 import hmr from '@core/utils/hmr'
 
-const
-  styles =  {
-    container: {
-      minHeight: '100vh',
-    },
-    content: {
-      position: 'relative',
-      flexGrow: 1,
-      backgroundColor: '#fff',
-      maxHeight: '100vh',
-    },
+const styles =  {
+  container: {
+    minHeight: '100vh',
   },
-  Progress = ({className}) =>
-    <Grid
-      container
-      justify='center'
-      alignItems='center'
-      className={className}>
-      <Zoom in={true}>
-        <CircularProgress size={40} />
-      </Zoom>
-    </Grid>
-
-Progress.propTypes = {
-  className: PropTypes.string,
+  content: {
+    position: 'relative',
+    flexGrow: 1,
+    backgroundColor: '#fff',
+    maxHeight: '100vh',
+  },
 }
 
 const App = ({ classes, auth }) =>
   <Observer render={() => (auth.status === null
-    ? <Progress className={classes.container} />
+    ? <CenteredProgress className={classes.container} size={40} />
     : <Grid
         container
         wrap='nowrap'

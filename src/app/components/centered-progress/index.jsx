@@ -1,11 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Grow from '@material-ui/core/Grow'
 import CenteredContainer from '@app/components/centered-container'
 
-const CenteredProgress = ({className, fullHeight}) =>
+const CenteredProgress = ({className, fullHeight, ...props}) =>
   <CenteredContainer fullHeight={fullHeight} className={className}>
-    <CircularProgress />
+    <Grow in={true} timeout={400}>
+      <CircularProgress {...props}/>
+    </Grow>
   </CenteredContainer>
 
 CenteredProgress.propTypes = {

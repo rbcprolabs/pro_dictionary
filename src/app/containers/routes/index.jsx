@@ -3,10 +3,8 @@ import Switch from 'react-router-dom/Switch'
 import Route from '@app/containers/route'
 import NotFound from '@app/screens/not-found'
 import Home from '@app/screens/home'
-import {
-  Login,
-  ForgotPassword,
-} from '@app/screens/auth'
+import Login from '@app/screens/login'
+import ForgotPassword from '@app/screens/forgot-password'
 import Term from '@app/screens/term'
 
 const Routes = () =>

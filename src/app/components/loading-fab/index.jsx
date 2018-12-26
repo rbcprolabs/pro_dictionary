@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import withStyles from '@material-ui/core/styles/withStyles'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Fab from '@material-ui/core/Fab'
 import green from '@material-ui/core/colors/green'
-import Button from '@material-ui/core/Button'
 
 const styles = {
   button: {
@@ -19,15 +19,11 @@ const styles = {
   buttonProgress: {
     color: green[500],
     position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
   },
 }
 
 @withStyles(styles)
-export default class LoadingButton extends React.Component {
+export default class LoadingFab extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     loading: PropTypes.bool.isRequired,
@@ -51,7 +47,7 @@ export default class LoadingButton extends React.Component {
     } = this.props
 
     return (
-      <Button
+      <Fab
         className={classNames(classes.button, {
           [classes.buttonSuccess]: success,
         })}
@@ -59,8 +55,8 @@ export default class LoadingButton extends React.Component {
         onClick={::this.handleButtonClick}
         {...props}>
         {children}
-        {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-      </Button>
+        {loading && <CircularProgress size={56} className={classes.buttonProgress} />}
+      </Fab>
     )
   }
 }

@@ -9,6 +9,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import Tooltip from '@material-ui/core/Tooltip'
 import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
@@ -192,21 +193,31 @@ export default class TermEdit extends React.Component {
                       fullWidth/>
                   </Grid>
                   <Grid item>
+                  <Tooltip
+                    title='Добавить синонимы в список'
+                    aria-label='Добавить'
+                    placement='bottom-end'>
                     <IconButton aria-label='Добавить' onClick={::this.addSynonyms}>
                       <AddIcon />
                     </IconButton>
+                  </Tooltip>
                   </Grid>
                 </Grid>
               </Grow>
           </DialogContent>
           <DialogActions>
             <Grow in timeout={1100}>
-              <Button
-                classes={{root: classes.deleteButton}}
-                onClick={::this.removeTerm}>
-                <DeleteIcon className={classes.deleteButtonIcon} />
-                Удалить термин
-              </Button>
+              <Tooltip
+                title='Будьте осторожны. Восстановить термин будет невозможно!'
+                aria-label='Удаление'
+                placement='top-start'>
+                <Button
+                  classes={{root: classes.deleteButton}}
+                  onClick={::this.removeTerm}>
+                  <DeleteIcon className={classes.deleteButtonIcon} />
+                  Удалить
+                </Button>
+              </Tooltip>
             </Grow>
             <Grow in timeout={1200}>
               <Button

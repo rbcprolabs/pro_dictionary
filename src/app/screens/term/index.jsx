@@ -12,13 +12,14 @@ import CenteredProgress from '@app/components/centered-progress'
 import Typography from '@material-ui/core/Typography'
 import CenteredContainer from '@app/components/centered-container'
 import Grow from '@material-ui/core/Grow'
+import Fade from '@material-ui/core/Fade'
 import Slide from '@material-ui/core/Slide'
 import Notification from '@core/stores/notification'
 import threeArray from '@core/utils/threeArray'
 import { updateByProperty, removeByProperty } from '@core/utils/hooks/array'
 
-import TermList from './list'
-import TermAdd from './add'
+import TermList from '@app/containers/term-list'
+import TermAdd from '@app/containers/term-add'
 import TermEdit from '@app/containers/term-edit'
 
 const styles = (theme) => ({
@@ -74,7 +75,7 @@ export default class Term extends Component {
     fullTerm: '',
     dictionary: null,
     items: [],
-    editFullTerm: null,
+    editTermData: null,
   }
 
   async fetchDataDictionary(dictionaryName, fullTerm) {
@@ -117,7 +118,7 @@ export default class Term extends Component {
       : this.fetchDataDictionary(dictionaryName, fullTerm))
 
     if (fetchedData.dictionary)
-      app.dictionaryId = fetchedData.dictionary.id
+      app.setDictionaryId(fetchedData.dictionary.id)
 
     return {
       three,
@@ -153,6 +154,30 @@ export default class Term extends Component {
     if (locationChanged) this.updateData()
   }
 
+  async onAdded() {
+    const items = await this.handleError(this.props.term.get, this.state.fullTerm, true)
+    this.setState({ items })
+  }
+
+  onEdit = (parent, id) => () => this.setState({ editTermData: {
+    parent,
+    id,
+  }})
+
+  onEditUpdate(result) {
+    const items = this.state.items::updateByProperty('id', result.id, result)
+    this.setState({ editTermData: null, items })
+  }
+
+  onEditRemove(id) {
+    const items = this.state.items::removeByProperty('id', id)
+    this.setState({ editTermData: null, items })
+  }
+
+  onEditCancel() {
+    this.setState({ editTermData: null })
+  }
+
   makeTabItems = (items) => items::threeArray(true).map(({ origin, deep }, index) =>
     <Grow
       in={true}
@@ -165,59 +190,13 @@ export default class Term extends Component {
     </Grow>
   )
 
-  async onAdded() {
-    this.props.notification.notify({
-      variant: Notification.SUCCESS,
-      message: 'Термины успешно добавлены',
-    })
+  renderContent() {
+    const {
+      items = [],
+      dictionary,
+    } = this.state
 
-    const items = await this.handleError(this.props.term.get, this.state.fullTerm, true)
-    this.setState({ items })
-  }
-
-  onAddError() {
-    this.props.notification.notify({
-      variant: Notification.ERROR,
-      message: 'Ошибка добавления терминов',
-    })
-  }
-
-  onEdit = (parent, id) => () => this.setState({ editFullTerm: {
-    parent,
-    id,
-  }})
-
-  onEditUpdate(result) {
-    const items = this.state.items::updateByProperty('id', result.id, result)
-    this.setState({ editFullTerm: null, items })
-  }
-
-  onEditRemove(id) {
-    const items = this.state.items::removeByProperty('id', id)
-    this.setState({ editFullTerm: null, items })
-  }
-
-  onEditCancel() {
-    this.setState({ editFullTerm: null })
-  }
-
-  render() {
-    const
-      {
-        classes,
-        term,
-        dictionary: dictionaryStore,
-      } = this.props,
-      {
-        items = [],
-        dictionary,
-        three,
-        termName,
-        parent,
-        editFullTerm,
-      } = this.state
-
-    const content = !!dictionary && items.length > 0
+    return (!!dictionary && items.length > 0
       ? <TermList items={items} isFlat={dictionary.isFlat} onEdit={this.onEdit} />
       : <CenteredContainer fullHeight>
           <Typography
@@ -227,6 +206,27 @@ export default class Term extends Component {
             Пусто
           </Typography>
         </CenteredContainer>
+    )
+  }
+
+  render() {
+    const
+      { classes, term, dictionary: dictionaryStore } = this.props,
+      { dictionary, three, termName, parent, editTermData } = this.state
+
+    if (!dictionary && term.loading || dictionaryStore.loading)
+      return (<CenteredProgress fullHeight />)
+    else if (!dictionary && !dictionaryStore.loading)
+      return (
+        <CenteredContainer fullHeight>
+          <Typography
+            variant='h6'
+            align='center'
+            color='textSecondary'>
+            Словарь не найден
+          </Typography>
+        </CenteredContainer>
+      )
 
     return (
       <>
@@ -245,40 +245,27 @@ export default class Term extends Component {
           </Slide>
         }
         <Grid container className={classes.container}>
-          {!dictionary
-            ? <CenteredProgress fullHeight />
-            : <>
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  lg={9}
-                  xl={9}
-                  className={classes.itemsContainer}>
-                    {term.loading || dictionaryStore.loading
-                      ? <CenteredProgress fullHeight />
-                      : content
-                    }
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  lg={3}
-                  xl={3}>
-                  <TermAdd
-                    dictionary={dictionary}
-                    termName={termName}
-                    parentId={parent && parent.id}
-                    onAdded={::this.onAdded}
-                    onError={::this.onAddError} />
-                </Grid>
-              </>
-          }
+          <Fade in={true} timeout={600}>
+            <Grid item xs={12} md={6} lg={9} xl={9} className={classes.itemsContainer}>
+                {term.loading || dictionaryStore.loading
+                  ? <CenteredProgress fullHeight />
+                  : this.renderContent()
+                }
+            </Grid>
+          </Fade>
+          <Fade in={true} timeout={800}>
+            <Grid item xs={12} md={6} lg={3} xl={3}>
+              <TermAdd
+                dictionary={dictionary}
+                termName={termName}
+                parentId={parent && parent.id}
+                onAdded={::this.onAdded} />
+            </Grid>
+          </Fade>
         </Grid>
         <TermEdit
-          open={editFullTerm !== null}
-          editData={editFullTerm}
+          open={editTermData !== null}
+          editData={editTermData}
           onClose={::this.onEditCancel}
           onUpdate={::this.onEditUpdate}
           onRemove={::this.onEditRemove} />

@@ -25,7 +25,7 @@ const NotFound = ({classes}) =>
         variant='h4'
         align='center'
         color='textSecondary'>
-        Данного раздела на сайте нет или он находится в разработке
+        Данного раздела на сайте нет
       </Typography>
     </Grid>
   </Grid>
