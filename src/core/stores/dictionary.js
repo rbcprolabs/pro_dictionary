@@ -43,7 +43,7 @@ export default class Dictionary {
       result = await API.post('dictionary', '/dictionary/', { body })
       this._set(result.id, result)
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
       throw error
     } finally {
       this.loading = false
@@ -82,7 +82,7 @@ export default class Dictionary {
         result = Object.values(this._items)
       }
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
     } finally {
       this.loading = false
     }
@@ -104,7 +104,7 @@ export default class Dictionary {
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.loading = false
     }
@@ -125,7 +125,7 @@ export default class Dictionary {
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.loading = false
     }
@@ -146,7 +146,7 @@ export default class Dictionary {
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.loading = false
     }
@@ -164,7 +164,7 @@ export default class Dictionary {
         this._set(id, {...body, id})
       }
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
     } finally {
       this.loading = false
     }
@@ -182,7 +182,7 @@ export default class Dictionary {
         this._remove(id)
       }
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
     } finally {
       this.loading = false
     }

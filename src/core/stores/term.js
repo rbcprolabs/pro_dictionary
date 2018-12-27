@@ -18,7 +18,7 @@ export default class Terms {
         ? API.post('term', '/term/', { body })
         : API.post('term', '/termAll/', { body }))
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
       throw error
     } finally {
       this.loading = false
@@ -53,7 +53,7 @@ export default class Terms {
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.loading = false
     }
@@ -74,7 +74,7 @@ export default class Terms {
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.loading = false
     }
@@ -96,7 +96,7 @@ export default class Terms {
       }
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.loading = false
     }
@@ -113,7 +113,7 @@ export default class Terms {
       )
     } catch (error) {
       if (!('response' in error) || 'response' in error && error.response.status !== 404)
-        console.error(error) // eslint-disable-line no-console
+        console.error(error)
     } finally {
       this.findLoading = false
     }
@@ -131,7 +131,7 @@ export default class Terms {
         this.items[body.parent].items = this.items[body.parent].items::updateByProperty('id', id, result)
       }
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
     } finally {
       this.loading = false
     }
@@ -149,7 +149,7 @@ export default class Terms {
         this.items[parent].items = this.items[parent].items::removeByProperty('id', id)
       }
     } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+      console.error(error)
     } finally {
       this.loading = false
     }

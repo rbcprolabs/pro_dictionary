@@ -38,6 +38,7 @@ export default class Login extends Component {
   }
 
   loginInput = React.createRef()
+  passwordInput = React.createRef()
 
   state = {
     login: '',
@@ -53,18 +54,26 @@ export default class Login extends Component {
       // Say react about page started in window
       this.setState({ fromWidget: true })
     }
+
+    setTimeout(() => {
+      if (this.hasAutofill) this.forceUpdate()
+    }, 100)
   }
 
   handleChange = ({ target }) => this.setState({
     [target.name]: target.value,
   })
 
-  validateForm() {
-    // detect autofill
-    if (this.loginInput.current
-        && this.loginInput.current.matches(':-webkit-autofill')) {
-      return true
-    }
+  // detect autofill
+  get hasAutofill() {
+    return this.loginInput.current
+      && this.passwordInput
+      && this.loginInput.current.matches(':-webkit-autofill')
+      && this.passwordInput.current.matches(':-webkit-autofill')
+  }
+
+  get validateForm() {
+    if (this.hasAutofill) return true
 
     return this.state.login.length > 0 && this.state.password.length > 0
   }
@@ -85,7 +94,7 @@ export default class Login extends Component {
     } catch ({message}) {
       this.props.notification.notify({
         variant: Notification.ERROR,
-        message,
+        message: message.replace(/Incorrect username or password/, 'Неправильный email или пароль'),
       })
     }
   }
@@ -123,6 +132,7 @@ export default class Login extends Component {
             <Grid item>
               <Grow in timeout={900}>
                 <TextField
+                  inputRef={this.passwordInput}
                   name='password'
                   label='Пароль'
                   className={classes.textField}
@@ -143,7 +153,7 @@ export default class Login extends Component {
                     <LoadingButton
                       loading={auth.loading}
                       type='submit'
-                      disabled={!this.validateForm()}
+                      disabled={!this.validateForm}
                       variant='contained'
                       color='secondary'>
                       Войти
@@ -156,7 +166,9 @@ export default class Login extends Component {
                       color='secondary'
                       disabled={auth.loading}
                       component={Link}
-                      to='/forgot-password'
+                      to={this.state.login.length === 0
+                        ? '/forgot-password'
+                        : `/forgot-password?email=${this.state.login}`}
                       className={classes.clearTextTransform}>
                       Забыл пароль?
                     </Button>

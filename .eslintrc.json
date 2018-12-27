@@ -26,7 +26,8 @@
   },
   "rules": {
     "max-len": [1, 120, 2, {"ignoreComments": true}],
-    "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
+    "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
+    "no-console": ["warn", { "allow": ["error"] }]
   },
   "extends": ["eslint:recommended", "plugin:react/recommended"]
 }

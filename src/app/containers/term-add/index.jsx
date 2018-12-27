@@ -132,7 +132,7 @@ export default class TermAdd extends Component {
         onChange={this.handleChange}>
         <Grid container justify='flex-end'>
           <Grow in timeout={1000}>
-            <Badge badgeContent={howManySends} invisible={howManySends === null} color='primary'>
+            <Badge badgeContent={howManySends || ''} invisible={howManySends === null} color='primary'>
               <LoadingFab
                 loading={this.state.loading}
                 color='secondary'

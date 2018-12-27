@@ -16,7 +16,7 @@ export default class AuthStore {
       await Auth.currentSession();
       this.status = true
     } catch (error) {
-      (error !== 'No current user') && console.error(error) // eslint-disable-line no-console
+      (error !== 'No current user') && console.error(error)
       this.status = false
     } finally {
       this.loading = false
@@ -25,13 +25,13 @@ export default class AuthStore {
   }
 
   @action
-  async signIn(login, password) {
+  async signIn(email, password) {
     this.loading = true
     try {
-      await Auth.signIn(login, password);
+      await Auth.signIn(email, password);
       this.status = true
     } catch (error) {
-      console.error(error.message) // eslint-disable-line no-console
+      console.error(error)
       throw error
     } finally {
       this.loading = false
@@ -45,11 +45,41 @@ export default class AuthStore {
     try {
       await Auth.signOut();
       this.status = false
-    } catch (e) {
-      console.error(e.message) // eslint-disable-line no-console
+    } catch (error) {
+      console.error(error)
     } finally {
       this.loading = false
     }
     return this.status
+  }
+
+  @action
+  async forgotPassword(email) {
+    this.loading = true
+    let result = null
+    try {
+      result = await Auth.forgotPassword(email)
+    } catch (error) {
+      console.error(error)
+      throw error
+    } finally {
+      this.loading = false
+    }
+    return result
+  }
+
+  @action
+  async forgotPasswordSubmit(email, code, newPassword) {
+    this.loading = true
+    let result = null
+    try {
+      result = await Auth.forgotPasswordSubmit(email, code, newPassword)
+    } catch (error) {
+      console.error(error)
+      throw error
+    } finally {
+      this.loading = false
+    }
+    return result
   }
 }
