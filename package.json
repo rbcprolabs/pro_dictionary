@@ -1,6 +1,6 @@
 {
   "name": "dictionary",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Dictionary web app",
   "main": "src/index.jsx",
   "scripts": {
@@ -17,7 +17,7 @@
     "contentful:logout": "contentful logout",
     "deploy": "aws s3 sync build/ s3://pro-dictionary",
     "postdeploy": "aws cloudfront create-invalidation --distribution-id E3I7NCZQEHFG9M --paths \"/*\"",
-    "release": "npm run build:production & npm run deploy & npm run postdeploy"
+    "release": "npm run build:production & npm run deploy"
   },
   "author": "Serge Shkurko",
   "license": "ISC",

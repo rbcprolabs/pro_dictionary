@@ -63,3 +63,14 @@ export function removeByProperty(key, value) {
   newArray.splice(itemIndex, 1)
   return newArray
 }
+
+/**
+ * Splice array by chunks
+ * @param {number} n chunk size
+ * @returns {Array}
+ * @example
+ * [1,2,3,4,5]::splitByChunks(2) // [[1,2],[3,4],[5]]
+ */
+export function splitByChunks(n) {
+  return Array.from(Array(Math.ceil(this.length / n)), (_, i) => this.slice(i * n, i * n + n))
+}
