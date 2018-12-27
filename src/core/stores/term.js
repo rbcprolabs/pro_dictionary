@@ -117,7 +117,7 @@ export default class Terms {
     } finally {
       this.findLoading = false
     }
-    return result
+    return result ? result.items : []
   }
 
   @action

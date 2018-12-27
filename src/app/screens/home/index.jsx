@@ -5,7 +5,7 @@ import CenteredContainer from '@app/components/centered-container'
 
 const Home = () =>
   <CenteredContainer fullHeight>
-    <Zoom in={true} timeout={600}>
+    <Zoom in timeout={600}>
       <Typography
         variant='h6'
         align='center'

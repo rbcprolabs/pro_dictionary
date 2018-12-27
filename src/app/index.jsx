@@ -1,4 +1,3 @@
-import '@babel/polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'mobx-react'
@@ -16,7 +15,7 @@ import {
 } from '@core/stores'
 import AppStore from '@app/stores/app'
 
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 configure(config)
@@ -53,7 +52,7 @@ config.env === 'production' && OfflinePluginRuntime.install({
 })
 
 ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
+  <ThemeProvider theme={theme}>
       <Provider {...stores}>
         <BrowserRouter>
           <>
@@ -62,6 +61,6 @@ ReactDOM.render(
           </>
         </BrowserRouter>
       </Provider>
-  </MuiThemeProvider>,
+  </ThemeProvider>,
   document.getElementById('root')
 )

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Slide from '@material-ui/core/Slide'
@@ -41,13 +41,13 @@ const Main = ({ classes }) =>
         <Grid
           container
           justify='center'>
-          <Slide direction='down' in={true} timeout={600}>
+          <Slide direction='down' in timeout={600}>
             <Logo />
           </Slide>
         </Grid>
       </Grid>
       <Grid item>
-        <Slide direction='up' in={true} timeout={600}>
+        <Slide direction='up' in timeout={600}>
           <Typography
             variant='h6'
             align='center'
@@ -62,7 +62,7 @@ const Main = ({ classes }) =>
       container
       justify='center'
       className={classes.appVersion}>
-      <Slide direction='up' in={true} timeout={800}>
+      <Slide direction='up' in timeout={800}>
         <Typography
           variant='subtitle1'
           align='center'

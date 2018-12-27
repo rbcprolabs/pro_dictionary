@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
@@ -136,14 +136,14 @@ export default class DictionaryAdd extends Component {
           direction='column'
           className={classes.centeredContainer}>
           <Grid item>
-            <Grow in={true} timeout={800}>
+            <Grow in timeout={800}>
               <Typography variant='h5'>
                 Добавление словаря
               </Typography>
             </Grow>
           </Grid>
           <Grid item>
-            <Grow in={true} timeout={900}>
+            <Grow in timeout={900}>
               <TextField
                 error={!::this.validate('name')}
                 required
@@ -155,7 +155,7 @@ export default class DictionaryAdd extends Component {
                 onChange={this.handleChange}
                 margin='normal' />
             </Grow>
-            <Grow in={true} timeout={1000}>
+            <Grow in timeout={1000}>
               <TextField
                 error={!::this.validate('slug')}
                 required
@@ -167,7 +167,7 @@ export default class DictionaryAdd extends Component {
                 onChange={this.handleChange}
                 margin='normal' />
             </Grow>
-            <Grow in={true} timeout={1100}>
+            <Grow in timeout={1100}>
               <TextField
                 error={!::this.validate('placeholderRule')}
                 fullWidth
@@ -180,7 +180,7 @@ export default class DictionaryAdd extends Component {
             </Grow>
           </Grid>
           <Grid item>
-            <Grow in={true} timeout={1100}>
+            <Grow in timeout={1100}>
               <RadioGroup
                 aria-label='Тип'
                 name='isFlat'
@@ -193,12 +193,12 @@ export default class DictionaryAdd extends Component {
           </Grid>
           {isFlat && (<>
             <Grid item>
-              <Grow in={true} timeout={800}>
+              <Grow in timeout={800}>
                 <Divider className={classes.divider} />
               </Grow>
             </Grid>
             <Grid item>
-              <Grow in={true} timeout={1000}>
+              <Grow in timeout={1000}>
                 <FormControlLabel
                   name='isOpen'
                   checked={isOpen}
@@ -215,7 +215,7 @@ export default class DictionaryAdd extends Component {
               spacing={16}
               justify='center'>
               <Grid item xs={6}>
-                <Grow in={true} timeout={1300}>
+                <Grow in timeout={1300}>
                   <Button
                     fullWidth
                     color='secondary'
@@ -225,7 +225,7 @@ export default class DictionaryAdd extends Component {
                 </Grow>
               </Grid>
               <Grid item xs={6}>
-                <Grow in={true} timeout={1400}>
+                <Grow in timeout={1400}>
                   <LoadingButton
                     fullWidth
                     loading={dictionary.loading}

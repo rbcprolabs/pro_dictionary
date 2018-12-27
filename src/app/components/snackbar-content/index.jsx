@@ -10,7 +10,7 @@ import amber from '@material-ui/core/colors/amber'
 import IconButton from '@material-ui/core/IconButton'
 import SnackbarContentUI from '@material-ui/core/SnackbarContent'
 import WarningIcon from '@material-ui/icons/Warning'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 
 const variantIcon = {
   success: CheckCircleIcon,

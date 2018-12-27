@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid'
 import LoadingButton from '@app/components/loading-button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import Notification from '@core/stores/notification'
 
 const styles = (theme) => ({

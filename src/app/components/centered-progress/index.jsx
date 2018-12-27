@@ -6,7 +6,7 @@ import CenteredContainer from '@app/components/centered-container'
 
 const CenteredProgress = ({className, fullHeight, ...props}) =>
   <CenteredContainer fullHeight={fullHeight} className={className}>
-    <Grow in={true} timeout={400}>
+    <Grow in timeout={400}>
       <CircularProgress {...props}/>
     </Grow>
   </CenteredContainer>

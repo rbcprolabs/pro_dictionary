@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import PowerSettingsIcon from '@material-ui/icons/PowerSettingsNew'
 import Slide from '@material-ui/core/Slide'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 
 const styles = (theme) => ({
   container: {
@@ -67,7 +67,7 @@ export default class DrawerFooter extends Component {
         alignItems='center'
         wrap='nowrap'
         className={this.props.classes.container}>
-        <Slide direction='up' in={true} timeout={400}>
+        <Slide direction='up' in timeout={400}>
           <Button
             onClick={::this.addToHomeScreen}
             color='secondary'
@@ -75,7 +75,7 @@ export default class DrawerFooter extends Component {
             Добавить на главный экран
           </Button>
         </Slide>
-        <Slide direction='up' in={true} timeout={400}>
+        <Slide direction='up' in timeout={400}>
           <Tooltip title='Выход из аккаунта' aria-label='Выход' placement='top-end'>
             <IconButton
               onClick={::this.handleLogout}

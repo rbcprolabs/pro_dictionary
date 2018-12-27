@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Slide from '@material-ui/core/Slide'
 import Link from 'react-router-dom/Link'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import logoUrl from '@app/assets/images/logo.svg'
 
 const styles = (theme) => ({
@@ -30,13 +30,13 @@ const DrawerHeader = ({ classes, app }) =>
     className={classes.container}>
     <Grid item xs={4}>
       <Link to='/' onClick={app.clearDictionaryId}>
-        <Slide direction='down' in={true} timeout={400}>
+        <Slide direction='down' in timeout={400}>
           <img src={logoUrl} />
         </Slide>
       </Link>
     </Grid>
     <Grid item xs={4}>
-      <Slide direction='down' in={true} timeout={400}>
+      <Slide direction='down' in timeout={400}>
         <Typography
           variant='body2'
           color='textSecondary'

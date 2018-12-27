@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { observer, inject as injectStore } from 'mobx-react'
 import Tag from '@widget/components/tag'
 import style from './style.scss'
-import NestingString from '@widget/components/string-nesting'
+import NestingString from '@widget/components/nesting-string'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 function removeTag(fullTerm) {

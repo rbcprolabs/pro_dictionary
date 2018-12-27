@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { observer, inject as injectStore } from 'mobx-react'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import List from '@material-ui/core/List'
@@ -102,7 +102,7 @@ export default class DictionaryList extends Component {
       { edit } = this.state
 
     return (
-      <Grow in={true} timeout={1000 + index * 100} key={id}>
+      <Grow in timeout={1000 + index * 100} key={id}>
         <ListItem button component={Link} to={`/${name}`} selected={id === app.dictionaryId}>
           <ListItemIcon className={classes.listItemIcon}>
             {!isFlat
@@ -139,7 +139,7 @@ export default class DictionaryList extends Component {
           {dictionary.items.length < 1
             ? dictionary.loading
               ? <CenteredProgress />
-              : <Grow direction='down' in={true} timeout={1000}>
+              : <Grow direction='down' in timeout={1000}>
                   <Typography variant='h6' color='textSecondary' align='center'>
                     Словарей ещё нет
                   </Typography>
@@ -151,7 +151,7 @@ export default class DictionaryList extends Component {
         </Grid>
         <Grid item className={classes.container}>
           <Grid container justify='space-between' alignItems='center'>
-            <Grow direction='down' in={true} timeout={1200}>
+            <Grow direction='down' in timeout={1200}>
               <Button
                 variant='contained'
                 color='secondary'
@@ -161,7 +161,7 @@ export default class DictionaryList extends Component {
                 Добавить
               </Button>
             </Grow>
-            <Grow direction='down' in={true} timeout={1300}>
+            <Grow direction='down' in timeout={1300}>
               <Tooltip
                 title={`${!this.state.edit ? 'Включить' : 'Выключить'} режим редактирования словарей`}
                 aria-label='Редактировать'

@@ -7,7 +7,7 @@ import { debounce } from 'throttle-debounce'
 import style from './style.scss'
 import Button from '@widget/components/button'
 import Loader from '@widget/components/loader'
-import NestingString from '@widget/components/string-nesting'
+import NestingString from '@widget/components/nesting-string'
 import { alphabet } from '@core/utils/sort'
 import withDictionary from '@widget/containers/dictionary'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
@@ -48,9 +48,9 @@ export default class Search extends Component {
   searchDebounced = debounce(1000, ::this.search)
 
   async search(query) {
-    const { items } = await this.props.term.findAllByDictionary(this.props.dictionary.id, query)
+    const searchResults = await this.props.term.findAllByDictionary(this.props.dictionary.id, query)
     this.setState({
-      searchResults: items,
+      searchResults,
       loading: false,
     })
   }

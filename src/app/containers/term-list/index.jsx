@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import Link from 'react-router-dom/Link'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
+import NestingString from '@app/components/nesting-string'
 
 const styles = (theme) => ({
   list: {
@@ -30,10 +31,30 @@ const styles = (theme) => ({
   },
 })
 
-const termListItem = ({ id, term, parent, fullTerm, childrens }, listItemTypographyProps, onEdit) =>
+function removeDictionaryName(fullTerm) {
+  const fulTermSplitted = fullTerm.split('/')
+  return fulTermSplitted.slice(1, fulTermSplitted.length)
+}
+
+function makeNestingString(fullTerm, searchQuery) {
+  return (
+    <NestingString
+      strings={removeDictionaryName(fullTerm)}
+      highlight={searchQuery}
+      delimeter=' ➜ '/>
+  )
+}
+
+const termListItem = (
+  { id, term, parent, fullTerm, childrens },
+  isSearch,
+  searchQuery,
+  listItemTypographyProps,
+  onEdit,
+) =>
   <ListItem key={id} button component={Link} to={`/${fullTerm}`} divider>
     <ListItemText
-      primary={term}
+      primary={!isSearch ? term : makeNestingString(fullTerm, searchQuery)}
       secondary={childrens && childrens.join(', ')}
       secondaryTypographyProps={listItemTypographyProps} />
     <ListItemSecondaryAction>
@@ -67,13 +88,13 @@ termListFlatItem.propTypes = {
   term: PropTypes.string.isRequired,
 }
 
-const TermList = ({ classes, items, isFlat, onEdit }) => {
+const TermList = ({ classes, isSearch, searchQuery, items, isFlat, onEdit }) => {
   const listItemTypographyProps = ({ noWrap: true, className: classes.itemSubTitle })
 
   return (
     <List className={classes.list}>
       {!isFlat
-        ? items.map((term) => termListItem(term, listItemTypographyProps, onEdit))
+        ? items.map((term) => termListItem(term, isSearch, searchQuery, listItemTypographyProps, onEdit))
         : items.map((term) => termListFlatItem(term, onEdit))}
     </List>
   )
@@ -81,6 +102,8 @@ const TermList = ({ classes, items, isFlat, onEdit }) => {
 
 TermList.propTypes = {
   classes: PropTypes.object.isRequired,
+  isSearch: PropTypes.bool,
+  searchQuery: PropTypes.string,
   items: PropTypes.array,
   isFlat: PropTypes.bool.isRequired,
   onEdit: PropTypes.func.isRequired,

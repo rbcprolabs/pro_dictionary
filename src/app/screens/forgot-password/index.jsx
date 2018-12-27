@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid'
 import LoadingButton from '@app/components/loading-button'
 import Link from 'react-router-dom/Link'
 import Grow from '@material-ui/core/Grow'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 
 const styles = (theme)=> ({
   form: {
@@ -71,7 +71,7 @@ export default class ForgotPassword extends Component {
             spacing={40}
             direction='column'>
             <Grid item>
-              <Grow in={true} timeout={600}>
+              <Grow in timeout={600}>
                 <TextField
                   autoFocus
                   id='password'
@@ -88,14 +88,14 @@ export default class ForgotPassword extends Component {
                 spacing={40}
                 justify='center'>
                 <Grid item xs={4}>
-                  <Grow in={true} timeout={800}>
+                  <Grow in timeout={800}>
                     <Button color='secondary' component={Link} to='/login'>
                       Назад
                     </Button>
                   </Grow>
                 </Grid>
                 <Grid item xs={4}>
-                  <Grow in={true} timeout={800}>
+                  <Grow in timeout={800}>
                     <LoadingButton
                       loading={auth.loading}
                       type='submit'

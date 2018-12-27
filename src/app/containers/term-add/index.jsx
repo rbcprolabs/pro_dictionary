@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import FullSizeInput from '@app/components/fullsize-input'
 import Grow from '@material-ui/core/Grow'
 import AddIcon from '@material-ui/icons/Add'
-import LoadingFab from '@app/components/loading-fab';
+import LoadingFab from '@app/components/loading-fab'
 import Notification from '@core/stores/notification'
 
 @injectStore(({
@@ -24,6 +24,7 @@ export default class TermAdd extends Component {
     termName: PropTypes.string.isRequired,
     parentId: PropTypes.string,
     onAdded: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
   }
 
   state = {
@@ -103,16 +104,17 @@ export default class TermAdd extends Component {
   }
 
   render() {
-    const { termName, dictionary } = this.props
+    const { disabled, termName, dictionary } = this.props
 
     return (
       <FullSizeInput
         placeholder={this.makePlaceholder(termName, dictionary.placeholderRule)}
         value={this.state.terms}
+        disabled={disabled}
         name='terms'
         onChange={this.handleChange}>
         <Grid container justify='flex-end'>
-          <Grow in={true} timeout={1000}>
+          <Grow in timeout={1000}>
             <LoadingFab
               loading={this.state.loading}
               color='secondary'

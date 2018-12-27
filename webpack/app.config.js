@@ -5,7 +5,7 @@ const
   CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = ({ mode, dirname }) => {
-  const etrypoint = [pathResolve(dirname, 'src/app/index.jsx')]
+  const etrypoint = [pathResolve(dirname, 'src/app/bootstrap.js'), pathResolve(dirname, 'src/app/index.jsx')]
 
   if (mode === 'development')
     // path = output.publicPath + __webpack_hmr

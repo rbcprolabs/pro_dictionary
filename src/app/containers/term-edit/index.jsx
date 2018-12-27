@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { inject as injectStore } from 'mobx-react'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import Notification from '@core/stores/notification'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'

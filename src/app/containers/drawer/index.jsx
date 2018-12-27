@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { observer, inject as injectStore } from 'mobx-react'
-import withStyles from '@material-ui/core/styles/withStyles'
+import withStyles from '@material-ui/styles/withStyles'
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
 import DrawerHeader from './header'
 import DrawerFooter from './footer'
@@ -11,7 +11,7 @@ import DictionaryAdd from './dictionary/add'
 import DictionaryEdit from './dictionary/edit'
 import Main from './main'
 import Drawer from '@material-ui/core/Drawer'
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import { darkTheme } from '@app/theme'
 
 const
@@ -86,7 +86,7 @@ export default class AppDrawer extends Component {
       widthUpSm = isWidthUp('sm', width)
 
     return (
-      <MuiThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={darkTheme}>
         <Drawer
           variant={widthUpSm ? 'permanent' : 'temporary'}
           classes={{
@@ -102,7 +102,7 @@ export default class AppDrawer extends Component {
             : this.getFragmentByName('main')
           }
         </Drawer>
-      </MuiThemeProvider>
+      </ThemeProvider>
     )
   }
 
